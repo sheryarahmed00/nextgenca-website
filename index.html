@@ -484,6 +484,7 @@ footer a:hover{color:#fff}
         <label for="f-name">Your name<input id="f-name" name="name" autocomplete="name" required></label>
         <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
       </div>
+      <label for="f-phone">Phone or WhatsApp number<input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Include country code if outside the UK" required></label>
       <div class="two">
         <label for="f-type">You are a<select id="f-type" name="type"><option>Sole trader or freelancer</option><option>Limited company</option><option>Landlord</option><option>Client outside the UK</option><option>Accountancy firm (outsourcing)</option><option>Individual</option></select></label>
         <label for="f-svc">You need<select id="f-svc" name="service"><option>Accounts and tax</option><option>Payroll</option><option>Bookkeeping and VAT</option><option>Management accounts or advisory</option><option>Company formation</option><option>Not sure yet</option></select></label>
@@ -578,8 +579,13 @@ document.getElementById("enquiry").addEventListener("submit", e => {
   const name = document.getElementById("f-name").value.trim();
   const email = document.getElementById("f-email").value.trim();
   note.hidden = false;
+  const phone = document.getElementById("f-phone").value.trim();
   if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
     note.textContent = "Please add your name and a valid email address so we can reply.";
+    return;
+  }
+  if (phone.replace(/\D/g, "").length < 7) {
+    note.textContent = "Please add a phone or WhatsApp number so we can call you back.";
     return;
   }
   btn.disabled = true;

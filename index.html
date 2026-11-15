@@ -195,6 +195,13 @@ section{padding:104px 0}
 .card-cred ul{list-style:none;margin:0;padding:0;position:relative;z-index:1}
 .card-cred li{padding:13px 0;border-top:1px solid rgba(255,255,255,.14);font-size:.9rem;color:#c9d3e3;display:flex;justify-content:space-between;gap:16px}
 .card-cred li b{color:#fff;text-align:right;font-weight:700}
+.cred-stack{display:grid;gap:22px}
+.card-cred.alt{background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-top:3px solid var(--navy);padding:30px 34px}
+.card-cred.alt::after{display:none}
+.card-cred.alt .nm{color:var(--navy)}
+.card-cred.alt .role{color:var(--gold);margin-bottom:14px}
+.card-cred.alt li{border-top-color:var(--rule);color:var(--muted)}
+.card-cred.alt li b{color:var(--navy)}
 .sectors{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 28px;border-top:1px solid var(--rule)}
 .sectors div{padding:22px 0;border-bottom:1px solid var(--rule)}
 .sectors b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;color:var(--navy);line-height:1.2;margin-bottom:4px}
@@ -517,19 +524,20 @@ footer a:hover{color:#fff}
     <div>
       <div class="head">
         <p class="eyebrow">About</p>
-        <h2>One Chartered Accountant, responsible for your file</h2>
+        <h2>A qualified team, led by a Chartered Accountant</h2>
       </div>
-      <p class="lead">NextGen is led by Sheryar Ahmed ACA FCCA, a member of both ICAEW and ACCA.</p>
+      <p class="lead">NextGen is led by Sheryar Ahmed ACA FCCA, a member of both ICAEW and ACCA, with Fiza Gillani ACCA as Managing Director and a team of ACCA-qualified accountants behind them.</p>
       <p>Sheryar has spent more than ten years in UK finance across hospitality, real estate and consulting, including running finance and payroll for a group of over 200 employees. That means the person preparing your accounts has also sat in the finance seat of a real business.</p>
-      <p>You will not be passed between juniors. You speak to the accountant who does the work, in plain English, and Urdu, Hindi or Punjabi if you prefer.</p>
+      <p>Your work is prepared by qualified accountants and reviewed by a Chartered Accountant before it goes to you or HMRC. You get a named contact who knows your file, in plain English, and Urdu, Hindi or Punjabi if you prefer.</p>
       <div class="facts">
-        <div><b>ACA · FCCA</b>Dual chartered qualification</div>
+        <div><b>ACA · FCCA · ACCA</b>Qualified team</div>
         <div><b>C011010236</b>ICAEW firm number</div>
         <div><b>10+ years</b>UK accounting experience</div>
         <div><b>200+ staff</b>Payroll run each month</div>
       </div>
     </div>
-    <aside class="card-cred" aria-label="Credentials">
+    <div class="cred-stack">
+  <aside class="card-cred" aria-label="Credentials">
       <p class="nm">Sheryar Ahmed</p>
       <p class="role">ACA · FCCA · Principal</p>
       <ul>
@@ -537,10 +545,18 @@ footer a:hover{color:#fff}
         <li><span>ACCA</span><b>Fellow (FCCA)</b></li>
         <li><span>Status</span><b>ICAEW practising certificate holder</b></li>
         <li><span>Firm number</span><b>C011010236</b></li>
-        <li><span>Degree</span><b>BSc (Hons) Applied Accounting, Oxford Brookes</b></li>
         <li><span>Cover</span><b>Professional indemnity insurance</b></li>
       </ul>
-    </aside>
+  </aside>
+      <aside class="card-cred alt" aria-label="Managing Director">
+        <p class="nm">Fiza Gillani</p>
+        <p class="role">ACCA · Managing Director</p>
+        <ul>
+          <li><span>ACCA</span><b>Member</b></li>
+          <li><span>Team</span><b>ACCA-qualified accountants</b></li>
+        </ul>
+      </aside>
+    </div>
   </div>
 </section>
 

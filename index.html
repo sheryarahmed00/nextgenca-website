@@ -99,8 +99,34 @@ nav.main a:hover{border-color:var(--gold);color:var(--navy)}
 .creds span{display:flex;align-items:center;gap:9px}
 .creds span::before{content:"";width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex:none}
 .creds strong{color:#fff;font-weight:700}
-.banner{margin-top:-130px;position:relative;z-index:2}
-.banner img{width:100%;border-radius:6px;box-shadow:0 30px 60px -24px rgba(11,27,52,.55);border:1px solid var(--rule)}
+.showcase{margin-top:-130px;position:relative;z-index:2}
+.show-card{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);background:var(--paper);border:1px solid var(--rule);box-shadow:0 30px 60px -28px rgba(11,27,52,.55)}
+@media (max-width:900px){.show-card{grid-template-columns:1fr}}
+.show-copy{padding:clamp(28px,4vw,48px);display:grid;gap:18px;align-content:center}
+.show-copy h2{font-size:clamp(1.8rem,3vw,2.5rem)}
+.pillars{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:18px}
+.pillars li{display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start}
+.pillars .ico{width:44px;height:44px;border:1px solid var(--gold);display:grid;place-items:center}
+.pillars svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pillars b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--navy);line-height:1.2}
+.pillars div span{font-size:.92rem;color:var(--muted)}
+.show-report{background:linear-gradient(160deg,var(--navy),var(--navy-deep));color:#fff;padding:clamp(24px,3.4vw,40px);display:grid;gap:20px;align-content:center;border-left:3px solid var(--gold)}
+@media (max-width:900px){.show-report{border-left:0;border-top:3px solid var(--gold)}}
+.rep-head{display:flex;justify-content:space-between;gap:12px;font:800 .68rem var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.16)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kpis small{display:block;font-size:.72rem;color:#9fb0c8;letter-spacing:.04em}
+.kpis b{display:block;font-family:var(--display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:600;line-height:1.15;font-variant-numeric:lining-nums}
+.kpis i{font-style:normal;font-size:.72rem;color:var(--gold-soft)}
+.show-report svg{width:100%;height:auto;display:block}
+.show-report rect{fill:rgba(255,255,255,.22)}
+.show-report rect.hi{fill:var(--gold)}
+.show-report text{fill:#9fb0c8;font:600 9px var(--body)}
+.rep-note{font-size:.74rem;color:#9fb0c8}
+.assure{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));border:1px solid var(--rule);border-top:0;background:var(--mist)}
+.assure li{padding:18px 22px;border-right:1px solid var(--rule);display:grid;gap:2px}
+.assure li:last-child{border-right:0}
+.assure b{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.assure span{font-size:.86rem;color:var(--muted)}
 
 section{padding:104px 0}
 .plan{transition:transform .25s,box-shadow .25s}
@@ -284,8 +310,34 @@ footer a:hover{color:#fff}
    </aside>
   </div>
 </div>
-<div class="wrap banner">
-  <img src="img/banner.jpg" alt="NextGen Chartered Accountant, your outsourcing partner. Accuracy you can trust, compliance you can rely on, growth we help you achieve." width="1600" height="667">
+<div class="wrap showcase">
+  <div class="show-card">
+    <div class="show-copy">
+      <p class="eyebrow">What you get</p>
+      <h2>Clear numbers, on time, every month</h2>
+      <ul class="pillars">
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></span><div><b>Accuracy you can trust</b><span>Every figure reviewed by a Chartered Accountant before it reaches you or HMRC.</span></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><div><b>Compliance you can rely on</b><span>Returns and accounts filed before the deadline, with reminders well ahead.</span></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/><path d="M14 6l3-3 3 3"/></svg></span><div><b>Growth we help you achieve</b><span>Plain-English reports that show where the money is made and where it leaks.</span></div></li>
+      </ul>
+    </div>
+    <div class="show-report" aria-label="Example monthly report">
+      <div class="rep-head"><span>Example monthly report</span><span>November</span></div>
+      <div class="kpis">
+        <div><small>Revenue</small><b>£48.2k</b><i>up 9% on October</i></div>
+        <div><small>Gross margin</small><b>61%</b><i>target 58%</i></div>
+        <div><small>Tax set aside</small><b>£6.1k</b><i>due 31 January</i></div>
+      </div>
+      <svg viewBox="0 0 312 132" role="img" aria-label="Bar chart of monthly revenue rising from June to November"><line x1="0" x2="312" y1="20" y2="20" stroke="rgba(255,255,255,.12)"/><line x1="0" x2="312" y1="50" y2="50" stroke="rgba(255,255,255,.12)"/><line x1="0" x2="312" y1="80" y2="80" stroke="rgba(255,255,255,.12)"/><rect x="8" y="64" width="36" height="46" rx="2"/><text x="26" y="126" text-anchor="middle">Jun</text><rect x="60" y="52" width="36" height="58" rx="2"/><text x="78" y="126" text-anchor="middle">Jul</text><rect x="112" y="58" width="36" height="52" rx="2"/><text x="130" y="126" text-anchor="middle">Aug</text><rect x="164" y="40" width="36" height="70" rx="2"/><text x="182" y="126" text-anchor="middle">Sep</text><rect x="216" y="32" width="36" height="78" rx="2"/><text x="234" y="126" text-anchor="middle">Oct</text><rect class="hi" x="268" y="18" width="36" height="92" rx="2"/><text x="286" y="126" text-anchor="middle">Nov</text></svg>
+      <p class="rep-note">Illustrative figures, shown to give a feel for the monthly pack.</p>
+    </div>
+  </div>
+  <ul class="assure">
+    <li><b>Client focused</b><span>Personal support</span></li>
+    <li><b>Data secure</b><span>Confidential and safe</span></li>
+    <li><b>On time</b><span>Every time</span></li>
+    <li><b>Long-term partnership</b><span>Built on trust</span></li>
+  </ul>
 </div>
 
 <section id="services">

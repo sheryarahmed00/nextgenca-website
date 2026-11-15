@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen Chartered Accountant</title>
+<meta name="description" content="NextGen Chartered Accountant. ICAEW member firm for UK and international clients: accounts, tax, payroll, VAT, bookkeeping, advisory and outsourcing, with fixed fees.">
+<link rel="icon" href="img/mark.jpg">
+<link rel="canonical" href="https://nextgenca.co.uk/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a firm's printed fee ledger. White paper, navy ink, gold rules; the fee schedule is set like a ledger page and is the one bold element. */
+:root{
+  color-scheme: light;
+  --navy:#12284a;
+  --navy-deep:#0b1b34;
+  --gold:#b8913f;
+  --gold-soft:#e9dcbc;
+  --paper:#ffffff;
+  --mist:#f4f6fa;
+  --ink:#1b2637;
+  --muted:#5a6679;
+  --rule:#dfe4ec;
+  --display:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --body:"Manrope","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  --wrap:1140px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1;margin:0;text-wrap:balance;color:var(--navy)}
+h1{font-size:clamp(2.5rem,5.6vw,4.4rem);letter-spacing:-.01em}
+h2{font-size:clamp(2rem,3.8vw,3rem)}
+h3{font-size:1.55rem}
+p{margin:0}
+.eyebrow{font-size:.74rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--gold)}
+.lead{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 .95rem var(--body);padding:14px 26px;border-radius:3px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#a27d31}
+.btn-line{border-color:rgba(255,255,255,.45);color:#fff}
+.btn-line:hover{border-color:var(--gold);color:var(--gold-soft)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-deep)}
+
+/* header */
+header.site{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:20px;height:76px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand img{height:50px;width:auto}
+.brand b{font-family:var(--display);font-weight:600;font-size:1.6rem;letter-spacing:.14em;color:var(--navy);line-height:1;display:block}
+.brand b i{font-style:normal;color:var(--gold)}
+.brand small{display:block;font-size:.58rem;font-weight:700;letter-spacing:.3em;color:var(--navy);margin-top:5px}
+nav.main{display:flex;gap:26px;font-size:.9rem;font-weight:600}
+nav.main a{text-decoration:none;color:var(--ink);padding:6px 0;border-bottom:2px solid transparent}
+nav.main a:hover{border-color:var(--gold);color:var(--navy)}
+.menu{display:none;background:none;border:1px solid var(--rule);border-radius:3px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.menu i{display:block;width:20px;height:2px;background:var(--navy)}
+.bar-right{display:flex;align-items:center;gap:12px}
+@media (max-width:920px){
+  .menu{display:flex}
+  nav.main{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--rule);flex-direction:column;gap:0;padding:8px 24px 16px;box-shadow:0 18px 30px -20px rgba(11,27,52,.35)}
+  nav.main.open{display:flex}
+  nav.main a{padding:14px 0;border-bottom:1px solid var(--rule)}
+}
+.topbar{background:var(--navy-deep);color:#c9d3e3;font-size:.78rem;letter-spacing:.04em}
+.topbar .wrap{display:flex;justify-content:space-between;gap:16px;padding-top:9px;padding-bottom:9px;flex-wrap:wrap}
+.topbar b{color:var(--gold-soft);font-weight:700}
+@media (max-width:640px){.topbar span:last-child{display:none}}
+@media (max-width:520px){.brand small{display:none}.brand b{font-size:1.25rem}.bar .btn{padding:11px 16px;font-size:.85rem}}
+
+/* hero */
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 70%);color:#fff;padding:84px 0 190px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-12%;top:-30%;width:60%;height:170%;border-left:1px solid rgba(184,145,63,.5);transform:rotate(18deg);background:linear-gradient(90deg,rgba(184,145,63,.09),transparent 55%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:56px;align-items:center}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr;gap:44px}}
+.cal{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-top:3px solid var(--gold);padding:28px 28px 22px;backdrop-filter:blur(6px)}
+.cal h2{font:800 .7rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:6px}
+.cal p.sub{font-family:var(--display);font-size:1.6rem;line-height:1.15;color:#fff;margin-bottom:14px}
+.cal ul{list-style:none;margin:0;padding:0}
+.cal li{display:grid;grid-template-columns:104px 1fr;gap:14px;padding:12px 0;border-top:1px solid rgba(255,255,255,.13);font-size:.88rem;color:#c9d3e3;align-items:baseline}
+.cal li b{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--gold-soft);font-variant-numeric:lining-nums}
+.cal .foot-note{font-size:.78rem;color:#9fb0c8;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.13)}
+.hero h1{color:#fff;max-width:17ch;margin:22px 0 22px}
+.hero h1 em{font-style:italic;color:var(--gold-soft);font-weight:500}
+.hero .lead{color:#c9d3e3;font-size:1.15rem}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.creds{display:flex;flex-wrap:wrap;gap:10px 30px;margin-top:44px;padding-top:26px;border-top:1px solid rgba(255,255,255,.16);font-size:.85rem;color:#c9d3e3}
+.creds span{display:flex;align-items:center;gap:9px}
+.creds span::before{content:"";width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex:none}
+.creds strong{color:#fff;font-weight:700}
+.banner{margin-top:-130px;position:relative;z-index:2}
+.banner img{width:100%;border-radius:6px;box-shadow:0 30px 60px -24px rgba(11,27,52,.55);border:1px solid var(--rule)}
+
+section{padding:104px 0}
+.plan{transition:transform .25s,box-shadow .25s}
+.plan:hover{transform:translateY(-4px);box-shadow:0 26px 40px -28px rgba(11,27,52,.45)}
+.head{display:grid;gap:16px;margin-bottom:48px}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.svc article{padding:34px 30px 36px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper);transition:background .2s}
+.svc article:hover{background:var(--mist)}
+.svc .no{font-family:var(--display);font-style:italic;font-size:1.15rem;color:var(--gold)}
+.svc h3{margin:6px 0 14px}
+.svc ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:.93rem;color:var(--muted)}
+.svc li{padding-left:18px;position:relative}
+.svc li::before{content:"";position:absolute;left:0;top:.72em;width:8px;height:1px;background:var(--gold)}
+
+/* fees ledger */
+.fees{background:var(--mist);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px;margin-bottom:64px}
+.plan{background:var(--paper);border:1px solid var(--rule);padding:34px 30px;display:flex;flex-direction:column;gap:16px;border-top:3px solid var(--navy)}
+.plan.key{background:var(--navy);color:#fff;border-color:var(--navy);border-top-color:var(--gold)}
+.plan.key h3,.plan.key .price{color:#fff}
+.plan.key p,.plan.key li{color:#c9d3e3}
+.plan .tag{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.plan p{font-size:.92rem;color:var(--muted)}
+.price{font-family:var(--display);font-size:3.4rem;font-weight:600;line-height:1;color:var(--navy);font-variant-numeric:lining-nums tabular-nums}
+.price small{font:600 .85rem var(--body);color:inherit;opacity:.75;margin-left:6px}
+.price sup{font:700 .8rem var(--body);vertical-align:top;position:relative;top:.6em;margin-right:6px;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.plan ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:.92rem;color:var(--ink);flex:1}
+.plan li{padding-left:22px;position:relative}
+.plan li::before{content:"";position:absolute;left:2px;top:.5em;width:9px;height:5px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg)}
+.ledger{background:var(--paper);border:1px solid var(--rule);padding:14px clamp(18px,4vw,48px) 40px;position:relative}
+.ledger::before{content:"";position:absolute;left:clamp(9px,2vw,24px);top:0;bottom:0;width:1px;background:rgba(184,145,63,.45)}
+.ledger-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:0 64px}
+.grp{padding-top:32px;break-inside:avoid}
+.grp h3{font-size:1.4rem;padding-bottom:10px;border-bottom:2px solid var(--navy);display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.grp h3 span{font:800 .66rem var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:.94rem}
+.row .nm{flex:0 1 auto}
+.row .dots{flex:1;border-bottom:1px dotted #b9c2d0;transform:translateY(-4px);min-width:16px}
+.row .amt{font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .amt small{font-weight:600;color:var(--muted);font-size:.78rem;margin-left:3px}
+.note{font-size:.84rem;color:var(--muted);margin-top:26px;max-width:80ch}
+
+/* international */
+.intl{background:var(--navy);color:#fff}
+.intl h2{color:#fff}
+.intl .lead{color:#c9d3e3}
+.intl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.14)}
+.intl-grid div{background:var(--navy);padding:28px 26px}
+.intl-grid h3{color:var(--gold-soft);font-size:1.35rem;margin-bottom:8px}
+.intl-grid p{font-size:.92rem;color:#c9d3e3}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:64px;align-items:center}
+@media (max-width:860px){.about{grid-template-columns:1fr;gap:40px}}
+.about p+p{margin-top:16px}
+.about .lead{color:var(--ink)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin-top:32px;border-top:1px solid var(--rule)}
+.facts div{padding:16px 16px 16px 0;border-bottom:1px solid var(--rule);font-size:.9rem;color:var(--muted)}
+.facts b{display:block;font-family:var(--display);font-size:1.45rem;font-weight:600;color:var(--navy);line-height:1.2}
+.card-cred{background:var(--navy);color:#fff;padding:38px 34px;border-top:3px solid var(--gold);position:relative;overflow:hidden}
+.card-cred::after{content:"";position:absolute;right:-60px;bottom:-60px;width:200px;height:200px;border:1px solid rgba(184,145,63,.4);transform:rotate(45deg)}
+.card-cred .nm{font-family:var(--display);font-size:2.1rem;font-weight:600;line-height:1.1}
+.card-cred .role{font-size:.72rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);margin:8px 0 22px}
+.card-cred ul{list-style:none;margin:0;padding:0;position:relative;z-index:1}
+.card-cred li{padding:13px 0;border-top:1px solid rgba(255,255,255,.14);font-size:.9rem;color:#c9d3e3;display:flex;justify-content:space-between;gap:16px}
+.card-cred li b{color:#fff;text-align:right;font-weight:700}
+.sectors{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 28px;border-top:1px solid var(--rule)}
+.sectors div{padding:22px 0;border-bottom:1px solid var(--rule)}
+.sectors b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;color:var(--navy);line-height:1.2;margin-bottom:4px}
+.sectors span{font-size:.88rem;color:var(--muted)}
+.band{background:var(--navy);color:#fff;padding:64px 0}
+.band .wrap{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.band h2{color:#fff;font-size:clamp(1.7rem,3vw,2.4rem);max-width:22ch}
+.band h2 em{color:var(--gold-soft);font-weight:500}
+.tools{display:flex;flex-wrap:wrap;gap:10px 34px;justify-content:center;padding:26px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:72px;font:700 .78rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.tools span:first-child{color:var(--gold)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px;counter-reset:s}
+.steps div{border-top:2px solid var(--navy);padding-top:20px;counter-increment:s}
+.steps div::before{content:"0" counter(s);font-family:var(--display);font-style:italic;font-size:2.2rem;color:var(--gold);line-height:1}
+.steps h3{font-size:1.35rem;margin:8px 0}
+.steps p{font-size:.93rem;color:var(--muted)}
+
+/* faq */
+.faq{max-width:820px}
+details{border-bottom:1px solid var(--rule)}
+details:first-of-type{border-top:1px solid var(--rule)}
+summary{cursor:pointer;list-style:none;padding:20px 40px 20px 0;font-weight:700;color:var(--navy);position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:14px;font:500 1.6rem var(--display);color:var(--gold)}
+details[open] summary::after{content:"–"}
+details p{padding:0 0 22px;color:var(--muted);max-width:68ch}
+
+/* contact */
+.contact{background:var(--mist);border-top:1px solid var(--rule)}
+.contact-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:56px}
+@media (max-width:860px){.contact-grid{grid-template-columns:1fr}}
+.reach{display:grid;gap:0;margin-top:30px;border-top:1px solid var(--rule)}
+.reach div{padding:15px 0;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;font-size:.93rem}
+.reach span{color:var(--muted)}
+.reach b{color:var(--navy);text-align:right}
+.reach a{text-decoration:none;border-bottom:1px solid var(--gold)}
+form{background:var(--paper);border:1px solid var(--rule);border-top:3px solid var(--gold);padding:34px clamp(20px,4vw,38px);display:grid;gap:18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+label{display:grid;gap:7px;font-size:.8rem;font-weight:700;color:var(--navy)}
+input,select,textarea{font:400 .95rem var(--body);color:var(--ink);padding:12px 14px;border:1px solid #c9d1dd;border-radius:3px;background:#fff;width:100%}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+#formNote{font-size:.9rem;color:var(--navy);background:var(--gold-soft);padding:14px 16px;border-left:3px solid var(--gold)}
+#formNote[hidden]{display:none}
+
+footer{background:var(--navy-deep);color:#aab6c9;padding:56px 0 34px;font-size:.87rem}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
+@media (max-width:760px){.foot{grid-template-columns:1fr}}
+footer b.w{font-family:var(--display);font-weight:600;font-size:1.7rem;letter-spacing:.14em;color:#fff}
+footer b.w i{font-style:normal;color:var(--gold)}
+footer h4{margin:0 0 12px;font:800 .7rem var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+footer a{text-decoration:none}
+footer a:hover{color:#fff}
+.legal{margin-top:40px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);font-size:.8rem;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap"><span><b>ICAEW member firm</b> · Chartered Accountant in practice</span><span>Call or WhatsApp <b>+44 7479 338169</b> · info@nextgenca.co.uk</span></div></div>
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="NextGen Chartered Accountant home">
+      <img src="img/mark.jpg" alt="" width="68" height="50">
+      <span><b>NEXT<i>GEN</i></b><small>CHARTERED ACCOUNTANT</small></span>
+    </a>
+    <nav class="main" id="mainNav" aria-label="Main">
+      <a href="#services">Services</a>
+      <a href="#sectors">Who we help</a>
+      <a href="#fees">Fees</a>
+      <a href="#international">International</a>
+      <a href="#about">About</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <div class="bar-right">
+      <a class="btn btn-navy" href="#contact">Book a free call</a>
+      <button class="menu" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap hero-grid">
+   <div>
+    <p class="eyebrow">ICAEW member firm · UK and international clients</p>
+    <h1>Your accounts, tax and payroll, handled by a <em>Chartered Accountant.</em></h1>
+    <p class="lead">NextGen is your outsourcing partner for the whole finance function. Fixed fees agreed before we start, deadlines met, and one qualified accountant who knows your business.</p>
+    <div class="cta">
+      <a class="btn btn-gold" href="#contact">Book a free 20-minute call</a>
+      <a class="btn btn-line" href="#fees">See fees from £25 a month</a>
+    </div>
+    <div class="creds">
+      <span><strong>ACA</strong> and <strong>FCCA</strong> qualified</span>
+      <span>ICAEW firm no. <strong>C011010236</strong></span>
+      <span><strong>10+ years</strong> in UK accounting</span>
+      <span>Professional indemnity <strong>insured</strong></span>
+    </div>
+   </div>
+   <aside class="cal" aria-label="UK filing deadlines we manage">
+    <h2>Deadlines we keep for you</h2>
+    <p class="sub">You run the business. We watch the calendar.</p>
+    <ul>
+      <li><b>31 January</b><span>Self Assessment tax return and payment</span></li>
+      <li><b>Every month</b><span>Payroll, RTI submissions and PAYE payment</span></li>
+      <li><b>Every quarter</b><span>VAT return, due one month and seven days after the period ends</span></li>
+      <li><b>9 months</b><span>Company accounts to Companies House after your year end</span></li>
+      <li><b>12 months</b><span>Corporation tax return to HMRC after your year end</span></li>
+    </ul>
+    <p class="foot-note">We remind you early and file before the date, not on it.</p>
+   </aside>
+  </div>
+</div>
+<div class="wrap banner">
+  <img src="img/banner.jpg" alt="NextGen Chartered Accountant, your outsourcing partner. Accuracy you can trust, compliance you can rely on, growth we help you achieve." width="1600" height="667">
+</div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Services</p>
+      <h2>Everything a business needs from its accountant</h2>
+      <p class="lead">Take one service or hand over the lot. Sole traders, landlords, contractors, limited companies and other accountancy firms all work with us.</p>
+    </div>
+    <div class="svc">
+      <article><span class="no">i.</span><h3>Accounts and compliance</h3><ul>
+        <li>Year-end accounts for limited companies</li><li>Sole trader and partnership accounts</li><li>Companies House filing and confirmation statements</li><li>Dormant company accounts</li><li>Accountant's letters for mortgages and visas</li></ul></article>
+      <article><span class="no">ii.</span><h3>Tax</h3><ul>
+        <li>Self Assessment tax returns</li><li>Corporation tax returns (CT600)</li><li>Landlord and rental income tax</li><li>Capital gains tax, including 60-day property returns</li><li>Tax planning for directors: salary and dividends</li><li>HMRC letters, enquiries and penalties</li></ul></article>
+      <article><span class="no">iii.</span><h3>Payroll and pensions</h3><ul>
+        <li>Weekly and monthly payroll with RTI filing</li><li>Director-only payroll</li><li>Payslips, P45, P60 and P11D</li><li>Auto-enrolment pension setup and uploads</li><li>CIS returns and subcontractor statements</li></ul></article>
+      <article><span class="no">iv.</span><h3>Bookkeeping and VAT</h3><ul>
+        <li>Monthly bookkeeping and bank reconciliation</li><li>VAT registration, scheme choice and returns</li><li>Making Tax Digital for VAT and Income Tax</li><li>Xero, QuickBooks, Sage and FreeAgent setup</li><li>Catch-up on late or messy books</li></ul></article>
+      <article><span class="no">v.</span><h3>Advisory and virtual FD</h3><ul>
+        <li>Monthly management accounts and KPIs</li><li>Cash flow forecasts and budgets</li><li>Business plans for loans and investors</li><li>Pricing, margin and cost reviews</li><li>Part-time Finance Director support</li></ul></article>
+      <article><span class="no">vi.</span><h3>Starting and running a company</h3><ul>
+        <li>Company formation and share structure</li><li>Sole trader to limited company switch</li><li>HMRC registrations: Self Assessment, PAYE, VAT, CIS</li><li>Director and shareholder changes</li><li>Closing a company and final accounts</li></ul></article>
+    </div>
+    <div class="tools"><span>We work on</span><span>Xero</span><span>QuickBooks</span><span>Sage</span><span>FreeAgent</span><span>Dext</span></div>
+  </div>
+</section>
+
+<section id="sectors" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Who we help</p>
+      <h2>Built for owner-managed businesses</h2>
+    </div>
+    <div class="sectors">
+      <div><b>Freelancers and contractors</b><span>Self Assessment, expenses and IR35 questions</span></div>
+      <div><b>Limited company directors</b><span>Accounts, corporation tax, salary and dividends</span></div>
+      <div><b>Landlords</b><span>Rental income, capital gains and property companies</span></div>
+      <div><b>Online sellers</b><span>Marketplace VAT, stock and multi-currency books</span></div>
+      <div><b>Restaurants and takeaways</b><span>Payroll, tips, VAT and weekly margins</span></div>
+      <div><b>Salons and retail</b><span>Payroll, self-employed chair rental and stock</span></div>
+      <div><b>Construction and trades</b><span>CIS returns, subcontractors and VAT reverse charge</span></div>
+      <div><b>Overseas founders</b><span>UK company set up and run from abroad</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="fees" id="fees">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Fees</p>
+      <h2>Fixed fees, written down before we start</h2>
+      <p class="lead">Every price below is a starting point for a simple case. You get an exact quote after a free call, and it does not change unless your work does.</p>
+    </div>
+
+    <div class="plans">
+      <div class="plan">
+        <span class="tag">Sole trader</span>
+        <div class="price"><sup>from</sup>£25<small>/ month</small></div>
+        <p>For freelancers, contractors and landlords.</p>
+        <ul><li>Annual accounts</li><li>Self Assessment tax return</li><li>Tax estimate before each deadline</li><li>Email and WhatsApp support</li></ul>
+        <a class="btn btn-navy" href="#contact">Get a quote</a>
+      </div>
+      <div class="plan key">
+        <span class="tag">Limited company</span>
+        <div class="price"><sup>from</sup>£59<small>/ month</small></div>
+        <p>For owner-managed companies.</p>
+        <ul><li>Year-end accounts and corporation tax return</li><li>Confirmation statement</li><li>Director's payroll and Self Assessment</li><li>Salary and dividend planning</li><li>Email and WhatsApp support</li></ul>
+        <a class="btn btn-gold" href="#contact">Get a quote</a>
+      </div>
+      <div class="plan">
+        <span class="tag">Growing business</span>
+        <div class="price"><sup>from</sup>£129<small>/ month</small></div>
+        <p>For VAT-registered companies with staff.</p>
+        <ul><li>Everything in Limited company</li><li>Monthly bookkeeping</li><li>Quarterly VAT returns</li><li>Payroll for up to 5 staff</li><li>Quarterly management accounts</li></ul>
+        <a class="btn btn-navy" href="#contact">Get a quote</a>
+      </div>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-cols" id="ledger"></div>
+      <p class="note">Fees are for straightforward cases and depend on turnover, number of transactions and the state of the records. Companies House and other official filing fees are charged at cost.</p>
+    </div>
+  </div>
+</section>
+
+<section class="intl" id="international">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">International</p>
+      <h2>UK accounting for clients outside the UK</h2>
+      <p class="lead">You do not need to be in the UK to have a UK company, UK property or UK customers. We work fully online, across time zones.</p>
+    </div>
+    <div class="intl-grid">
+      <div><h3>Non-resident companies</h3><p>UK company formation for overseas founders, with accounts, tax and filings handled each year.</p></div>
+      <div><h3>Non-resident landlords</h3><p>UK tax returns for rental income and property sales when you live abroad.</p></div>
+      <div><h3>Residence and double tax</h3><p>Statutory residence reviews, foreign income reporting and double taxation relief claims.</p></div>
+      <div><h3>Overseas sellers</h3><p>UK VAT registration and returns for e-commerce and marketplace sellers based abroad.</p></div>
+      <div><h3>Expats and new arrivals</h3><p>Tax returns for people moving to or from the UK, including split-year treatment.</p></div>
+      <div><h3>Outsourcing for firms</h3><p>White-label bookkeeping, payroll and accounts preparation for accountancy practices in the UK and abroad.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div>
+      <div class="head">
+        <p class="eyebrow">About</p>
+        <h2>One Chartered Accountant, responsible for your file</h2>
+      </div>
+      <p class="lead">NextGen is led by Sheryar Ahmed ACA FCCA, a member of both ICAEW and ACCA.</p>
+      <p>Sheryar has spent more than ten years in UK finance across hospitality, real estate and consulting, including running finance and payroll for a group of over 200 employees. That means the person preparing your accounts has also sat in the finance seat of a real business.</p>
+      <p>You will not be passed between juniors. You speak to the accountant who does the work, in plain English, and Urdu, Hindi or Punjabi if you prefer.</p>
+      <div class="facts">
+        <div><b>ACA · FCCA</b>Dual chartered qualification</div>
+        <div><b>C011010236</b>ICAEW firm number</div>
+        <div><b>10+ years</b>UK accounting experience</div>
+        <div><b>200+ staff</b>Payroll run each month</div>
+      </div>
+    </div>
+    <aside class="card-cred" aria-label="Credentials">
+      <p class="nm">Sheryar Ahmed</p>
+      <p class="role">ACA · FCCA · Principal</p>
+      <ul>
+        <li><span>ICAEW</span><b>Chartered Accountant (ACA)</b></li>
+        <li><span>ACCA</span><b>Fellow (FCCA)</b></li>
+        <li><span>Status</span><b>ICAEW practising certificate holder</b></li>
+        <li><span>Firm number</span><b>C011010236</b></li>
+        <li><span>Degree</span><b>BSc (Hons) Applied Accounting, Oxford Brookes</b></li>
+        <li><span>Cover</span><b>Professional indemnity insurance</b></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">How it works</p>
+      <h2>From first call to filed</h2>
+    </div>
+    <div class="steps">
+      <div><h3>Free call</h3><p>Twenty minutes to understand your business and what you need.</p></div>
+      <div><h3>Fixed quote</h3><p>A written fee and an engagement letter. No hourly surprises.</p></div>
+      <div><h3>Onboarding</h3><p>ID checks required by UK anti-money-laundering rules, then we take over from your old accountant.</p></div>
+      <div><h3>Done on time</h3><p>We do the work, explain the numbers and file before the deadline.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <h2>Switching accountant takes one email. <em>We handle the rest.</em></h2>
+    <a class="btn btn-gold" href="#contact">Book a free call</a>
+  </div>
+</div>
+
+<section id="questions">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Questions</p>
+      <h2>Before you ask</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Can I switch from my current accountant?</summary><p>Yes. We write to your current accountant for the handover information. You do not need to manage the move yourself.</p></details>
+      <details><summary>Do you work with clients outside Luton and London?</summary><p>Yes. Everything is done online, so we act for clients anywhere in the UK and abroad.</p></details>
+      <details><summary>Are the prices really fixed?</summary><p>Your quote is fixed for the work described in your engagement letter. If the work changes, we agree a new fee with you first.</p></details>
+      <details><summary>My books are behind or I have missed a deadline. Can you help?</summary><p>Yes. Tell us what is outstanding and we will set out what to file first and what any penalties are likely to be.</p></details>
+      <details><summary>Which software do you use?</summary><p>We work with Xero, QuickBooks, Sage and FreeAgent, and can set one up for you if you have none.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <div class="head" style="margin-bottom:0">
+        <p class="eyebrow">Contact</p>
+        <h2>Book a free 20-minute call</h2>
+        <p class="lead">Tell us a little about your business. You will get a reply with a time to talk and, after the call, a fixed quote.</p>
+      </div>
+      <div class="reach">
+        <div><span>Based in</span><b>Luton, England</b></div>
+        <div><span>Clients</span><b>UK-wide and international</b></div>
+        <div><span>Hours</span><b>Mon to Sat, 9am to 7pm UK time</b></div>
+        <div><span>Phone</span><b><a href="tel:+447479338169">+44 7479 338169</a></b></div>
+        <div><span>WhatsApp</span><b><a href="https://wa.me/447479338169">Message +44 7479 338169</a></b></div>
+        <div><span>Email</span><b><a href="mailto:info@nextgenca.co.uk">info@nextgenca.co.uk</a></b></div>
+      </div>
+    </div>
+    <form id="enquiry" name="enquiry" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+      <input type="hidden" name="form-name" value="enquiry">
+      <p hidden><label for="f-hp">Leave this empty<input id="f-hp" name="company-website" tabindex="-1" autocomplete="off"></label></p>
+      <div class="two">
+        <label for="f-name">Your name<input id="f-name" name="name" autocomplete="name" required></label>
+        <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+      </div>
+      <div class="two">
+        <label for="f-type">You are a<select id="f-type" name="type"><option>Sole trader or freelancer</option><option>Limited company</option><option>Landlord</option><option>Client outside the UK</option><option>Accountancy firm (outsourcing)</option><option>Individual</option></select></label>
+        <label for="f-svc">You need<select id="f-svc" name="service"><option>Accounts and tax</option><option>Payroll</option><option>Bookkeeping and VAT</option><option>Management accounts or advisory</option><option>Company formation</option><option>Not sure yet</option></select></label>
+      </div>
+      <label for="f-msg">Anything we should know<textarea id="f-msg" name="message" placeholder="For example: turnover, number of staff, deadline coming up"></textarea></label>
+      <button class="btn btn-gold" type="submit">Request my free call</button>
+      <p id="formNote" role="status" hidden></p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <b class="w">NEXT<i>GEN</i></b>
+        <p style="margin-top:10px;max-width:38ch">Chartered Accountant. Your outsourcing partner for accounts, tax, payroll and advice.</p>
+        <p style="margin-top:14px">+44 7479 338169<br>info@nextgenca.co.uk<br>nextgenca.co.uk</p>
+      </div>
+      <div><h4>Services</h4><ul><li><a href="#services">Accounts and tax</a></li><li><a href="#services">Payroll and pensions</a></li><li><a href="#services">Bookkeeping and VAT</a></li><li><a href="#international">International</a></li></ul></div>
+      <div><h4>Firm</h4><ul><li><a href="#fees">Fees</a></li><li><a href="#about">About</a></li><li><a href="#questions">Questions</a></li><li><a href="#contact">Book a call</a></li></ul></div>
+    </div>
+    <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number C011010236. © 2026 NextGen Chartered Accountant.</p>
+  </div>
+</footer>
+
+<script>
+const FEES = [
+  ["Accounts and tax","from",[
+    ["Self Assessment tax return","£99"],
+    ["Sole trader accounts and tax return","£149"],
+    ["Landlord tax return","£129"],
+    ["Partnership accounts and return","£249"],
+    ["Limited company accounts and CT600","£349"],
+    ["Dormant company accounts","£49"],
+    ["Confirmation statement","£29"],
+    ["Capital gains tax return","£149"],
+    ["Tax planning session","£75"],
+    ["Accountant's letter (mortgage, visa)","£49"]]],
+  ["Payroll and CIS","from",[
+    ["Director-only payroll","£10","/mo"],
+    ["Staff payroll, up to 5 employees","£20","/mo"],
+    ["Extra employee","£4","/payslip"],
+    ["Auto-enrolment pension setup","£49"],
+    ["P11D, per employee","£35"],
+    ["CIS monthly return","£25","/mo"]]],
+  ["Bookkeeping and VAT","from",[
+    ["Monthly bookkeeping","£49","/mo"],
+    ["VAT return","£45","/qtr"],
+    ["VAT registration","£39"],
+    ["MTD for Income Tax quarterly update","£25","/qtr"],
+    ["Accounting software setup","£99"]]],
+  ["Advisory","from",[
+    ["Management accounts","£99","/mo"],
+    ["Cash flow forecast or budget","£149"],
+    ["Business plan for a loan","£249"],
+    ["Virtual Finance Director","£249","/mo"]]],
+  ["Company services","from",[
+    ["Company formation","£49"],
+    ["Sole trader to limited company switch","£99"],
+    ["HMRC registration (SA, PAYE or CIS)","£25"],
+    ["Director or shareholder change","£29"]]],
+  ["International","from",[
+    ["UK company formation for non-residents","£99"],
+    ["Non-resident landlord tax return","£149"],
+    ["Residence and double tax review","£149"],
+    ["UK VAT registration for overseas sellers","£99"]]],
+  ["Outsourcing for accountancy firms","from",[
+    ["Bookkeeping","£12","/hour"],
+    ["Payroll bureau, white label","£3","/payslip"],
+    ["Year-end accounts preparation","£90","/job"],
+    ["Management accounts pack","£80","/pack"]]]
+];
+const esc = s => s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+document.getElementById("ledger").innerHTML = FEES.map(([title, col, rows]) =>
+  '<div class="grp"><h3>' + esc(title) + '<span>' + col + '</span></h3>' +
+  rows.map(([n, a, u]) => '<div class="row"><span class="nm">' + esc(n) + '</span><span class="dots"></span><span class="amt">' + a + (u ? '<small>' + u + '</small>' : '') + '</span></div>').join("") +
+  '</div>').join("");
+
+const menuBtn = document.getElementById("menuBtn"), nav = document.getElementById("mainNav");
+menuBtn.addEventListener("click", () => {
+  const open = nav.classList.toggle("open");
+  menuBtn.setAttribute("aria-expanded", open);
+  menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+});
+nav.addEventListener("click", e => { if (e.target.tagName === "A") { nav.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); } });
+
+document.getElementById("enquiry").addEventListener("submit", e => {
+  e.preventDefault();
+  const form = e.target, note = document.getElementById("formNote"), btn = form.querySelector("button[type=submit]");
+  const name = document.getElementById("f-name").value.trim();
+  const email = document.getElementById("f-email").value.trim();
+  note.hidden = false;
+  if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
+    note.textContent = "Please add your name and a valid email address so we can reply.";
+    return;
+  }
+  btn.disabled = true;
+  note.textContent = "Sending your enquiry.";
+  fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(new FormData(form)).toString() })
+    .then(r => { if (!r.ok) throw new Error(r.status); form.reset(); note.textContent = "Thank you. Your enquiry has been sent and we will reply within one working day."; })
+    .catch(() => { note.textContent = "Your enquiry could not be sent from this page. Please email info@nextgenca.co.uk or call +44 7479 338169."; })
+    .finally(() => { btn.disabled = false; });
+});
+</script>
+</body>
+</html>

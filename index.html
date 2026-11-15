@@ -206,6 +206,21 @@ section{padding:104px 0}
 .tools{display:flex;flex-wrap:wrap;gap:10px 34px;justify-content:center;padding:26px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:72px;font:700 .78rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .tools span:first-child{color:var(--gold)}
 
+.rev-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:40px}
+.score{border:1px solid var(--rule);border-top:3px solid var(--gold);padding:18px 26px;display:grid;justify-items:start;min-width:210px}
+.score b{font-family:var(--display);font-size:3.4rem;font-weight:600;line-height:1;color:var(--navy);font-variant-numeric:lining-nums}
+.score span{font-size:.85rem;color:var(--muted)}
+.score small{margin-top:8px;font:800 .68rem var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.revs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.rev{margin:0;background:var(--mist);border:1px solid var(--rule);padding:26px 26px 28px;display:grid;gap:18px;align-content:start}
+.rev-top{display:grid;grid-template-columns:46px 1fr auto;gap:14px;align-items:center}
+.dp{width:46px;height:46px;border-radius:50%;background:var(--navy);color:var(--gold-soft);display:grid;place-items:center;font-family:var(--display);font-size:1.4rem;font-weight:600}
+.rev-top b{display:block;color:var(--navy);font-size:.95rem;overflow-wrap:anywhere}
+.rev-top div span{font-size:.8rem;color:var(--muted)}
+.rate{font-weight:800;color:var(--gold);font-size:.9rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rev blockquote{margin:0;font-family:var(--display);font-size:1.3rem;line-height:1.35;color:var(--ink)}
+#reviews .note a{color:var(--navy);font-weight:700}
+
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px;counter-reset:s}
 .steps div{border-top:2px solid var(--navy);padding-top:20px;counter-increment:s}
@@ -266,6 +281,7 @@ footer a:hover{color:#fff}
     <nav class="main" id="mainNav" aria-label="Main">
       <a href="#services">Services</a>
       <a href="#sectors">Who we help</a>
+      <a href="#reviews">Reviews</a>
       <a href="#fees">Fees</a>
       <a href="#international">International</a>
       <a href="#about">About</a>
@@ -381,6 +397,39 @@ footer a:hover{color:#fff}
       <div><b>Construction and trades</b><span>CIS returns, subcontractors and VAT reverse charge</span></div>
       <div><b>Overseas founders</b><span>UK company set up and run from abroad</span></div>
     </div>
+  </div>
+</section>
+
+
+<section id="reviews" style="padding-top:0">
+  <div class="wrap">
+    <div class="rev-head">
+      <div class="head" style="margin-bottom:0">
+        <p class="eyebrow">Client reviews</p>
+        <h2>What clients say about working with Sheryar</h2>
+        <p class="lead">These are real reviews from clients who hired Sheryar through Fiverr, quoted as they were written.</p>
+      </div>
+      <div class="score"><b>4.6</b><span>out of 5</span><small>397 reviews on Fiverr</small></div>
+    </div>
+    <div class="revs">
+      <figure class="rev">
+        <div class="rev-top"><span class="dp" aria-hidden="true">C</span><div><b>christophers292</b><span>United Kingdom · Fiverr client</span></div><span class="rate" aria-label="Rated 4.7 out of 5">★ 4.7</span></div>
+        <blockquote>“4th year in a row having him do our annual returns for a small business. Very happy with him and the service”</blockquote>
+      </figure>
+      <figure class="rev">
+        <div class="rev-top"><span class="dp" aria-hidden="true">Y</span><div><b>yukilove</b><span>United Kingdom · Fiverr client</span></div><span class="rate" aria-label="Rated 5 out of 5">★ 5</span></div>
+        <blockquote>“The best!! Great advice and always available to answer questions and anything to do with corporate finance. Super fast delivery as always”</blockquote>
+      </figure>
+      <figure class="rev">
+        <div class="rev-top"><span class="dp" aria-hidden="true">I</span><div><b>ijazdar1</b><span>Fiverr client</span></div><span class="rate" aria-label="Rated 5 out of 5">★ 5</span></div>
+        <blockquote>“An amazing accountant who was patient and understanding throughout the process. Was very professional throughout.”</blockquote>
+      </figure>
+      <figure class="rev">
+        <div class="rev-top"><span class="dp" aria-hidden="true">M</span><div><b>mohamedammar393</b><span>Saudi Arabia · Fiverr client</span></div><span class="rate" aria-label="Rated 5 out of 5">★ 5</span></div>
+        <blockquote>“excellent as usual, thank you very much”</blockquote>
+      </figure>
+    </div>
+    <p class="note"><a href="https://www.fiverr.com/pro_chartereda" rel="noopener">Read all 397 reviews on Fiverr</a></p>
   </div>
 </section>
 

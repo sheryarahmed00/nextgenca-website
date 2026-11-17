@@ -165,3 +165,7 @@ s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{ma
 # Social profiles: tell Google which profiles belong to the firm
 _SAME = '"sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E","https://wa.me/447591246395"]'
 s = _re.sub(r'"sameAs":\[[^\]]*\]', _SAME, s, count=1)
+
+# Google Search Console verification
+if 'google-site-verification' not in s:
+    s = s.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="google-site-verification" content="JtV78OIq002X6sZKrBfHd2YsYli2YX8-uKDxMeHRK5U">', 1)

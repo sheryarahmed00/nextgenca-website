@@ -169,3 +169,48 @@ s = _re.sub(r'"sameAs":\[[^\]]*\]', _SAME, s, count=1)
 # Google Search Console verification
 if 'google-site-verification' not in s:
     s = s.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="google-site-verification" content="JtV78OIq002X6sZKrBfHd2YsYli2YX8-uKDxMeHRK5U">', 1)
+
+# Free first step on each service group
+_FREE = {
+ 'Accounts and compliance': 'Free Companies House deadline check',
+ 'Tax': 'Free first look at your HMRC letter',
+ 'Payroll and pensions': 'Free payroll health check',
+ 'Bookkeeping and VAT': 'Free Making Tax Digital readiness check',
+ 'Advisory and virtual FD': 'Free cash flow review call',
+ 'Starting and running a company': 'Free sole trader vs limited company comparison',
+}
+s = _re.sub(r'<p class="svc-free">.*?</p>', '', s)
+for _h, _o in _FREE.items():
+    _i = s.find('<h3>' + _h + '</h3>')
+    if _i < 0: continue
+    _j = s.find('</article>', _i)
+    s = s[:_j] + f'<p class="svc-free"><a href="#contact"><b>Free:</b> {_o[5:]} →</a></p>' + s[_j:]
+
+# Software certifications
+s = s.replace('We work on</span><span>Xero</span><span>QuickBooks</span><span>Sage</span><span>FreeAgent</span><span>Dext</span>',
+              'Certified in</span><span>Xero</span><span>QuickBooks</span><span>Sage</span><span>FreeAgent</span><span>Dext</span>', 1)
+
+# Trust bar under the hero
+TRUST = '''<!--trust-->
+<div class="trustbar"><div class="wrap">
+  <a class="tb" href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" target="_blank" rel="noopener"><b>ICAEW</b><span>Member firm C011010236</span></a>
+  <div class="tb"><b>ACCA</b><span>Fellow, FCCA</span></div>
+  <div class="tb"><b>Xero</b><span>Certified</span></div>
+  <div class="tb"><b>QuickBooks</b><span>Certified ProAdvisor</span></div>
+  <div class="tb"><b>Sage</b><span>Certified</span></div>
+  <div class="tb"><b>FreeAgent</b><span>Certified</span></div>
+  <div class="tb"><b>Dext</b><span>Certified</span></div>
+  <div class="tb"><b>PI insured</b><span>Professional indemnity</span></div>
+</div></div>
+<!--/trust-->
+'''
+s = _re.sub(r'<!--trust-->.*?<!--/trust-->\n', '', s, flags=_re.S)
+s = s.replace('<!--insights-->', TRUST + '<!--insights-->', 1)
+TB_CSS = ('/*tb*/.trustbar{background:#fff;border-bottom:1px solid var(--rule)}.trustbar .wrap{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding-top:22px;padding-bottom:22px}@media(max-width:1000px){.trustbar .wrap{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.trustbar .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+          '.trustbar .tb{display:flex;flex-direction:column;align-items:center;min-width:0;padding:8px 6px;border:1px solid var(--rule);text-decoration:none;color:inherit}'
+          '.trustbar .tb b{font-family:var(--display);font-size:1.15rem;color:var(--navy);line-height:1.1}.trustbar .tb span{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:3px;text-align:center}'
+          'a.tb:hover{border-color:var(--gold)}#insights{padding-top:56px}'
+          '.svc-free{margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--rule);font-size:.88rem}.svc-free a{color:var(--navy);text-decoration:none}.svc-free b{color:var(--gold)}.svc-free a:hover{text-decoration:underline}'
+          '/*/tb*/')
+s = _re.sub(r'/\*tb\*/.*?/\*/tb\*/', '', s, flags=_re.S)
+s = s.replace('</style>', TB_CSS + '</style>', 1)

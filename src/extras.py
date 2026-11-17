@@ -147,17 +147,17 @@ for _p in _parts:
     else:
         _m = _re.match(r'<section[^>]*id="([^"]+)"', _p); _k = _m.group(1) if _m else 'x%d' % len(_blocks)
     _blocks[_k] = _p
-_ORDER = ['showcase', 'services', 'sectors', 'process', 'fees', 'reviews', 'about', 'insights', 'international', 'band', 'questions']
+_ORDER = ['insights', 'showcase', 'services', 'sectors', 'process', 'fees', 'reviews', 'about', 'international', 'band', 'questions']
 _new = ''.join(_blocks.pop(k) for k in _ORDER if k in _blocks) + ''.join(_blocks.values())
 s = s[:_start] + _new + s[_end:]
 
 # nav in the same order as the page
 s = _re.sub(r'(<nav class="main" id="mainNav" aria-label="Main">\n).*?(    </nav>)',
-            r'\1      <a href="#services">Services</a>\n      <a href="#sectors">Who we help</a>\n      <a href="#fees">Fees</a>\n      <a href="#reviews">Reviews</a>\n      <a href="#about">About</a>\n      <a href="#insights">Insights</a>\n      <a href="#international">International</a>\n      <a href="#questions">Questions</a>\n\2',
+            r'\1      <a href="#insights">Insights</a>\n      <a href="#services">Services</a>\n      <a href="#sectors">Who we help</a>\n      <a href="#fees">Fees</a>\n      <a href="#reviews">Reviews</a>\n      <a href="#about">About</a>\n      <a href="#international">International</a>\n      <a href="#questions">Questions</a>\n\2',
             s, count=1, flags=_re.S)
 
 # byline on the deadlines box
 s = _re.sub(r'<p class="cal-by">.*?</p>\n    ', '', s)
 s = s.replace('<h2>Deadlines we keep for you</h2>',
               '<p class="cal-by">Guides by Sheryar Ahmed ACA FCCA</p>\n    <h2>Deadlines we keep for you</h2>', 1)
-s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}', 1)
+s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}#insights~.wrap.showcase{margin-top:0}', 1)

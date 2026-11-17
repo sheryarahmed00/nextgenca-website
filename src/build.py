@@ -362,7 +362,9 @@ s=s.replace('<div class="wrap showcase">',INS+'<div class="wrap showcase">',1)
 s=re.sub(r'<!--latest-->.*?<!--/latest-->\n','',s,flags=re.S)
 if POSTS:
     lp=POSTS[0]
-    s=s.replace('    <div class="creds">',f'    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n    <div class="creds">',1)
+    if '<div class="hero-side">' not in s:
+        s=s.replace('   <aside class="cal"','   <div class="hero-side">\n   <aside class="cal"',1).replace('   </aside>','   </aside>\n   </div>',1)
+    s=s.replace('   <div class="hero-side">\n',f'   <div class="hero-side">\n    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n',1)
 old_foot=re.search(r'<footer>.*?</footer>',s,re.S).group(0)
 new_foot=re.search(r'<footer>.*?</footer>',FOOT,re.S).group(0).replace('href="/#','href="#')
 s=s.replace(old_foot,new_foot)

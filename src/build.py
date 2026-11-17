@@ -356,10 +356,8 @@ INS=f'''<!--insights-->
 <script src="/updates.js" defer></script>
 <!--/insights-->
 '''
-if '<!--insights-->' in s:
-    s=re.sub(r'<!--insights-->.*?<!--/insights-->\n',lambda m:INS,s,flags=re.S)
-else:
-    s=s.replace('<section id="questions">',INS+'<section id="questions">',1)
+s=re.sub(r'<!--insights-->.*?<!--/insights-->\n','',s,flags=re.S)
+s=s.replace('<section id="sectors"',INS+'<section id="sectors"',1)
 old_foot=re.search(r'<footer>.*?</footer>',s,re.S).group(0)
 new_foot=re.search(r'<footer>.*?</footer>',FOOT,re.S).group(0).replace('href="/#','href="#')
 s=s.replace(old_foot,new_foot)

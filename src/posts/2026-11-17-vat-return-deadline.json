@@ -1,0 +1,28 @@
+{
+ "slug": "vat-return-deadline-one-month-and-seven-days",
+ "sort": "2026-11-15",
+ "label": "Deadline guide · every quarter",
+ "title": "VAT return deadline: one month and 7 days after each quarter, and the penalty points system",
+ "summary": "Your VAT return and payment are due by the same date. How the deadline works, why weekends do not count, and how late returns earn penalty points.",
+ "tags": [
+  "VAT",
+  "Small business"
+ ],
+ "body": "<p>Most VAT-registered businesses send a VAT return every 3 months. Each return and its payment have the same deadline.</p><h2>The deadline</h2><ul><li>Usually <b>one calendar month and 7 days</b> after the end of the VAT period. A quarter ending 31 December is due by 7 February.</li><li>The <b>payment must reach HMRC's account</b> by the same date, so allow time for it to clear.</li><li>The deadline still applies if it falls on a weekend or bank holiday.</li><li>You must send a return even if there is no VAT to pay or reclaim.</li></ul><h2>Late returns: penalty points</h2><p>For VAT periods starting on or after 1 January 2023, each late return, including a nil return, earns a <b>penalty point</b>. Once you reach the threshold for your filing frequency, you get a <b>£200 penalty</b>, and another £200 for each later late return while you are at the threshold. Sending future returns on time removes the points.</p><h2>Late payment</h2><p>Late payment penalties are separate. The amount goes up after 16 days and again after 31 days, and interest runs from the first day the payment is overdue until it is paid in full. If you miss a return altogether, HMRC sends an assessment of what it thinks you owe.</p><h2>What I would do</h2><ul><li>Check your exact due dates in your VAT online account.</li><li>Pay by Direct Debit so the money arrives on time.</li><li>If you cannot pay in full, contact HMRC before the deadline, not after.</li></ul>",
+ "sources": [
+  {
+   "title": "Sending a VAT Return: when to do a VAT Return (GOV.UK)",
+   "url": "https://www.gov.uk/submit-vat-return"
+  },
+  {
+   "title": "Sending a VAT Return: late returns and payment (GOV.UK)",
+   "url": "https://www.gov.uk/submit-vat-return/late-returns-and-payment"
+  }
+ ],
+ "related": [
+  "bookkeeping-and-vat",
+  "making-tax-digital",
+  "hmrc-letters-and-penalties"
+ ],
+ "date": "2026-11-17"
+}

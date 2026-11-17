@@ -107,3 +107,22 @@ s = s.replace('You will get a reply with a time to talk and, after the call, a f
               'We reply within 1 hour, Monday to Saturday, 9am to 7pm, with a time to talk and, after the call, a fixed quote.', 1)
 s = s.replace('Prefer not to book now? We will reply within one working day.',
               'Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.', 1)
+
+# Deadlines box: each date links to Sheryar's article on it
+_DL = [
+ ('31 January', 'Self Assessment tax return and payment', 'start-your-self-assessment-tax-return-now'),
+ ('Every month', 'Payroll, RTI submissions and PAYE payment', 'payroll-deadlines-fps-on-payday-pay-hmrc-by-22nd'),
+ ('Every quarter', 'VAT return, due one month and seven days after the period ends', 'vat-return-deadline-one-month-and-seven-days'),
+ ('9 months', 'Company accounts to Companies House after your year end', 'company-accounts-deadline-9-months-and-late-filing-penalties'),
+ ('12 months', 'Corporation tax return to HMRC after your year end', 'corporation-tax-pay-9-months-1-day-file-ct600-12-months'),
+]
+for _d, _t, _sl in _DL:
+    s = s.replace(f'<li><b>{_d}</b><span>{_t}</span></li>',
+                  f'<li><a class="dl" href="/insights/{_sl}"><b>{_d}</b><span>{_t}<i>Read the guide →</i></span></a></li>', 1)
+s = s.replace('<p class="foot-note">We remind you early and file before the date, not on it.</p>',
+              '<p class="foot-note">Tap a date for Sheryar\'s guide to it. We remind you early and file before the date, not on it.</p>', 1)
+DL_CSS = ('/*dl*/.cal li a.dl{display:contents;color:inherit;text-decoration:none}.cal li a.dl i{display:block;font-style:normal;font-size:.78rem;font-weight:700;color:var(--gold-soft);margin-top:4px;opacity:.85}'
+          '.cal li:hover{background:rgba(255,255,255,.04)}.cal li a.dl:hover i{text-decoration:underline;opacity:1}'
+          '#insights+.wrap.showcase,.showcase{margin-top:24px}/*/dl*/')
+s = _re.sub(r'/\*dl\*/.*?/\*/dl\*/', '', s, flags=_re.S)
+s = s.replace('</style>', DL_CSS + '</style>', 1)

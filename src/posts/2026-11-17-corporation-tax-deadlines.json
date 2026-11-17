@@ -1,0 +1,36 @@
+{
+ "slug": "corporation-tax-pay-9-months-1-day-file-ct600-12-months",
+ "sort": "2026-11-13",
+ "label": "Deadline guide · 9 months and 1 day, 12 months",
+ "title": "Corporation tax: pay 9 months and 1 day after your year end, file the CT600 within 12 months",
+ "summary": "The tax is due before the return. The two corporation tax deadlines, the late filing penalties, and what happens after 6 months.",
+ "tags": [
+  "Corporation tax",
+  "Limited company"
+ ],
+ "body": "<p>Corporation tax has two separate deadlines, and the payment comes first.</p><h2>The deadlines</h2><ul><li><b>Pay</b> the corporation tax, or tell HMRC the company owes none: <b>9 months and 1 day</b> after the accounting period ends. A year ending 31 March means paying by 1 January.</li><li><b>File</b> the Company Tax Return (CT600): <b>12 months</b> after the accounting period ends.</li></ul><p>You must file a return even if the company made a loss or has no tax to pay. An accounting period for corporation tax cannot be longer than 12 months, so a company's first accounts can need two returns and two payment dates.</p><h2>Late filing penalties</h2><ul><li>1 day late: <b>£200</b></li><li>3 months late: another <b>£200</b></li><li>6 months late: HMRC estimates the tax and adds <b>10%</b> of the unpaid tax</li><li>12 months late: another <b>10%</b> of any unpaid tax</li></ul><p>If the return is late three times in a row, the £200 penalties become £1,000 each. After 6 months HMRC issues a 'tax determination' of the tax it thinks you owe, which cannot be appealed: you have to pay and file the return.</p><h2>What I would do</h2><ul><li>Prepare the accounts and CT600 together, early, so you know the tax figure before the 9-month payment date.</li><li>Put money aside for corporation tax every month rather than at the year end.</li></ul>",
+ "sources": [
+  {
+   "title": "Accounts and tax returns for private limited companies (GOV.UK)",
+   "url": "https://www.gov.uk/prepare-file-annual-accounts-for-limited-company"
+  },
+  {
+   "title": "Company Tax Returns: overview (GOV.UK)",
+   "url": "https://www.gov.uk/company-tax-returns"
+  },
+  {
+   "title": "Company Tax Returns: penalties for late filing (GOV.UK)",
+   "url": "https://www.gov.uk/company-tax-returns/penalties-for-late-filing"
+  },
+  {
+   "title": "Your limited company's first accounts and Company Tax Return (GOV.UK)",
+   "url": "https://www.gov.uk/first-company-accounts-and-return"
+  }
+ ],
+ "related": [
+  "limited-company-accounts",
+  "director-salary-and-dividends",
+  "hmrc-letters-and-penalties"
+ ],
+ "date": "2026-11-17"
+}

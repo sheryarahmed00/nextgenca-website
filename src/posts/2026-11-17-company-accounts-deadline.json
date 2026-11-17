@@ -1,0 +1,32 @@
+{
+ "slug": "company-accounts-deadline-9-months-and-late-filing-penalties",
+ "sort": "2026-11-14",
+ "label": "Deadline guide · 9 months after year end",
+ "title": "Company accounts: due 9 months after your year end, and the late filing penalties",
+ "summary": "Companies House expects your accounts 9 months after the financial year ends (21 months for first accounts). Penalties start at £150 and double if you are late two years running.",
+ "tags": [
+  "Companies House",
+  "Limited company"
+ ],
+ "body": "<p>Every private limited company must send annual accounts to Companies House, even if it is small, dormant or made a loss.</p><h2>The deadlines</h2><ul><li><b>First accounts:</b> 21 months after the company was registered with Companies House.</li><li><b>Every year after:</b> 9 months after the company's financial year ends. A year ending 31 March is due by 31 December.</li></ul><p>The balance sheet must show a director's name and be signed by a director, and the directors must approve the accounts before they are filed.</p><h2>Late filing penalties</h2><ul><li>Up to 1 month late: <b>£150</b></li><li>1 to 3 months: <b>£375</b></li><li>3 to 6 months: <b>£750</b></li><li>More than 6 months: <b>£1,500</b></li></ul><p>The penalty is <b>doubled</b> if accounts are late two years in a row, and a company that does not file can be fined and struck off. Appeals rarely succeed for reasons such as the directors being abroad, not knowing the deadline, or the accountant being at fault.</p><h2>Coming in 2028</h2><p>From 1 April 2028, accounts must be filed with Companies House using commercial software.</p><h2>What I would do</h2><ul><li>Check your company's next accounts due date on the Companies House register.</li><li>Start the accounts as soon as the year ends, so the corporation tax figure is known before it has to be paid.</li></ul>",
+ "sources": [
+  {
+   "title": "Accounts and tax returns for private limited companies (GOV.UK)",
+   "url": "https://www.gov.uk/prepare-file-annual-accounts-for-limited-company"
+  },
+  {
+   "title": "Prepare annual accounts: penalties for late filing (GOV.UK)",
+   "url": "https://www.gov.uk/annual-accounts/penalties-for-late-filing"
+  },
+  {
+   "title": "File your company's annual accounts (GOV.UK)",
+   "url": "https://www.gov.uk/file-your-company-annual-accounts"
+  }
+ ],
+ "related": [
+  "limited-company-accounts",
+  "companies-house-filing",
+  "dormant-company-accounts"
+ ],
+ "date": "2026-11-17"
+}

@@ -1,0 +1,32 @@
+{
+ "slug": "payroll-deadlines-fps-on-payday-pay-hmrc-by-22nd",
+ "sort": "2026-11-16",
+ "label": "Deadline guide · every month",
+ "title": "Payroll deadlines every month: FPS on or before payday, pay HMRC by the 22nd",
+ "summary": "Running payroll means two HMRC deadlines every tax month. Here is the calendar, from payday to the 22nd, and what happens if you miss it.",
+ "tags": [
+  "Payroll",
+  "Employers"
+ ],
+ "body": "<p>If you employ anyone, including yourself as a director, payroll runs to a fixed HMRC calendar. Tax months run from the 6th of one month to the 5th of the next.</p><h2>On or before payday</h2><ul><li>Work out pay and deductions in your payroll software, and give each employee a payslip.</li><li>Send a <b>Full Payment Submission (FPS)</b> to HMRC <b>on or before your employees' payday</b>, even if you pay HMRC quarterly.</li><li>Include everyone you pay, even if they earn less than £96 a week.</li></ul><h2>In the next tax month</h2><ul><li>From the <b>10th</b>: see what you owe in your HMRC online account.</li><li>By the <b>19th</b>: send an Employer Payment Summary (EPS) to claim any reductions, such as statutory pay. If you paid no one that month, you also send an EPS.</li><li>By the <b>22nd</b>: pay HMRC. If you pay by cheque through the post, it must arrive by the 19th.</li></ul><p>If you usually pay less than £1,500 a month, you may be able to pay HMRC quarterly instead. Quarterly payments are due on the 22nd after the quarter ends, for example 22 July for the 6 April to 5 July quarter.</p><h2>If you are late</h2><p>HMRC can send a late filing notice and charge a penalty if you pay employees and do not send an FPS on time. Late payment can also bring interest and penalties. Late or wrong payroll reports can affect your employees' benefits such as Universal Credit. A new employer that sends no report or payment for 120 days can have its PAYE scheme closed.</p><h2>What I would do</h2><ul><li>Fix one payday each month and run payroll a few days before it.</li><li>Set the HMRC payment as a Direct Debit or a diary reminder for the 20th.</li><li>Director-only company? You still need an FPS each time you pay yourself a salary.</li></ul>",
+ "sources": [
+  {
+   "title": "Running payroll: overview (GOV.UK)",
+   "url": "https://www.gov.uk/running-payroll"
+  },
+  {
+   "title": "Running payroll: reporting to HMRC, FPS (GOV.UK)",
+   "url": "https://www.gov.uk/running-payroll/reporting-to-hmrc"
+  },
+  {
+   "title": "Pay employers' PAYE (GOV.UK)",
+   "url": "https://www.gov.uk/pay-paye-tax"
+  }
+ ],
+ "related": [
+  "payroll",
+  "director-only-payroll",
+  "payslips-p45-p60-p11d"
+ ],
+ "date": "2026-11-17"
+}

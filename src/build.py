@@ -55,6 +55,7 @@ FOOT='''<footer>
         <b class="w">NEXT<i>GEN</i></b>
         <p style="margin-top:10px;max-width:38ch">Chartered Accountant. Your outsourcing partner for accounts, tax, payroll and advice.</p>
         <p style="margin-top:14px">+44 7591 246395<br>info@nextgenca.co.uk<br>nextgenca.co.uk</p>
+        <p style="margin-top:14px">Follow us: <a href="https://www.linkedin.com/company/nextgen-chartered-accountant" rel="me noopener" target="_blank">LinkedIn</a> · <a href="https://www.facebook.com/nextgencharteredaccountant" rel="me noopener" target="_blank">Facebook</a> · <a href="https://www.instagram.com/nextgencharteredaccountant/" rel="me noopener" target="_blank">Instagram</a><br><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener" target="_blank">ICAEW directory listing</a></p>
       </div>
       <div><h4>Services</h4><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
       <div><h4>Firm</h4><ul><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/#fees">Fees</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
@@ -70,7 +71,7 @@ menuBtn.addEventListener("click",()=>{const open=nav.classList.toggle("open");me
 CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need. We reply within 1 hour, Monday to Saturday, 9am to 7pm, and send a fixed fee after a free call.</p>
 <a class="btn btn-navy" href="/#contact">Book a free call</a><a class="btn btn-wa" href="https://wa.me/447591246395">Message on WhatsApp</a></div>'''
 PAGES={}
-def page(slug,title,desc,body,ld=None,noindex=False):
+def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website'):
     url='https://nextgenca.co.uk/'+slug
     h=f'''<!DOCTYPE html>
 <html lang="en-GB">
@@ -85,12 +86,14 @@ def page(slug,title,desc,body,ld=None,noindex=False):
 '''
     if not noindex:
         h+=f'''<link rel="canonical" href="{url}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{ogtype}">
 <meta property="og:site_name" content="NextGen Chartered Accountant">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="https://nextgenca.co.uk/img/mark.jpg">
+<meta property="og:image" content="{image or 'https://nextgenca.co.uk/img/mark.jpg'}">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="{'summary_large_image' if image else 'summary'}">
 '''
     if ld: h+='<script type="application/ld+json">'+json.dumps(ld,separators=(',',':'))+'</script>\n'
     h+=f'''<link rel="preconnect" href="https://fonts.googleapis.com">

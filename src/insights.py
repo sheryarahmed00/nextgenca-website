@@ -1,3 +1,4 @@
+import os
 # Insights: articles from src/posts/*.json plus the live GOV.UK updates feed.
 # Executed inside build.py (uses page, NAMES, CTA, html, json, R).
 import glob, datetime
@@ -30,7 +31,7 @@ for p in POSTS:
          "author":{"@type":"Person","name":"Sheryar Ahmed","honorificSuffix":"ACA FCCA","jobTitle":"Chartered Accountant","url":"https://nextgenca.co.uk/#about"},
          "publisher":{"@type":"Organization","name":"NextGen Chartered Accountant","logo":{"@type":"ImageObject","url":"https://nextgenca.co.uk/img/mark.jpg"}}},
         {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://nextgenca.co.uk/insights"},{"@type":"ListItem","position":3,"name":p['title'],"item":url}]}]
-    page('insights/'+p['slug'],p['title']+' | NextGen Chartered Accountant',p['summary'],body,ld)
+    page('insights/'+p['slug'],p['title']+' | NextGen Chartered Accountant',p['summary'],body,ld,image=('https://nextgenca.co.uk/social/'+p['slug']+'.png') if os.path.exists(R+'social/'+p['slug']+'.png') else None,ogtype='article')
 
 cards=''.join(f'''<article class="post"><p class="post-meta">{html.escape(p.get('label',nice(p['date'])))}</p><p class="post-by">By Sheryar Ahmed ACA FCCA</p><h3><a href="/insights/{p['slug']}">{html.escape(p['title'])}</a></h3><p>{html.escape(p['summary'])}</p><a href="/insights/{p['slug']}">Read the article</a></article>''' for p in POSTS)
 page('insights','Insights: UK Tax and Accounting Updates | NextGen Chartered Accountant',

@@ -126,3 +126,38 @@ DL_CSS = ('/*dl*/.cal li a.dl{display:contents;color:inherit;text-decoration:non
           '#insights+.wrap.showcase,.showcase{margin-top:24px}/*/dl*/')
 s = _re.sub(r'/\*dl\*/.*?/\*/dl\*/', '', s, flags=_re.S)
 s = s.replace('</style>', DL_CSS + '</style>', 1)
+
+# Section order, in the order professional firm sites use:
+# hero -> what you get -> services -> who we help -> how it works -> fees -> reviews -> about -> insights -> international -> switch -> FAQ -> contact
+_start = min(i for i in (s.find('<!--insights-->'), s.find('<div class="wrap showcase">')) if i >= 0)
+_end = s.find('<section class="contact" id="contact">')
+_region = s[_start:_end]
+_blocks = {}
+_mi = _re.search(r'<!--insights-->.*?<!--/insights-->\n', _region, _re.S)
+if _mi:
+    _blocks['insights'] = _mi.group(0)
+    _region = _region.replace(_mi.group(0), '')
+_parts = _re.split(r'(?m)^(?=<div class="wrap showcase">|<section[ >]|<div class="band">)', _region)
+for _p in _parts:
+    if not _p.strip():
+        continue
+    if _p.startswith('<div class="wrap showcase">'): _k = 'showcase'
+    elif _p.startswith('<div class="band">'): _k = 'band'
+    elif 'From first call to filed' in _p: _k = 'process'
+    else:
+        _m = _re.match(r'<section[^>]*id="([^"]+)"', _p); _k = _m.group(1) if _m else 'x%d' % len(_blocks)
+    _blocks[_k] = _p
+_ORDER = ['showcase', 'services', 'sectors', 'process', 'fees', 'reviews', 'about', 'insights', 'international', 'band', 'questions']
+_new = ''.join(_blocks.pop(k) for k in _ORDER if k in _blocks) + ''.join(_blocks.values())
+s = s[:_start] + _new + s[_end:]
+
+# nav in the same order as the page
+s = _re.sub(r'(<nav class="main" id="mainNav" aria-label="Main">\n).*?(    </nav>)',
+            r'\1      <a href="#services">Services</a>\n      <a href="#sectors">Who we help</a>\n      <a href="#fees">Fees</a>\n      <a href="#reviews">Reviews</a>\n      <a href="#about">About</a>\n      <a href="#insights">Insights</a>\n      <a href="#international">International</a>\n      <a href="#questions">Questions</a>\n\2',
+            s, count=1, flags=_re.S)
+
+# byline on the deadlines box
+s = _re.sub(r'<p class="cal-by">.*?</p>\n    ', '', s)
+s = s.replace('<h2>Deadlines we keep for you</h2>',
+              '<p class="cal-by">Guides by Sheryar Ahmed ACA FCCA</p>\n    <h2>Deadlines we keep for you</h2>', 1)
+s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}', 1)

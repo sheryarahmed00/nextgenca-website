@@ -381,6 +381,7 @@ if 'privacy notice</a>' not in s.split('</form>')[0]:
     s=s.replace(btn,btn+'\n      <p style="margin-top:12px;font-size:.82rem;opacity:.8">We use your details only to reply to your enquiry. See our <a href="/privacy">privacy notice</a>.</p>')
 if '/chat.js?v=5' not in s:
     s=s.replace('</body>','<script src="/chat.js?v=5" defer></script>\n</body>')
+exec(open(R+'src/extras.py').read())
 open(R+'index.html','w').write(s)
 slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','accountants-in-luton','privacy','complaints']+NEW_SLUGS+POST_SLUGS
 open(R+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>https://nextgenca.co.uk/{x}</loc><lastmod>'+str(datetime.date.today())+'</lastmod></url>\n' for x in slugs)+'</urlset>\n')

@@ -1,14 +1,14 @@
 (function(){
   // Live chat (tawk.to). If it cannot load, the WhatsApp launcher below is shown instead.
   var TAWK="https://embed.tawk.to/6afbe877a1383d3c7fcfb931/1k7k085dc";
-  var done=false;
-  function fallback(){ if(done) return; done=true; whatsappLauncher(); }
+  var done=false, usingFallback=false;
+  function fallback(){ if(done) return; done=true; usingFallback=true; whatsappLauncher(); }
+  function removeFallback(){ document.querySelectorAll(".ngc-btn,.ngc-box").forEach(function(e){e.remove();}); usingFallback=false; }
   window.Tawk_API=window.Tawk_API||{}; window.Tawk_LoadStart=new Date();
-  window.Tawk_API.onLoad=function(){ done=true; };
+  window.Tawk_API.onLoad=function(){ done=true; if(usingFallback) removeFallback(); };
   var t=document.createElement("script"); t.async=true; t.src=TAWK; t.charset="UTF-8"; t.setAttribute("crossorigin","*");
   t.onerror=fallback;
   document.head.appendChild(t);
-  setTimeout(function(){ if(!done && !document.querySelector('iframe[title*="chat" i]')) fallback(); },8000);
 
   function whatsappLauncher(){
   var WA="447591246395";

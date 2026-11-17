@@ -1,4 +1,16 @@
 (function(){
+  // Live chat (tawk.to). If it cannot load, the WhatsApp launcher below is shown instead.
+  var TAWK="https://embed.tawk.to/6afbe877a1383d3c7fcfb931/default";
+  var done=false;
+  function fallback(){ if(done) return; done=true; whatsappLauncher(); }
+  window.Tawk_API=window.Tawk_API||{}; window.Tawk_LoadStart=new Date();
+  window.Tawk_API.onLoad=function(){ done=true; };
+  var t=document.createElement("script"); t.async=true; t.src=TAWK; t.charset="UTF-8"; t.setAttribute("crossorigin","*");
+  t.onerror=fallback;
+  document.head.appendChild(t);
+  setTimeout(function(){ if(!done && !document.querySelector('iframe[title*="chat" i]')) fallback(); },8000);
+
+  function whatsappLauncher(){
   var WA="447591246395";
   var topics=[
     ["Self Assessment tax return","Hi NextGen, I need help with a Self Assessment tax return."],
@@ -28,4 +40,5 @@
   btn.addEventListener("click",function(){toggle(box.hidden);});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!box.hidden){toggle(false);btn.focus();}});
   document.body.appendChild(box);document.body.appendChild(btn);
+  }
 })();

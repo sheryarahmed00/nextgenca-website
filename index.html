@@ -643,11 +643,11 @@ footer a:hover{color:#fff}
       <label for="f-phone">Phone or WhatsApp number<input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Include country code if outside the UK" required></label>
       <div class="two">
         <label for="f-type">You are a<select id="f-type" name="type"><option>Sole trader or freelancer</option><option>Limited company</option><option>Landlord</option><option>Client outside the UK</option><option>Accountancy firm (outsourcing)</option><option>Individual</option></select></label>
-        <label for="f-svc">You need<select id="f-svc" name="service"><option>Accounts and tax</option><option>Payroll</option><option>Bookkeeping and VAT</option><option>Management accounts or advisory</option><option>Company formation</option><option>Not sure yet</option></select></label>
+        <label for="f-svc">Service you need<select id="f-svc" name="service"><option>Self Assessment tax return</option><option>Limited company accounts and corporation tax</option><option>Bookkeeping and VAT</option><option>Payroll</option><option>Landlord tax</option><option>Company formation</option><option>Management accounts or advisory</option><option>UK tax for non-residents</option><option>Outsourcing for my practice</option><option>Not sure yet</option></select></label>
       </div>
-      <label for="f-msg">Anything we should know<textarea id="f-msg" name="message" placeholder="For example: turnover, number of staff, deadline coming up"></textarea></label>
-      <button class="btn btn-gold" type="submit">Request my free call</button>
-      <p style="margin-top:14px"><a href="/book" style="color:#e9dcbc;font-weight:700">Or pick a time for a free 15-minute call online</a></p>
+      <label for="f-msg">Describe what you need help with<textarea id="f-msg" name="message" required placeholder="For example: what the issue is, your turnover, number of staff, any deadline or HMRC letter"></textarea></label>
+      <p style="margin:4px 0 16px;font-size:.9rem;opacity:.9">After you send this form, you will get a link to pick a time for your free 15-minute call.</p>
+      <button class="btn btn-gold" type="submit">Send and choose a call time</button>
       <p style="margin-top:12px;font-size:.82rem;opacity:.8">We use your details only to reply to your enquiry. See our <a href="/privacy">privacy notice</a>.</p>
       <p id="formNote" role="status" hidden></p>
     </form>
@@ -746,11 +746,15 @@ document.getElementById("enquiry").addEventListener("submit", e => {
     note.textContent = "Please add a phone or WhatsApp number so we can call you back.";
     return;
   }
+  if (document.getElementById("f-msg").value.trim().length < 10) {
+    note.textContent = "Please describe in a sentence or two what you need help with.";
+    return;
+  }
   btn.disabled = true;
   note.textContent = "Sending your enquiry.";
   fetch("https://formsubmit.co/ajax/info@nextgenca.co.uk", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(Object.fromEntries(new FormData(form))) })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); note.textContent = "Thank you. Your enquiry has been sent and we will reply within one working day."; })
+    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); note.innerHTML = 'Thank you. Your enquiry has been sent. Now pick a time for your free 15-minute call:<br><a class="btn btn-navy" style="margin-top:12px" href="/book" target="_blank" rel="noopener">Pick a time for your call</a><br><span style="display:inline-block;margin-top:10px">Prefer not to book now? We will reply within one working day.</span>'; })
     .catch(() => { note.textContent = "Your enquiry could not be sent from this page. Please email info@nextgenca.co.uk or call +44 7591 246395."; })
     .finally(() => { btn.disabled = false; });
 });

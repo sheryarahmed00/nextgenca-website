@@ -336,6 +336,7 @@ def relblock(slug):
     return '<h2>Related services</h2><ul>'+''.join(f'<li><a href="/{r}">{NAMES[r]}</a></li>' for r in rs)+'</ul>'
 for k,h in PAGES.items():
     h=re.sub(r'@@REL:([a-z0-9-]+)@@',lambda m:relblock(m.group(1)),h)
+    h=re.sub(r'<li>([a-z])',lambda m:'<li>'+m.group(1).upper(),h)
     open(R+k+'.html','w').write(h)
 
 # index.html updates

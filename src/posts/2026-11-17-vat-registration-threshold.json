@@ -1,0 +1,24 @@
+{
+ "slug": "vat-registration-threshold-90000-when-to-register",
+ "sort": "2026-03-31",
+ "label": "VAT threshold: £90,000",
+ "title": "The £90,000 VAT threshold: when you must register and how the 12-month test works",
+ "summary": "Registration is based on a rolling 12 months, not your tax year. How to check, the 30-day rules, and what happens if you register late.",
+ "tags": [
+  "VAT",
+  "Small business"
+ ],
+ "body": "<p>Many small businesses get caught out by VAT because they check their turnover once a year. The test is a rolling one, and you need to look at it every month.</p><h2>When you must register</h2><ul><li>When your taxable turnover for the <b>last 12 months</b> goes over <b>£90,000</b>.</li><li>Or when you expect your taxable turnover to go over £90,000 in the <b>next 30 days</b> alone.</li><li>Businesses based outside the UK that supply goods or services in the UK must register whatever their turnover.</li></ul><h2>The deadlines</h2><p>If you went over the threshold in the last 12 months, you must register within 30 days of the end of that month, and you are registered from the first day of the second month after. GOV.UK's example: turnover first goes over £90,000 on 15 July, so you must register by 30 August, and you are registered from 1 September.</p><p>If you expect to go over in the next 30 days, you must register by the end of that 30-day period, and you are registered from the date you realised.</p><h2>What counts as taxable turnover</h2><p>Everything you sell that is not VAT exempt or outside the scope of VAT, including zero-rated sales. Exempt sales do not count.</p><h2>What I would do</h2><ul><li>Add up your sales for the last 12 months at the end of every month once you are above about £75,000.</li><li>If you register late, you still owe HMRC the VAT from the date you should have been registered, even if you did not charge it.</li><li>Think about whether registering voluntarily makes sense: if your customers are VAT registered, they can usually reclaim the VAT you charge.</li></ul>",
+ "sources": [
+  {
+   "title": "Register for VAT: when to register (GOV.UK)",
+   "url": "https://www.gov.uk/register-for-vat"
+  }
+ ],
+ "related": [
+  "bookkeeping-and-vat",
+  "hmrc-registrations",
+  "making-tax-digital"
+ ],
+ "date": "2026-11-17"
+}

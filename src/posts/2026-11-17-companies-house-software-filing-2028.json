@@ -1,0 +1,24 @@
+{
+ "slug": "companies-house-accounts-software-filing-from-april-2028",
+ "sort": "2026-10-23",
+ "label": "Companies House update · 23 October 2026",
+ "title": "Companies House: all accounts must be filed through software from April 2028",
+ "summary": "Small companies will not have to file a profit and loss account after all, but web and paper filing of accounts will close in April 2028.",
+ "tags": [
+  "Companies House",
+  "Limited companies"
+ ],
+ "body": "<p>On 23 October 2026 the government updated its plans for how company accounts are filed with Companies House under the Economic Crime and Corporate Transparency Act 2023. One proposal has been paused and another confirmed.</p><h2>What has been paused</h2><p>Small companies and micro-entities will <b>not</b> have to start filing their profit and loss account from April 2028. The government is looking at ways to simplify filing with Companies House and HMRC together. In practice, abridged accounts are still allowed, and smaller companies keep the option to leave out the profit and loss account from the accounts filed at Companies House.</p><h2>What is going ahead</h2><ul><li>From April 2028, every UK company must file its accounts in iXBRL format using commercial software. This applies whether you file yourself or through an accountant.</li><li>Companies House web filing and paper filing will close for accounts. Web filing stays open for other filings such as confirmation statements and director changes.</li><li>Companies claiming audit exemption will need a stronger eligibility statement.</li><li>The parts of the accounts and reports must be filed together.</li><li>There will be a limit on how many times a company can shorten its accounting reference period.</li></ul><h2>What I would do</h2><p>If you file your company's accounts yourself through the Companies House website, you have until April 2028, but it is worth deciding now whether you will buy software or hand the filing to an accountant. Accountants already file in iXBRL, so for clients we act for there is nothing extra to do.</p>",
+ "sources": [
+  {
+   "title": "Companies House update to accounts filing from April 2028 (GOV.UK, 23 October 2026)",
+   "url": "https://www.gov.uk/government/news/companies-house-update-to-accounts-filing-from-april-2028"
+  }
+ ],
+ "related": [
+  "limited-company-accounts",
+  "dormant-company-accounts",
+  "companies-house-filing"
+ ],
+ "date": "2026-11-17"
+}

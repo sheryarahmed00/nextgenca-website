@@ -1,0 +1,24 @@
+{
+ "slug": "companies-house-identity-verification-for-directors",
+ "sort": "2026-06-01",
+ "label": "Companies House guidance · updated 1 June 2026",
+ "title": "Companies House identity verification: what directors and PSCs must do",
+ "summary": "Directors and people with significant control must verify their identity. Without it, a company cannot file its confirmation statement.",
+ "tags": [
+  "Companies House",
+  "Directors"
+ ],
+ "body": "<p>Identity verification is now a legal requirement for anyone who sets up, runs, owns or controls a UK company. It is meant to stop people using companies for fraud and to make the Companies House register more reliable.</p><h2>Who needs to verify</h2><ul><li>Directors, and their equivalents such as LLP members.</li><li>Directors of overseas companies registered in the UK.</li><li>People with significant control (PSCs).</li><li>Companies House authorised agents.</li></ul><p>In most cases you verify once. Companies House will add other groups, such as people who file on a company's behalf, later.</p><h2>How to verify</h2><ul><li><b>Yourself, free:</b> through the 'Verify your identity for Companies House' service on GOV.UK One Login, using an app, online questions or a participating Post Office.</li><li><b>Through an authorised agent:</b> an accountant or solicitor registered with Companies House as an Authorised Corporate Service Provider (ACSP) can verify you, from any country. They may charge a fee.</li></ul><p>Once verified, you get a Companies House personal code. Keep it as safe as your tax reference.</p><h2>When the code is needed</h2><ul><li><b>Existing directors:</b> in the company's next confirmation statement. The company cannot file its confirmation statement unless all its directors are verified.</li><li><b>New directors:</b> when they are appointed, or when the company is formed.</li><li><b>PSCs:</b> through Companies House's PSC service, within a 14-day window.</li></ul><h2>What I would do</h2><p>Check when your company's next confirmation statement is due and make sure every director has verified well before then. Acting as a director without verifying after the deadline can be an offence, and the company can be affected too. If you live abroad, the agent route is often the simplest.</p>",
+ "sources": [
+  {
+   "title": "Verifying your identity for Companies House (GOV.UK, last updated 1 June 2026)",
+   "url": "https://www.gov.uk/guidance/verifying-your-identity-for-companies-house"
+  }
+ ],
+ "related": [
+  "companies-house-filing",
+  "director-and-shareholder-changes",
+  "company-formation"
+ ],
+ "date": "2026-11-17"
+}

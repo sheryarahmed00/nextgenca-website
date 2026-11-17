@@ -341,11 +341,12 @@ if '<a href="/insights">Insights</a>' not in s:
     s=s.replace('      <a href="#questions">Questions</a>','      <a href="/insights">Insights</a>\n      <a href="#questions">Questions</a>',1)
 latest=''.join(f'<article class="post"><p class="note">{nice(p["date"])} · {AUTHOR}</p><h3><a href="/insights/{p["slug"]}">{html.escape(p["title"])}</a></h3><p>{html.escape(p["summary"])}</p></article>' for p in POSTS[:3])
 INS=f'''<!--insights-->
-<section id="insights" style="padding-top:0">
+<section id="insights">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Insights</p>
       <h2>New rules, explained</h2>
+      <p class="lead">Every week Sheryar Ahmed ACA FCCA reviews the latest HMRC and Companies House changes and explains what they mean for you.</p>
     </div>
     <div class="ins-grid">
       <div><h3 style="margin:0 0 6px">Latest articles</h3>{latest}<p style="margin-top:16px"><a class="btn btn-navy" href="/insights">All articles</a></p></div>
@@ -357,7 +358,11 @@ INS=f'''<!--insights-->
 <!--/insights-->
 '''
 s=re.sub(r'<!--insights-->.*?<!--/insights-->\n','',s,flags=re.S)
-s=s.replace('<section id="sectors"',INS+'<section id="sectors"',1)
+s=s.replace('<div class="wrap showcase">',INS+'<div class="wrap showcase">',1)
+s=re.sub(r'<!--latest-->.*?<!--/latest-->\n','',s,flags=re.S)
+if POSTS:
+    lp=POSTS[0]
+    s=s.replace('    <div class="creds">',f'    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n    <div class="creds">',1)
 old_foot=re.search(r'<footer>.*?</footer>',s,re.S).group(0)
 new_foot=re.search(r'<footer>.*?</footer>',FOOT,re.S).group(0).replace('href="/#','href="#')
 s=s.replace(old_foot,new_foot)

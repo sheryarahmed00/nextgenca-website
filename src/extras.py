@@ -213,3 +213,32 @@ TB_CSS = ('/*tb*/.trustbar{background:#fff;border-bottom:1px solid var(--rule)}.
           '/*/tb*/')
 s = _re.sub(r'/\*tb\*/.*?/\*/tb\*/', '', s, flags=_re.S)
 s = s.replace('</style>', TB_CSS + '</style>', 1)
+
+# Full price list on its own page (/fees); home keeps packages + estimator
+import json as _json
+_fm = _re.search(r'const FEES = (\[.*?\n\]);', s, _re.S)
+if _fm:
+    _FEES = _json.loads(_fm.group(1))
+    _css = ''.join(c.strip() for c in _re.findall(r'[^{}]*\{[^}]*\}', s[:s.find('</style>')]) if _re.match(r'\s*(/\*[^*]*\*/\s*)?\.(ledger|grp|row)', c))
+    _ledger = ''.join('<div class="grp"><h3>' + html.escape(t) + '<span>' + c + '</span></h3>' + ''.join(
+        '<div class="row"><span class="nm">' + html.escape(r[0]) + '</span><span class="dots"></span><span class="amt">' + r[1] + ('<small>' + r[2] + '</small>' if len(r) > 2 else '') + '</span></div>' for r in rows) + '</div>' for t, c, rows in _FEES)
+    _body = f'''<style>{_css}.ledger{{margin-top:28px}}</style>
+<p class="crumb"><a href="/">Home</a> / Fees</p>
+<p class="eyebrow" style="margin-top:22px">Fees</p>
+<h1>Full price list</h1>
+<p class="lead">Every price below is a starting fee for a straightforward case. You get an exact fixed quote after a free 15-minute call, and it does not change unless your work does.</p>
+<p><a class="btn btn-gold" href="/#estimate">Estimate your monthly fee</a> <a class="btn btn-navy" href="/#contact">Book a free call</a></p>
+<div class="ledger"><div class="ledger-cols">{_ledger}</div>
+<p class="note">Fees depend on turnover, number of transactions and the state of the records. Companies House and other official filing fees are charged at cost.</p></div>
+{CTA}'''
+    page('fees', 'Accountant Fees and Full Price List | NextGen Chartered Accountant',
+         'Fixed-fee price list for accounts, tax returns, payroll, VAT, bookkeeping and company services from NextGen Chartered Accountant, an ICAEW member firm in Luton.', _body)
+    open(R + 'fees.html', 'w').write(PAGES['fees'])
+s = s.replace('<div class="ledger-cols" id="ledger"></div>',
+              '<p style="margin:26px 0 8px"><a class="btn btn-navy" href="/fees">See the full price list →</a></p>', 1)
+s = s.replace('document.getElementById("ledger").innerHTML =', 'var _lg = document.getElementById("ledger"); if (_lg) _lg.innerHTML =', 1)
+
+# Software logos in the trust bar
+for _n, _a in [('Xero', 'xero'), ('QuickBooks', 'quickbooks'), ('Sage', 'sage'), ('FreeAgent', 'freeagent'), ('Dext', 'dext')]:
+    s = s.replace(f'<div class="tb"><b>{_n}</b>', f'<div class="tb"><img src="/img/badges/{_a}.svg" alt="{_n}" height="28" loading="lazy">', 1)
+s = s.replace('.trustbar .tb b{', '.trustbar .tb img{height:28px;width:auto;max-width:100%;margin:2px 0}.trustbar .tb b{', 1)

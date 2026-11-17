@@ -10,3 +10,7 @@
 - Every figure, rate and date must come from a GOV.UK page read that day, and that page must be listed in `sources`.
 - Never invent quotes, client stories, statistics or reviews. No opinions on politics.
 - Do not repeat a topic already covered in `src/posts/`.
+
+## Facebook and Instagram posts
+- `python3 src/social_image.py <slug> "<label>" "<headline>" "<sub line>"` makes `social/<slug>.png` (1080x1350). After it is pushed and deployed it is public at https://nextgenca.co.uk/social/<slug>.png, which Zapier uses for Instagram and Facebook photo posts.
+- `src/social_log.json` lists every Facebook/Instagram post already published: [{"date":"YYYY-MM-DD","slug":"...","link":"...","facebook":true,"instagram":true}]. Never post a slug that is already in the log.

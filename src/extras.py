@@ -242,3 +242,6 @@ s = s.replace('document.getElementById("ledger").innerHTML =', 'var _lg = docume
 for _n, _a in [('Xero', 'xero'), ('QuickBooks', 'quickbooks'), ('Sage', 'sage'), ('FreeAgent', 'freeagent'), ('Dext', 'dext')]:
     s = s.replace(f'<div class="tb"><b>{_n}</b>', f'<div class="tb"><img src="/img/badges/{_a}.svg" alt="{_n}" height="28" loading="lazy">', 1)
 s = s.replace('.trustbar .tb b{', '.trustbar .tb img{height:28px;width:auto;max-width:100%;margin:2px 0}.trustbar .tb b{', 1)
+
+# Both team cards in the same navy style
+s = s.replace('<aside class="card-cred alt"', '<aside class="card-cred" style="margin-top:18px"', 1)

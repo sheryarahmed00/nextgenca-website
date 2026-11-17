@@ -94,3 +94,16 @@ if _i > 0:
 
 # hero: link to the estimator next to the fees button
 s = s.replace('<a class="btn btn-line" href="#fees">See fees from £25 a month</a>', '<a class="btn btn-line" href="#estimate">Estimate your fee from £25 a month</a>', 1)
+
+# ICAEW directory link and 1-hour reply promise
+ICAEW_URL = 'https://find.icaew.com/firms/luton/nextgen/Z1qgR7E'
+_A = f'<a href="{ICAEW_URL}" target="_blank" rel="noopener" style="color:inherit">'
+s = s.replace('<span>ICAEW firm no. <strong>C011010236</strong></span>',
+              f'<span>{_A}ICAEW firm no. <strong>C011010236</strong> ↗</a></span>\n      <span>Replies within <strong>1 hour</strong> Mon to Sat</span>', 1)
+s = s.replace('<div><b>C011010236</b>ICAEW firm number</div>',
+              f'<div><b>C011010236</b>{_A}ICAEW firm number, verify ↗</a></div>', 1)
+s = s.replace('firm number C011010236. ©', f'firm number {_A}C011010236</a>. ©', 1)
+s = s.replace('You will get a reply with a time to talk and, after the call, a fixed quote.',
+              'We reply within 1 hour, Monday to Saturday, 9am to 7pm, with a time to talk and, after the call, a fixed quote.', 1)
+s = s.replace('Prefer not to book now? We will reply within one working day.',
+              'Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.', 1)

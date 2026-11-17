@@ -67,7 +67,7 @@ const menuBtn=document.getElementById("menuBtn"),nav=document.getElementById("ma
 menuBtn.addEventListener("click",()=>{const open=nav.classList.toggle("open");menuBtn.setAttribute("aria-expanded",open);menuBtn.setAttribute("aria-label",open?"Close menu":"Open menu");});
 </script>
 <script src="/chat.js?v=5" defer></script>'''
-CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need and we will reply with a fixed fee, within one working day.</p>
+CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need. We reply within 1 hour, Monday to Saturday, 9am to 7pm, and send a fixed fee after a free call.</p>
 <a class="btn btn-navy" href="/#contact">Book a free call</a><a class="btn btn-wa" href="https://wa.me/447591246395">Message on WhatsApp</a></div>'''
 PAGES={}
 def page(slug,title,desc,body,ld=None,noindex=False):

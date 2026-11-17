@@ -331,7 +331,8 @@ footer a:hover{color:#fff}
     </div>
             <div class="creds">
       <span><strong>ACA</strong> and <strong>FCCA</strong> qualified</span>
-      <span>ICAEW firm no. <strong>C011010236</strong></span>
+      <span><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" target="_blank" rel="noopener" style="color:inherit">ICAEW firm no. <strong>C011010236</strong> ↗</a></span>
+      <span>Replies within <strong>1 hour</strong> Mon to Sat</span>
       <span><strong>10+ years</strong> in UK accounting</span>
       <span>Professional indemnity <strong>insured</strong></span>
     </div>
@@ -340,7 +341,7 @@ footer a:hover{color:#fff}
     <!--latest-->
     <a class="hero-latest" href="/insights/self-assessment-scams-how-to-spot-a-fake-hmrc-message"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>Self Assessment scams: how to spot a fake HMRC message before 31 January</b><i>Read the article →</i></a>
     <!--/latest-->
-                                       <aside class="cal" aria-label="UK filing deadlines we manage">
+                                           <aside class="cal" aria-label="UK filing deadlines we manage">
     <h2>Deadlines we keep for you</h2>
     <p class="sub">You run the business. We watch the calendar.</p>
     <ul>
@@ -451,7 +452,7 @@ footer a:hover{color:#fff}
       </div>
     </div>
     <!--/exp-->
-          </div>
+              </div>
 </section>
 
 
@@ -544,6 +545,7 @@ footer a:hover{color:#fff}
 
     
     
+    
     <!--est-->
     <div class="est" id="estimate">
       <h3>Estimate your monthly fee</h3>
@@ -631,7 +633,7 @@ footer a:hover{color:#fff}
       <p>Your work is prepared by qualified accountants and reviewed by a Chartered Accountant before it goes to you or HMRC. You get a named contact who knows your file and explains things in plain English.</p>
       <div class="facts">
         <div><b>ACA · FCCA · ACCA</b>Qualified team</div>
-        <div><b>C011010236</b>ICAEW firm number</div>
+        <div><b>C011010236</b><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" target="_blank" rel="noopener" style="color:inherit">ICAEW firm number, verify ↗</a></div>
         <div><b>10+ years</b>UK accounting experience</div>
         <div><b>350+</b>Five-star client reviews</div>
       </div>
@@ -704,7 +706,7 @@ footer a:hover{color:#fff}
       <div class="head" style="margin-bottom:0">
         <p class="eyebrow">Contact</p>
         <h2>Book a free 15-minute call</h2>
-        <p class="lead">Tell us a little about your business. You will get a reply with a time to talk and, after the call, a fixed quote.</p>
+        <p class="lead">Tell us a little about your business. We reply within 1 hour, Monday to Saturday, 9am to 7pm, with a time to talk and, after the call, a fixed quote.</p>
       </div>
       <div class="reach">
         <div><span>Based in</span><b>Luton, England</b></div>
@@ -749,7 +751,7 @@ footer a:hover{color:#fff}
       <div><h4>Services</h4><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
       <div><h4>Firm</h4><ul><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="#fees">Fees</a></li><li><a href="#about">About</a></li><li><a href="#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
     </div>
-    <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number C011010236. © 2026 NextGen Chartered Accountant.</p>
+    <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number <a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" target="_blank" rel="noopener" style="color:inherit">C011010236</a>. © 2026 NextGen Chartered Accountant.</p>
   </div>
 </footer>
 
@@ -837,7 +839,7 @@ document.getElementById("enquiry").addEventListener("submit", e => {
   note.textContent = "Sending your enquiry.";
   fetch("https://formsubmit.co/ajax/info@nextgenca.co.uk", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(Object.fromEntries(new FormData(form))) })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); note.innerHTML = 'Thank you. Your enquiry has been sent. Now pick a time for your free 15-minute call:<br><a class="btn btn-navy" style="margin-top:12px" href="/book" target="_blank" rel="noopener">Pick a time for your call</a><br><span style="display:inline-block;margin-top:10px">Prefer not to book now? We will reply within one working day.</span>'; })
+    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); note.innerHTML = 'Thank you. Your enquiry has been sent. Now pick a time for your free 15-minute call:<br><a class="btn btn-navy" style="margin-top:12px" href="/book" target="_blank" rel="noopener">Pick a time for your call</a><br><span style="display:inline-block;margin-top:10px">Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.</span>'; })
     .catch(() => { note.textContent = "Your enquiry could not be sent from this page. Please email info@nextgenca.co.uk or call +44 7591 246395."; })
     .finally(() => { btn.disabled = false; });
 });

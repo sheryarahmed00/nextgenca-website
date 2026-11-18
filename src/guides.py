@@ -160,3 +160,156 @@ EXTRA_LINKS+= [
  ('Accountant or bookkeeper?','/accountant-or-bookkeeper'),
  ('Online accountants for London businesses','/online-accountants-for-london-businesses'),
 ]
+
+CALC_CSS='<style>.calc{background:var(--mist);padding:22px;border-left:3px solid var(--gold);margin:10px 0 18px}.calc label{display:block;font-weight:700;margin:0 0 6px}.calc input{width:100%;max-width:260px;padding:11px 12px;border:1px solid var(--rule);font:inherit;margin:0 0 14px}.calc output{display:block}.calc table{margin-top:6px}</style>'
+
+guide('corporation-tax-calculator','Corporation tax calculator (2026 to 2027)',
+ 'Corporation Tax Calculator UK 2026/27 | Marginal Relief | NextGen',
+ 'Free UK corporation tax calculator for the financial year starting 1 April 2026. Works out the 19% small profits rate, 25% main rate and marginal relief, including associated companies.',
+ CALC_CSS+'''<p class="lead">Enter your company's taxable profit for a 12-month accounting period to see the corporation tax due. The calculator applies the 19% small profits rate, the 25% main rate and marginal relief for profits between £50,000 and £250,000.</p>
+<div class="calc">
+<label for="ctp">Taxable profit for the year (£)</label><input id="ctp" type="number" min="0" step="100" value="80000" inputmode="numeric">
+<label for="cta">Associated companies (other companies you control)</label><input id="cta" type="number" min="0" step="1" value="0" inputmode="numeric">
+<table class="ft"><tr><td>Corporation tax due</td><td id="ctr">-</td></tr><tr><td>Effective rate</td><td id="cte">-</td></tr><tr><td>Marginal relief included</td><td id="ctm">-</td></tr></table>
+</div>
+<script>
+(function(){function f(n){return "£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function run(){var p=Math.max(0,parseFloat(document.getElementById("ctp").value)||0),a=Math.max(0,parseInt(document.getElementById("cta").value)||0),d=a+1,lo=50000/d,hi=250000/d,tax,mr=0;
+if(p<=lo){tax=p*0.19}else if(p>=hi){tax=p*0.25}else{mr=(hi-p)*3/200;tax=p*0.25-mr}
+document.getElementById("ctr").textContent=f(tax);document.getElementById("cte").textContent=p?(tax/p*100).toFixed(2)+"%":"-";document.getElementById("ctm").textContent=f(mr)}
+["ctp","cta"].forEach(function(i){document.getElementById(i).addEventListener("input",run)});run()})();
+</script>
+<h2>How corporation tax is worked out</h2>
+<table class="ft">
+<tr><td>Profits up to £50,000</td><td>19%</td></tr>
+<tr><td>Profits from £50,000 to £250,000</td><td>25% less marginal relief</td></tr>
+<tr><td>Profits over £250,000</td><td>25%</td></tr>
+</table>
+<p>Marginal relief is (£250,000 minus profit) multiplied by 3/200. Example: on £80,000 of profit, tax at 25% is £20,000, marginal relief is £170,000 x 3/200 = £2,550, so the tax due is £17,450.</p>
+<h2>What the calculator assumes</h2>
+<ul><li>A 12-month accounting period falling in the financial year from 1 April 2026.</li>
+<li>No dividends received from companies outside your group.</li>
+<li>The £50,000 and £250,000 limits are divided by the number of associated companies plus one.</li>
+<li>Taxable profit is after allowable expenses and capital allowances, which is not the same as the profit in your accounts.</li></ul>
+<p>Corporation tax is due 9 months and 1 day after the year end. See <a href="/tax-deadlines-for-company-directors">deadlines for directors</a> and the <a href="/limited-company-expenses-guide">expenses a company can claim</a>. We prepare the computation and CT600 as part of our <a href="/corporation-tax-returns">corporation tax return service</a>.</p>''',
+ [('Is the 19% rate automatic?','Yes, if taxable profits are £50,000 or less for a 12-month period and the company is not a close investment-holding company.'),
+  ('What is an associated company?','Broadly, another company under the same control anywhere in the world. Each one reduces the £50,000 and £250,000 limits.'),
+  ('My accounting period is shorter than 12 months. Does this work?','No. The limits are reduced in proportion for short periods, so ask us for the figure.'),
+  ('Can I reduce the bill?','Legitimately, yes: claim all allowable expenses and capital allowances, and consider employer pension contributions. We look at this in a tax planning session.')],
+ crumb='Calculators')
+
+guide('dividend-tax-calculator','Dividend tax calculator for directors (2026 to 2027)',
+ 'Dividend Tax Calculator UK 2026/27 for Directors | NextGen CA',
+ 'Free UK dividend tax calculator for the 2026 to 2027 tax year. Enter your salary and dividends to see the dividend tax due at 10.75%, 35.75% and 39.35% after the personal allowance and £500 dividend allowance.',
+ CALC_CSS+'''<p class="lead">Enter your salary and the dividends you take in the 2026 to 2027 tax year to see the tax due on the dividends. The calculator uses the personal allowance, the £500 dividend allowance and the dividend rates of 10.75%, 35.75% and 39.35%.</p>
+<div class="calc">
+<label for="dvs">Salary and other non-dividend income (£)</label><input id="dvs" type="number" min="0" step="100" value="12570" inputmode="numeric">
+<label for="dvd">Dividends (£)</label><input id="dvd" type="number" min="0" step="100" value="40000" inputmode="numeric">
+<table class="ft"><tr><td>Tax on dividends</td><td id="dvt">-</td></tr><tr><td>Dividends after tax</td><td id="dvn">-</td></tr><tr><td>Rate on total dividends</td><td id="dve">-</td></tr></table>
+</div>
+<script>
+(function(){function f(n){return "£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function run(){var s=Math.max(0,parseFloat(document.getElementById("dvs").value)||0),d=Math.max(0,parseFloat(document.getElementById("dvd").value)||0),tot=s+d;
+var pa=12570;if(tot>100000){pa=Math.max(0,12570-Math.floor((tot-100000)/2))}
+var paS=Math.min(s,pa),paD=Math.min(d,pa-paS),sT=s-paS,dT=d-paD;
+var b1=37700,b2=125140-pa;var used=sT,rem=dT,tax=0,al=Math.min(500,rem);
+function slice(limit,rate){var room=Math.max(0,limit-used),x=Math.min(rem,room);if(x<=0)return;var free=Math.min(al,x);al-=free;tax+=(x-free)*rate;used+=x;rem-=x}
+slice(b1,0.1075);slice(b2,0.3575);slice(Infinity,0.3935);
+document.getElementById("dvt").textContent=f(tax);document.getElementById("dvn").textContent=f(d-tax);document.getElementById("dve").textContent=d?(tax/d*100).toFixed(2)+"%":"-"}
+["dvs","dvd"].forEach(function(i){document.getElementById(i).addEventListener("input",run)});run()})();
+</script>
+<h2>Dividend tax rates for 2026 to 2027</h2>
+<table class="ft">
+<tr><td>Dividend allowance</td><td>£500</td></tr>
+<tr><td>Basic rate band</td><td>10.75%</td></tr>
+<tr><td>Higher rate band</td><td>35.75%</td></tr>
+<tr><td>Additional rate band</td><td>39.35%</td></tr>
+</table>
+<h2>What the calculator assumes</h2>
+<ul><li>You are resident in England, Wales or Northern Ireland. Scottish income tax bands apply to salary but dividends use the UK bands, so results can differ slightly for Scottish taxpayers.</li>
+<li>The standard personal allowance of £12,570, reduced by £1 for every £2 of income over £100,000.</li>
+<li>Dividends are treated as the top slice of income, and the £500 allowance uses up part of the band it falls in.</li>
+<li>It shows the tax on dividends only. Income tax and National Insurance on salary are separate, and the company pays corporation tax before a dividend can be paid.</li></ul>
+<p>Dividends are reported on your Self Assessment return and the tax is due by 31 January. For the best mix of salary, dividends and pension for your company, see <a href="/director-salary-and-dividends">director salary and dividend planning</a>, or use the <a href="/corporation-tax-calculator">corporation tax calculator</a>.</p>''',
+ [('Do I pay National Insurance on dividends?','No. Dividends are not subject to National Insurance, which is one reason directors often take a low salary and the rest as dividends.'),
+  ('Can my company always pay a dividend?','Only out of profits after corporation tax. A dividend paid without enough retained profit is unlawful and may have to be repaid.'),
+  ('Do I need a tax return for dividends?','Yes if your dividends are over £10,000, or if tax is due and HMRC cannot collect it through your tax code.'),
+  ('Why is my rate lower than 10.75%?','Because part of your dividends is covered by the personal allowance or the £500 dividend allowance.')],
+ crumb='Calculators')
+
+guide('how-much-does-an-accountant-cost-uk','How much does an accountant cost in the UK?',
+ 'How Much Does an Accountant Cost UK? 2026 Fees | NextGen CA',
+ 'What UK accountants charge in 2026 for Self Assessment, limited company accounts, VAT, payroll and bookkeeping, how monthly retainers compare with annual fixed fees, and our own published prices.',
+ '''<p class="lead">In 2026 most UK small businesses pay an accountant in one of two ways: a monthly retainer that covers everything, or a fixed fee for each piece of work. What you pay depends on the type of business and how much needs doing, not on where the accountant is based.</p>
+<h2>Typical UK fees in 2026</h2>
+<table class="ft">
+<tr><td>One-off Self Assessment tax return</td><td>£150 to £300</td></tr>
+<tr><td>Sole trader, online accountant, monthly retainer</td><td>about £25 to £60 a month</td></tr>
+<tr><td>Limited company, online accountant, monthly retainer</td><td>about £40 to £185 a month plus VAT</td></tr>
+<tr><td>Contractor limited company package</td><td>about £80 to £200 a month</td></tr>
+<tr><td>Annual fixed fee for company accounts, budget firms</td><td>about £49 to £599</td></tr>
+</table>
+<p class="note">Ranges are taken from published price comparisons of UK online accountants in 2026. Individual firms vary.</p>
+<h2>Our fixed fees</h2>
+<table class="ft">
+<tr><td>Self Assessment tax return</td><td>from £99</td></tr>
+<tr><td>Self-employed tax return, several income sources</td><td>from £150</td></tr>
+<tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
+<tr><td>VAT return</td><td>from £90 a quarter</td></tr>
+<tr><td>Payroll</td><td>from £25 a month</td></tr>
+<tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
+</table>
+<p>The <a href="/fees">full price list</a> shows every service. Your fee is fixed in writing before work starts.</p>
+<h2>Monthly retainer or annual fixed fee?</h2>
+<p>A retainer suits a business with regular work: monthly bookkeeping, payroll, VAT and frequent questions. A fixed annual fee suits a company with simple affairs that mainly needs accounts and a tax return once a year. A company paying £90 a month on a retainer spends £1,080 a year; if it only needs year-end accounts, a CT600 and a confirmation statement, a fixed fee is usually much less.</p>
+<h2>What changes the price</h2>
+<ul><li>How good your records are. Clean bookkeeping in software costs less to finish than a box of receipts.</li>
+<li>Turnover and the number of transactions.</li>
+<li>VAT registration, payroll and the number of employees.</li>
+<li>Extra income sources such as property, foreign income or capital gains.</li>
+<li>Overdue returns that need catching up.</li></ul>
+<h2>What to check before you choose</h2>
+<ul><li>Is the firm regulated by a body such as ICAEW or ACCA? Anyone can call themselves an accountant.</li>
+<li>Who prepares the work and who reviews it?</li>
+<li>Does the fee include filing with HMRC and Companies House, and replies to your questions?</li>
+<li>Is there a minimum term or an exit fee?</li></ul>
+<p>See also <a href="/accountant-or-bookkeeper">accountant or bookkeeper</a>, and <a href="/about">who we are</a>.</p>''',
+ [('Is an accountant tax deductible?','For a business, yes. Accountancy fees for preparing business accounts and returns are an allowable expense.'),
+  ('Why are some accountants so cheap?','Low headline prices often exclude VAT returns, payroll, the director\'s tax return or support. Compare what is included, not just the first figure.'),
+  ('Do you charge a monthly retainer?','Only for monthly work such as bookkeeping and payroll. Year-end accounts and tax returns are a fixed fee per job.'),
+  ('Can I get a quote without commitment?','Yes. Book a free 15-minute call and we send a fixed quote in writing.')])
+
+guide('uk-company-non-resident-director-guide','Running a UK limited company as a non-resident director',
+ 'UK Company for Non-Resident Directors: Tax Guide | NextGen CA',
+ 'A guide for overseas founders and non-resident directors of UK limited companies: Companies House rules, identity verification, corporation tax, filing deadlines, VAT and paying yourself.',
+ '''<p class="lead">You do not need to live in the UK to own or direct a UK limited company. The company still has the same duties as any other: it files accounts and a confirmation statement with Companies House and a corporation tax return with HMRC every year, wherever its directors live.</p>
+<h2>What Companies House requires</h2>
+<ul><li>A registered office at an appropriate address in the UK where documents will reach the company. A PO box alone is not accepted.</li>
+<li>A registered email address.</li>
+<li>Identity verification for directors and people with significant control. See our article on <a href="/insights/companies-house-identity-verification-for-directors">identity verification for directors</a>.</li>
+<li>At least one director who is a natural person aged 16 or over. There is no UK residence requirement.</li></ul>
+<h2>Tax the company pays</h2>
+<p>A company incorporated in the UK is normally UK tax resident and pays corporation tax on its worldwide profits at 19% to 25%. If the company is managed and controlled from another country, that country may also treat it as resident there, and the double tax treaty decides which country taxes what. This needs checking before you start trading.</p>
+<h2>Deadlines every year</h2>
+<table class="ft">
+<tr><td>Annual accounts to Companies House</td><td>9 months after year end</td></tr>
+<tr><td>Corporation tax payment</td><td>9 months and 1 day after year end</td></tr>
+<tr><td>CT600 return to HMRC</td><td>12 months after year end</td></tr>
+<tr><td>Confirmation statement</td><td>Every 12 months</td></tr>
+</table>
+<p>These apply even if the company has not traded. A company that has never traded files dormant accounts. Late accounts bring automatic penalties starting at £150.</p>
+<h2>Paying yourself from abroad</h2>
+<ul><li>Dividends paid to a non-resident shareholder are generally not taxed further in the UK, but are usually taxable where you live.</li>
+<li>A salary for duties carried out wholly outside the UK is generally not subject to UK income tax; duties performed in the UK are.</li>
+<li>Your home country's rules matter as much as the UK's. Take local advice as well.</li></ul>
+<h2>VAT</h2>
+<p>A business established in the UK must register once taxable turnover passes £90,000. Different rules apply to a company with no UK establishment, which may have to register from its first UK sale. We check which applies before you invoice UK customers.</p>
+<h2>Practical points</h2>
+<ul><li>UK business bank accounts can be harder to open from abroad. Allow time, and consider providers that accept non-resident directors.</li>
+<li>Keep UK-format records and invoices from day one.</li>
+<li>Tell Companies House within 14 days if a director's details change.</li></ul>
+<p>We act for overseas founders and non-resident directors: <a href="/company-formation">company formation</a>, <a href="/limited-company-accounts">annual accounts and CT600</a>, and <a href="/non-resident-uk-tax">UK tax for non-residents</a>, all handled online across time zones.</p>''',
+ [('Can a non-UK resident be the only director of a UK company?','Yes. There is no nationality or residence requirement for directors or shareholders.'),
+  ('Does my company pay UK tax if all customers are abroad?','Usually yes. A UK-incorporated company is normally UK tax resident and taxed on worldwide profits, subject to any double tax treaty.'),
+  ('My company never traded. Do I still need to file?','Yes. Dormant accounts and a confirmation statement are still due every year until the company is closed.'),
+  ('Can you file overdue accounts for my company?','Yes. Tell us the company number and we will set out what is outstanding, the likely penalties and a fixed fee to bring it up to date.')])

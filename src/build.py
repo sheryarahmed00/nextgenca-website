@@ -330,7 +330,7 @@ page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | Next
 <li><a href="/company-formation">Company formation</a>, from £49</li>
 <li><a href="/management-accounts">Management accounts and virtual Finance Director</a>, from £99 a month</li>
 <li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li>
-<li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul>
+<li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul><p class="note">Prices are starting fees. NextGen is not VAT registered, so no VAT is added to our fees.</p>
 <h2>Why choose a Chartered Accountant</h2>
 <ul><li>The firm is led by Sheryar Ahmed ACA FCCA, a member of both ICAEW and ACCA.</li>
 <li>Fees are fixed and agreed before any work starts.</li>

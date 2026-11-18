@@ -121,7 +121,7 @@ guide('accountant-or-bookkeeper','Accountant or bookkeeper: which does your busi
  [('Can a bookkeeper file my company accounts?','A bookkeeper can prepare the records, but statutory accounts and the corporation tax return are normally prepared by an accountant, who takes responsibility for the tax treatment.'),
   ('Do I need an accountant as a sole trader?','It is not a legal requirement. Many sole traders use one for the tax return, to claim the right expenses and to prepare for Making Tax Digital.'),
   ('Is an online accountant as good as a local one?','The qualifications and regulation are the same. What matters is who prepares and reviews your work and how quickly they reply.'),
-  ('How much does an accountant cost?','It depends on the work. Our fees are fixed and published, for example limited company accounts and CT600 from £349 and Self Assessment from £99.')])
+  ('How much does an accountant cost?','It depends on the work. Our fees are fixed and published, for example limited company accounts and CT600 from £349 and Self Assessment from £99. NextGen is not VAT registered, so no VAT is added to our fees.')])
 
 guide('online-accountants-for-london-businesses','Online accountants for London businesses',
  'Online Accountants for London Businesses | Fixed Fees | NextGen',
@@ -146,7 +146,7 @@ guide('online-accountants-for-london-businesses','Online accountants for London 
 <tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
 <tr><td>Director-only payroll</td><td>£10 a month</td></tr>
 <tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
-</table>
+</table><p class="note">NextGen is not VAT registered, so no VAT is added to these fees. Many firms quote prices plus VAT at 20%, so compare like with like.</p>
 <p class="note">Prices are starting fees. NextGen is not VAT registered, so no VAT is added to our fees. See the <a href="/fees">full price list</a>.</p>
 <h2>Is an accountant outside London right for you?</h2>
 <p>Company accounts, tax returns, VAT and payroll are filed online with HMRC and Companies House, so where your accountant sits makes no difference to the filing. If you want regular face-to-face meetings at an office in London, a local firm will suit you better. If you want qualified work, a named contact and a fixed fee, working online does the same job.</p>''',
@@ -351,7 +351,7 @@ g("tky").textContent=f(net);g("tkm").textContent=f(net/12);g("tkw").textContent=
 <li>The personal allowance falls by £1 for every £2 of income over £100,000.</li>
 <li>Pension is treated as salary sacrifice, so it reduces both tax and National Insurance. Other pension schemes give a slightly different result.</li>
 <li>No student loan, benefits in kind or other deductions.</li></ul>
-<p>If you are a company director, taking a low salary and the rest as dividends usually leaves more in your pocket. See the <a href="/dividend-tax-calculator">dividend tax calculator</a> and <a href="/director-salary-and-dividends">director salary and dividend planning</a>. Employers can use our <a href="/payroll">payroll service</a>: £10 a month for a director-only payroll and £25 a month for up to 5 employees.</p>''',
+<p>If you are a company director, taking a low salary and the rest as dividends usually leaves more in your pocket. See the <a href="/dividend-tax-calculator">dividend tax calculator</a> and <a href="/director-salary-and-dividends">director salary and dividend planning</a>. Employers can use our <a href="/payroll">payroll service</a>: £10 a month for a director-only payroll and £25 a month for up to 5 employees. No VAT is added.</p>''',
  [('Why is my payslip slightly different?','Payroll works out tax and National Insurance each pay period, and your tax code, student loan, benefits or pension scheme type can change the figure.'),
   ('How much tax do I pay on £35,000?','In 2026 to 2027, income tax is £4,486 and National Insurance is £1,794.40, leaving take-home pay of £28,719.60, about £2,393 a month.'),
   ('Does this work for the self-employed?','No. Sole traders pay Class 4 National Insurance at 6% and 2% on profits instead, through Self Assessment.'),

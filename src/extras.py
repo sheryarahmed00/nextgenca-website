@@ -262,3 +262,11 @@ s=_re.sub(r'<meta property="og:title" content="[^"]*">','<meta property="og:titl
 s=_re.sub(r'<meta property="og:description" content="[^"]*">','<meta property="og:description" content="'+_HD+'">',s,count=1)
 s=s.replace('"description":"ICAEW member firm of Chartered Accountants in Luton, Bedfordshire. Fixed-fee','"description":"ICAEW member firm of Chartered Accountants serving clients across the UK, based in Luton, Bedfordshire. Fixed-fee',1)
 s=s.replace('"areaServed":[{"@type":"City","name":"Luton"},{"@type":"AdministrativeArea","name":"Bedfordshire"},{"@type":"Country","name":"United Kingdom"}]','"areaServed":[{"@type":"Country","name":"United Kingdom"},{"@type":"City","name":"London"},{"@type":"City","name":"Luton"},{"@type":"AdministrativeArea","name":"Bedfordshire"}]',1)
+
+# Link new UK service pages from the home services section
+if '<!--uksvc-->' not in s:
+    _i=s.find('id="services"'); _j=s.find('</section>',_i)
+    _blk='''<!--uksvc--><p class="uksvc" style="margin:22px 0 0;line-height:1.9">More: <a href="/accounting-services-uk">All accounting services UK</a> · <a href="/corporation-tax-returns">Corporation tax returns (CT600)</a> · <a href="/vat-registration-and-returns">VAT registration and returns</a> · <a href="/small-business-accounting">Small business accounting</a> · <a href="/contractor-and-self-employed-accounting">Contractor and self-employed accounting</a> · <a href="/business-tax-planning">Business tax planning</a></p>
+'''
+    _k=s.rfind('</div>',_i,_j)
+    if _i>0 and _k>0: s=s[:_k]+_blk+s[_k:]

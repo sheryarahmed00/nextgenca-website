@@ -390,8 +390,7 @@ for k,h in PAGES.items():
 # index.html updates
 s=idx
 if '<a href="/insights">Insights</a>' not in s:
-    s=s.replace('      <a href="#questions">Questions</a>','      <a href="/#tools">Free tools</a>
-      <a href="/insights">Insights</a>\n      <a href="#questions">Questions</a>',1)
+    s=s.replace('      <a href="#questions">Questions</a>','      <a href="/insights">Insights</a>\n      <a href="#questions">Questions</a>',1)
 latest=''.join(f'<article class="post"><p class="post-meta">{html.escape(p.get("label",nice(p["date"])))}</p><p class="post-by">By Sheryar Ahmed ACA FCCA</p><h3><a href="/insights/{p["slug"]}">{html.escape(p["title"])}</a></h3><p>{html.escape(p["summary"])}</p></article>' for p in POSTS[:4])
 INS=f'''<!--insights-->
 <section id="insights">

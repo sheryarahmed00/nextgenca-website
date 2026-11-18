@@ -313,3 +313,44 @@ guide('uk-company-non-resident-director-guide','Running a UK limited company as 
   ('Does my company pay UK tax if all customers are abroad?','Usually yes. A UK-incorporated company is normally UK tax resident and taxed on worldwide profits, subject to any double tax treaty.'),
   ('My company never traded. Do I still need to file?','Yes. Dormant accounts and a confirmation statement are still due every year until the company is closed.'),
   ('Can you file overdue accounts for my company?','Yes. Tell us the company number and we will set out what is outstanding, the likely penalties and a fixed fee to bring it up to date.')])
+
+guide('salary-take-home-calculator','Salary take-home pay calculator (2026 to 2027)',
+ 'Take-Home Pay Calculator UK 2026/27 | Salary After Tax | NextGen',
+ 'Free UK take-home pay calculator for the 2026 to 2027 tax year. Enter your gross salary and pension to see income tax, National Insurance and your net pay per year, month and week.',
+ CALC_CSS+'''<p class="lead">Enter your gross annual salary to see how much you take home after income tax and National Insurance in the 2026 to 2027 tax year. Add a pension percentage if you pay into a workplace pension.</p>
+<div class="calc">
+<label for="tks">Gross salary for the year (£)</label><input id="tks" type="number" min="0" step="500" value="35000" inputmode="numeric">
+<label for="tkp">Your pension contribution (% of salary, salary sacrifice)</label><input id="tkp" type="number" min="0" max="100" step="0.5" value="0" inputmode="decimal">
+<table class="ft"><tr><td>Take-home pay per year</td><td id="tky">-</td></tr><tr><td>Per month</td><td id="tkm">-</td></tr><tr><td>Per week</td><td id="tkw">-</td></tr><tr><td>Income tax</td><td id="tkt">-</td></tr><tr><td>National Insurance</td><td id="tkn">-</td></tr><tr><td>Pension</td><td id="tkpp">-</td></tr></table>
+</div>
+<script>
+(function(){function f(n){return "£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function g(i){return document.getElementById(i)}
+function run(){var s=Math.max(0,parseFloat(g("tks").value)||0),pc=Math.min(100,Math.max(0,parseFloat(g("tkp").value)||0)),pen=s*pc/100,e=s-pen;
+var pa=12570;if(e>100000){pa=Math.max(0,12570-Math.floor((e-100000)/2))}
+var t=Math.max(0,e-pa),tax=Math.min(t,37700)*0.2+Math.max(0,Math.min(t,125140-pa)-37700)*0.4+Math.max(0,t-(125140-pa))*0.45;
+var ni=Math.max(0,Math.min(e,50270)-12570)*0.08+Math.max(0,e-50270)*0.02,net=e-tax-ni;
+g("tky").textContent=f(net);g("tkm").textContent=f(net/12);g("tkw").textContent=f(net/52);g("tkt").textContent=f(tax);g("tkn").textContent=f(ni);g("tkpp").textContent=f(pen)}
+["tks","tkp"].forEach(function(i){g(i).addEventListener("input",run)});run()})();
+</script>
+<h2>Rates used for 2026 to 2027</h2>
+<table class="ft">
+<tr><td>Personal allowance</td><td>£12,570</td></tr>
+<tr><td>Basic rate, £12,571 to £50,270</td><td>20%</td></tr>
+<tr><td>Higher rate, £50,271 to £125,140</td><td>40%</td></tr>
+<tr><td>Additional rate, over £125,140</td><td>45%</td></tr>
+<tr><td>Employee National Insurance, £12,570 to £50,270</td><td>8%</td></tr>
+<tr><td>Employee National Insurance, over £50,270</td><td>2%</td></tr>
+</table>
+<h2>What the calculator assumes</h2>
+<ul><li>You live in England, Wales or Northern Ireland. Scotland has its own income tax bands, so results will differ there.</li>
+<li>Tax code 1257L, one job, under State Pension age, National Insurance category A.</li>
+<li>The personal allowance falls by £1 for every £2 of income over £100,000.</li>
+<li>Pension is treated as salary sacrifice, so it reduces both tax and National Insurance. Other pension schemes give a slightly different result.</li>
+<li>No student loan, benefits in kind or other deductions.</li></ul>
+<p>If you are a company director, taking a low salary and the rest as dividends usually leaves more in your pocket. See the <a href="/dividend-tax-calculator">dividend tax calculator</a> and <a href="/director-salary-and-dividends">director salary and dividend planning</a>. Employers can use our <a href="/payroll">payroll service</a> from £25 a month.</p>''',
+ [('Why is my payslip slightly different?','Payroll works out tax and National Insurance each pay period, and your tax code, student loan, benefits or pension scheme type can change the figure.'),
+  ('How much tax do I pay on £35,000?','In 2026 to 2027, income tax is £4,486 and National Insurance is £1,794.40, leaving take-home pay of £28,719.60, about £2,393 a month.'),
+  ('Does this work for the self-employed?','No. Sole traders pay Class 4 National Insurance at 6% and 2% on profits instead, through Self Assessment.'),
+  ('What is the 60% tax trap?','Between £100,000 and £125,140 you lose £1 of personal allowance for every £2 earned, so the effective income tax rate on that slice is 60%. Pension contributions can reduce it.')],
+ crumb='Calculators')

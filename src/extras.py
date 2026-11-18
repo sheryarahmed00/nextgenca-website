@@ -285,7 +285,7 @@ if '<!--tools-->' not in s:
       <a class="ftool" href="/corporation-tax-calculator"><small>Calculator</small><b>Corporation tax calculator</b><span>19%, 25% and marginal relief for 2026 to 2027.</span><i>Calculate →</i></a>
       <a class="ftool" href="/dividend-tax-calculator"><small>Calculator</small><b>Dividend tax calculator</b><span>See the tax on your salary and dividend mix.</span><i>Calculate →</i></a>
       <a class="ftool" href="/tax-deadlines-for-company-directors"><small>Guide</small><b>Deadlines for directors</b><span>Every filing date and the penalty for missing it.</span><i>Read the guide →</i></a>
-      <a class="ftool" href="/limited-company-expenses-guide"><small>Guide</small><b>What can my company claim?</b><span>Expenses a limited company can and cannot claim.</span><i>Read the guide →</i></a>
+      <a class="ftool" href="/salary-take-home-calculator"><small>Calculator</small><b>Take-home pay calculator</b><span>Your salary after tax and National Insurance.</span><i>Calculate →</i></a>
     </div>
   </div>
 </section>
@@ -297,11 +297,12 @@ if '<!--tools-->' not in s:
 if '<!--herocalc-->' not in s:
     _hc='''<!--herocalc--><div class="hcalc">
       <style>.hcalc{margin:30px 0 0;max-width:640px;padding:20px 22px;border:1px solid rgba(201,162,77,.45);border-left:3px solid var(--gold);background:rgba(255,255,255,.05)}.hcalc small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.hcalc b.t{display:block;color:#fff;font-size:1.08rem;margin:6px 0 14px}.hcalc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}.hcalc input{width:170px;padding:11px 12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font:inherit}.hcalc .res{color:rgba(255,255,255,.85)}.hcalc .res strong{color:#fff;font-size:1.25rem}.hcalc p{margin:14px 0 0;font-size:.9rem}.hcalc p a{color:var(--gold-2,#e3c178);font-weight:700;margin-right:18px;white-space:nowrap}</style>
-      <small>Free tool</small>
-      <b class="t">Quick corporation tax check, 2026 to 2027</b>
+      <small>Free tools</small>
+      <b class="t">Quick tax check, 2026 to 2027</b>
       <div class="row"><label for="hcp" style="color:rgba(255,255,255,.85)">Company profit £</label><input id="hcp" type="number" min="0" step="1000" value="60000" inputmode="numeric"><span class="res">Tax due <strong id="hcr">-</strong></span></div>
-      <p><a href="/corporation-tax-calculator">Full calculator →</a><a href="/dividend-tax-calculator">Dividend tax calculator →</a><a href="/tax-deadlines-for-company-directors">Deadlines for directors →</a></p>
-      <script>(function(){var i=document.getElementById("hcp"),o=document.getElementById("hcr");function r(){var p=Math.max(0,parseFloat(i.value)||0),t=p<=50000?p*0.19:p>=250000?p*0.25:p*0.25-(250000-p)*3/200;o.textContent="£"+Math.round(t).toLocaleString("en-GB")}i.addEventListener("input",r);r()})();</script>
+      <div class="row" style="margin-top:12px"><label for="hsp" style="color:rgba(255,255,255,.85)">Annual salary £</label><input id="hsp" type="number" min="0" step="1000" value="35000" inputmode="numeric"><span class="res">Take-home <strong id="hsr">-</strong> a month</span></div>
+      <p><a href="/corporation-tax-calculator">Full calculator →</a><a href="/salary-take-home-calculator">Take-home pay calculator →</a><a href="/dividend-tax-calculator">Dividend tax calculator →</a><a href="/tax-deadlines-for-company-directors">Deadlines for directors →</a></p>
+      <script>(function(){var i=document.getElementById("hcp"),o=document.getElementById("hcr");function r(){var p=Math.max(0,parseFloat(i.value)||0),t=p<=50000?p*0.19:p>=250000?p*0.25:p*0.25-(250000-p)*3/200;o.textContent="£"+Math.round(t).toLocaleString("en-GB")}i.addEventListener("input",r);r();var a=document.getElementById("hsp"),b=document.getElementById("hsr");function q(){var e=Math.max(0,parseFloat(a.value)||0),pa=12570;if(e>100000){pa=Math.max(0,12570-Math.floor((e-100000)/2))}var t=Math.max(0,e-pa),x=Math.min(t,37700)*0.2+Math.max(0,Math.min(t,125140-pa)-37700)*0.4+Math.max(0,t-(125140-pa))*0.45,n=Math.max(0,Math.min(e,50270)-12570)*0.08+Math.max(0,e-50270)*0.02;b.textContent="£"+Math.round((e-x-n)/12).toLocaleString("en-GB")}a.addEventListener("input",q);q()})();</script>
     </div>
 '''
     _a=s.find('<div class="creds">'); _b=s.find('</div>',_a)

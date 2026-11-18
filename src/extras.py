@@ -292,3 +292,17 @@ if '<!--tools-->' not in s:
 '''
     s=s.replace('<section id="insights">',_tools+'<section id="insights">',1)
     s=s.replace('<a href="#insights">Insights</a>','<a href="#tools">Free tools</a>\n      <a href="#insights">Insights</a>',1)
+
+# Quick corporation tax check in the hero, under the credentials
+if '<!--herocalc-->' not in s:
+    _hc='''<!--herocalc--><div class="hcalc">
+      <style>.hcalc{margin:30px 0 0;max-width:640px;padding:20px 22px;border:1px solid rgba(201,162,77,.45);border-left:3px solid var(--gold);background:rgba(255,255,255,.05)}.hcalc small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.hcalc b.t{display:block;color:#fff;font-size:1.08rem;margin:6px 0 14px}.hcalc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}.hcalc input{width:170px;padding:11px 12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font:inherit}.hcalc .res{color:rgba(255,255,255,.85)}.hcalc .res strong{color:#fff;font-size:1.25rem}.hcalc p{margin:14px 0 0;font-size:.9rem}.hcalc p a{color:var(--gold-2,#e3c178);font-weight:700;margin-right:18px;white-space:nowrap}</style>
+      <small>Free tool</small>
+      <b class="t">Quick corporation tax check, 2026 to 2027</b>
+      <div class="row"><label for="hcp" style="color:rgba(255,255,255,.85)">Company profit £</label><input id="hcp" type="number" min="0" step="1000" value="60000" inputmode="numeric"><span class="res">Tax due <strong id="hcr">-</strong></span></div>
+      <p><a href="/corporation-tax-calculator">Full calculator →</a><a href="/dividend-tax-calculator">Dividend tax calculator →</a><a href="/tax-deadlines-for-company-directors">Deadlines for directors →</a></p>
+      <script>(function(){var i=document.getElementById("hcp"),o=document.getElementById("hcr");function r(){var p=Math.max(0,parseFloat(i.value)||0),t=p<=50000?p*0.19:p>=250000?p*0.25:p*0.25-(250000-p)*3/200;o.textContent="£"+Math.round(t).toLocaleString("en-GB")}i.addEventListener("input",r);r()})();</script>
+    </div>
+'''
+    _a=s.find('<div class="creds">'); _b=s.find('</div>',_a)
+    if _a>0 and _b>0: s=s[:_b+6]+'\n    '+_hc+s[_b+6:]

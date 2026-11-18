@@ -338,12 +338,21 @@ footer a:hover{color:#fff}
       <span><strong>10+ years</strong> in UK accounting</span>
       <span>Professional indemnity <strong>insured</strong></span>
     </div>
+    <!--herocalc--><div class="hcalc">
+      <style>.hcalc{margin:30px 0 0;max-width:640px;padding:20px 22px;border:1px solid rgba(201,162,77,.45);border-left:3px solid var(--gold);background:rgba(255,255,255,.05)}.hcalc small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.hcalc b.t{display:block;color:#fff;font-size:1.08rem;margin:6px 0 14px}.hcalc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}.hcalc input{width:170px;padding:11px 12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font:inherit}.hcalc .res{color:rgba(255,255,255,.85)}.hcalc .res strong{color:#fff;font-size:1.25rem}.hcalc p{margin:14px 0 0;font-size:.9rem}.hcalc p a{color:var(--gold-2,#e3c178);font-weight:700;margin-right:18px;white-space:nowrap}</style>
+      <small>Free tool</small>
+      <b class="t">Quick corporation tax check, 2026 to 2027</b>
+      <div class="row"><label for="hcp" style="color:rgba(255,255,255,.85)">Company profit £</label><input id="hcp" type="number" min="0" step="1000" value="60000" inputmode="numeric"><span class="res">Tax due <strong id="hcr">-</strong></span></div>
+      <p><a href="/corporation-tax-calculator">Full calculator →</a><a href="/dividend-tax-calculator">Dividend tax calculator →</a><a href="/tax-deadlines-for-company-directors">Deadlines for directors →</a></p>
+      <script>(function(){var i=document.getElementById("hcp"),o=document.getElementById("hcr");function r(){var p=Math.max(0,parseFloat(i.value)||0),t=p<=50000?p*0.19:p>=250000?p*0.25:p*0.25-(250000-p)*3/200;o.textContent="£"+Math.round(t).toLocaleString("en-GB")}i.addEventListener("input",r);r()})();</script>
+    </div>
+
    </div>
    <div class="hero-side">
     <!--latest-->
     <a class="hero-latest" href="/insights/self-assessment-scams-how-to-spot-a-fake-hmrc-message"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>Self Assessment scams: how to spot a fake HMRC message before 31 January</b><i>Read the article →</i></a>
     <!--/latest-->
-                                                                                                                                                                                                       <aside class="cal" aria-label="UK filing deadlines we manage">
+                                                                                                                                                                                                               <aside class="cal" aria-label="UK filing deadlines we manage">
     <p class="cal-by">Guides by Sheryar Ahmed ACA FCCA</p>
     <h2>Deadlines we keep for you</h2>
     <p class="sub">You run the business. We watch the calendar.</p>
@@ -483,7 +492,7 @@ footer a:hover{color:#fff}
       </div>
     </div>
     <!--/exp-->
-                                                                                                                                                                          </div>
+                                                                                                                                                                                  </div>
 </section>
 
 
@@ -534,6 +543,8 @@ footer a:hover{color:#fff}
       </div>
     </div>
 
+    
+    
     
     
     

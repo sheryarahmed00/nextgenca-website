@@ -266,7 +266,11 @@ s=s.replace('"areaServed":[{"@type":"City","name":"Luton"},{"@type":"Administrat
 # Link new UK service pages from the home services section
 if '<!--uksvc-->' not in s:
     _i=s.find('id="services"'); _j=s.find('</section>',_i)
-    _blk='''<!--uksvc--><p class="uksvc" style="margin:22px 0 0;line-height:1.9">More: <a href="/accounting-services-uk">All accounting services UK</a> · <a href="/corporation-tax-returns">Corporation tax returns (CT600)</a> · <a href="/vat-registration-and-returns">VAT registration and returns</a> · <a href="/small-business-accounting">Small business accounting</a> · <a href="/contractor-and-self-employed-accounting">Contractor and self-employed accounting</a> · <a href="/business-tax-planning">Business tax planning</a></p>
+    _blk='''<!--uksvc--><div class="uksvc" style="margin:26px 0 0">
+<style>.uksvc h3{font:800 .74rem var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}.uksvc .chips{display:flex;flex-wrap:wrap;gap:10px}.uksvc .chips a{display:inline-flex;align-items:center;padding:11px 18px;border:1px solid var(--rule);background:#fff;color:var(--navy);font-weight:700;font-size:.93rem;text-decoration:none;border-radius:999px;transition:background .15s,color .15s,border-color .15s}.uksvc .chips a:hover{background:var(--navy);color:#fff;border-color:var(--navy)}.uksvc .chips a.all{background:var(--navy);color:#fff;border-color:var(--navy)}</style>
+<h3>Popular services</h3>
+<div class="chips"><a href="/corporation-tax-returns">Corporation tax returns (CT600)</a><a href="/vat-registration-and-returns">VAT registration and returns</a><a href="/small-business-accounting">Small business accounting</a><a href="/contractor-and-self-employed-accounting">Contractor and self-employed accounting</a><a href="/business-tax-planning">Business tax planning</a><a class="all" href="/accounting-services-uk">All accounting services →</a></div>
+</div>
 '''
     _k=s.rfind('</div>',_i,_j)
     if _i>0 and _k>0: s=s[:_k]+_blk+s[_k:]

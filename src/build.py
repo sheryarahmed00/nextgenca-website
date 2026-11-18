@@ -143,8 +143,8 @@ def svc(slug,name,title,desc,lead,inc,feerows,steps,dates,qs,dates_title='Dates 
     page(slug,title,desc,body,ld)
 
 svc('self-assessment-tax-return','Self Assessment tax returns',
- 'Self Assessment Tax Return Accountant in Luton | From £99 | NextGen',
- 'Self Assessment tax returns prepared and filed by a Chartered Accountant in Luton. Fixed fees from £99 for employees, sole traders, landlords and directors across the UK.',
+ 'Self Assessment Tax Return Accountant UK | From £99 | NextGen',
+ 'Self Assessment tax returns prepared and filed online by ICAEW Chartered Accountants. Fixed fees from £99 for employees, sole traders, landlords and directors across the UK.',
  'Your tax return prepared, checked and filed with HMRC by a Chartered Accountant, for a fixed fee agreed before we start.',
  ['Review of your income, expenses and allowances','Sole trader, rental, dividend, pension and foreign income','Capital gains, including 60-day property returns','Tax calculation explained in plain English before we file','Filing with HMRC and confirmation of what to pay and when','Help with HMRC letters, late returns and penalties'],
  [('Self Assessment tax return','£99'),('Self-employed tax return, one income source','£99'),('Self-employed tax return, several income sources','£150'),('Landlord tax return','£129'),('Capital gains tax return','£149'),('MTD for Income Tax quarterly update','£30 per quarter')],
@@ -156,7 +156,7 @@ svc('self-assessment-tax-return','Self Assessment tax returns',
 
 svc('limited-company-accounts','Limited company accounts and corporation tax',
  'Limited Company Accounts and CT600 | From £349 | NextGen Chartered Accountant',
- 'Year-end accounts, corporation tax return (CT600) and Companies House filing for limited companies. Fixed fees from £349 from an ICAEW member firm in Luton.',
+ 'Year-end accounts, corporation tax return (CT600) and Companies House filing for limited companies. Fixed fees from £349 from an ICAEW member firm, online across the UK.',
  'Year-end accounts, the corporation tax return and Companies House filing, handled together for one fixed fee.',
  ['Statutory year-end accounts','Corporation tax computation and CT600 return','Filing with Companies House and HMRC','Confirmation statement','Salary and dividend planning for directors','Dormant company accounts'],
  [('Limited company accounts and CT600','£349'),('Dormant company accounts','£49'),('Confirmation statement','£29'),('Director-only payroll','£10 per month'),('Tax planning session','£75')],

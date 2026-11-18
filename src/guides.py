@@ -60,7 +60,7 @@ guide('tax-deadlines-for-company-directors','Tax and filing deadlines for limite
 <tr><td>File annual accounts at Companies House</td><td>9 months after year end</td></tr>
 <tr><td>Pay corporation tax</td><td>9 months and 1 day after year end</td></tr>
 <tr><td>File the CT600 company tax return</td><td>12 months after year end</td></tr>
-<tr><td>Confirmation statement</td><td>Within 14 days of the review date, every 12 months</td></tr>
+<tr><td>Confirmation statement</td><td>Within 14 days after the end of the review period, at least once every 12 months</td></tr>
 </table>
 <p>A new company's first accounts are due 21 months after the date of incorporation. Example: a company with a 31 March 2026 year end files accounts by 31 December 2026, pays corporation tax by 1 January 2027 and files its CT600 by 31 March 2027.</p>
 <h2>Deadlines that fall on fixed dates</h2>
@@ -77,7 +77,7 @@ guide('tax-deadlines-for-company-directors','Tax and filing deadlines for limite
 </table>
 <h2>Penalties for filing late</h2>
 <ul><li>Companies House accounts: £150 if up to 1 month late, £375 for 1 to 3 months, £750 for 3 to 6 months and £1,500 for more than 6 months. The penalty doubles if accounts were late the year before as well.</li>
-<li>CT600: £100 if one day late and a further £100 after 3 months, then tax-based penalties after 6 and 12 months.</li>
+<li>CT600, for returns with a filing date on or after 1 April 2026: £200 if the return is late and £400 if it is more than 3 months late. If the returns for the two previous periods were also late, these rise to £1,000 and £2,000. HMRC adds tax-based penalties of 10% of the unpaid tax when the return is 6 months late and a further 10% at 12 months. Returns with a filing date before 1 April 2026 carry the old £100 and £200 penalties.</li>
 <li>Self Assessment: £100 if one day late, then daily and tax-based penalties after 3, 6 and 12 months.</li>
 <li>Late tax also carries interest from the due date.</li></ul>
 <h2>Why directors need a personal tax return</h2>
@@ -143,7 +143,9 @@ guide('online-accountants-for-london-businesses','Online accountants for London 
 <tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
 <tr><td>Self Assessment tax return</td><td>from £99</td></tr>
 <tr><td>VAT return</td><td>from £90 a quarter</td></tr>
-<tr><td>Payroll</td><td>from £25 a month</td></tr>
+<tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
+<tr><td>Director-only payroll</td><td>£10 a month</td></tr>
+<tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
 </table>
 <p class="note">Prices are starting fees. See the <a href="/fees">full price list</a>.</p>
 <h2>Is an accountant outside London right for you?</h2>
@@ -256,7 +258,8 @@ guide('how-much-does-an-accountant-cost-uk','How much does an accountant cost in
 <tr><td>Self-employed tax return, several income sources</td><td>from £150</td></tr>
 <tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
 <tr><td>VAT return</td><td>from £90 a quarter</td></tr>
-<tr><td>Payroll</td><td>from £25 a month</td></tr>
+<tr><td>Director-only payroll</td><td>£10 a month</td></tr>
+<tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
 <tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
 </table>
 <p>The <a href="/fees">full price list</a> shows every service. Your fee is fixed in writing before work starts.</p>
@@ -295,7 +298,7 @@ guide('uk-company-non-resident-director-guide','Running a UK limited company as 
 <tr><td>Annual accounts to Companies House</td><td>9 months after year end</td></tr>
 <tr><td>Corporation tax payment</td><td>9 months and 1 day after year end</td></tr>
 <tr><td>CT600 return to HMRC</td><td>12 months after year end</td></tr>
-<tr><td>Confirmation statement</td><td>Every 12 months</td></tr>
+<tr><td>Confirmation statement</td><td>Within 14 days after the end of each 12-month review period</td></tr>
 </table>
 <p>These apply even if the company has not traded. A company that has never traded files dormant accounts. Late accounts bring automatic penalties starting at £150.</p>
 <h2>Paying yourself from abroad</h2>
@@ -348,9 +351,186 @@ g("tky").textContent=f(net);g("tkm").textContent=f(net/12);g("tkw").textContent=
 <li>The personal allowance falls by £1 for every £2 of income over £100,000.</li>
 <li>Pension is treated as salary sacrifice, so it reduces both tax and National Insurance. Other pension schemes give a slightly different result.</li>
 <li>No student loan, benefits in kind or other deductions.</li></ul>
-<p>If you are a company director, taking a low salary and the rest as dividends usually leaves more in your pocket. See the <a href="/dividend-tax-calculator">dividend tax calculator</a> and <a href="/director-salary-and-dividends">director salary and dividend planning</a>. Employers can use our <a href="/payroll">payroll service</a> from £25 a month.</p>''',
+<p>If you are a company director, taking a low salary and the rest as dividends usually leaves more in your pocket. See the <a href="/dividend-tax-calculator">dividend tax calculator</a> and <a href="/director-salary-and-dividends">director salary and dividend planning</a>. Employers can use our <a href="/payroll">payroll service</a>: £10 a month for a director-only payroll and £25 a month for up to 5 employees.</p>''',
  [('Why is my payslip slightly different?','Payroll works out tax and National Insurance each pay period, and your tax code, student loan, benefits or pension scheme type can change the figure.'),
   ('How much tax do I pay on £35,000?','In 2026 to 2027, income tax is £4,486 and National Insurance is £1,794.40, leaving take-home pay of £28,719.60, about £2,393 a month.'),
   ('Does this work for the self-employed?','No. Sole traders pay Class 4 National Insurance at 6% and 2% on profits instead, through Self Assessment.'),
   ('What is the 60% tax trap?','Between £100,000 and £125,140 you lose £1 of personal allowance for every £2 earned, so the effective income tax rate on that slice is 60%. Pension contributions can reduce it.')],
  crumb='Calculators')
+
+FEE_NOTE='<p class="note">Prices are starting fees and are fixed in writing before work starts. See the <a href="/fees">full price list</a>.</p>'
+
+guide('making-tax-digital-for-income-tax','Making Tax Digital for Income Tax: who it applies to and what to do',
+ 'Making Tax Digital for Income Tax UK | 2026 Guide | NextGen CA',
+ 'Making Tax Digital for Income Tax started on 6 April 2026 for sole traders and landlords with income over £50,000. Thresholds, quarterly update dates, software, penalties and what it costs.',
+ '''<p class="lead">Making Tax Digital for Income Tax (MTD IT) started on 6 April 2026. Sole traders and landlords above the income threshold must now keep digital records, send HMRC a quarterly update through software and file a final declaration after the tax year ends, instead of one Self Assessment return.</p>
+<h2>Who has to join, and when</h2>
+<table class="ft">
+<tr><td>Qualifying income over £50,000</td><td>From 6 April 2026</td></tr>
+<tr><td>Qualifying income over £30,000</td><td>From 6 April 2027</td></tr>
+<tr><td>Qualifying income over £20,000</td><td>From 6 April 2028</td></tr>
+</table>
+<p>Qualifying income is your gross self-employment and property income added together, before expenses. HMRC looks at the return for the tax year two years earlier, so the April 2026 start is based on your 2024 to 2025 return. Employment income, dividends and pensions do not count towards the threshold.</p>
+<h2>What you have to do each year</h2>
+<ul><li>Keep digital records of income and expenses in MTD-compatible software.</li>
+<li>Send a quarterly update for each business and for property income.</li>
+<li>File a final declaration by 31 January after the tax year, which replaces the Self Assessment return, and pay the tax as before.</li></ul>
+<h2>Quarterly update deadlines</h2>
+<table class="ft">
+<tr><td>6 April to 5 July</td><td>7 August</td></tr>
+<tr><td>6 July to 5 October</td><td>7 November</td></tr>
+<tr><td>6 October to 5 January</td><td>7 February</td></tr>
+<tr><td>6 January to 5 April</td><td>7 May</td></tr>
+</table>
+<p>You can elect to use calendar quarters instead, ending on 30 June, 30 September, 31 December and 31 March, with the same filing dates.</p>
+<h2>Penalties</h2>
+<p>MTD IT uses a points system. Each late submission earns a point, and a £200 penalty is charged when you reach the threshold. HMRC has said it will not apply penalty points for late quarterly updates in the first year, 2026 to 2027, but the final declaration and tax payment deadlines still carry penalties.</p>
+<h2>What it costs with us</h2>
+<table class="ft">
+<tr><td>MTD for Income Tax quarterly update</td><td>£30 a quarter</td></tr>
+<tr><td>Final declaration, one income source</td><td>from £99</td></tr>
+<tr><td>Monthly bookkeeping, if you want us to keep the records</td><td>from £49 a month</td></tr>
+</table>'''+FEE_NOTE+'''
+<h2>How to get ready</h2>
+<ul><li>Check your gross income on your last tax return against the thresholds.</li>
+<li>Choose software, or ask us to set it up. See <a href="/accounting-software-setup">software setup</a>.</li>
+<li>Open a separate bank account for the business or rental income if you do not have one.</li>
+<li>Sign up for MTD IT, or authorise us to do it as your agent.</li></ul>
+<p>We run MTD IT for clients as part of our <a href="/making-tax-digital">Making Tax Digital service</a>, alongside <a href="/sole-trader-accounts">sole trader accounts</a> and <a href="/landlord-tax-return">landlord tax returns</a>.</p>''',
+ [('Does MTD for Income Tax apply to limited companies?','No. It applies to individuals with self-employment or property income. Companies continue to file a CT600.'),
+  ('My profit is low but my turnover is over £50,000. Am I in?','Yes. The test uses gross income before expenses, not profit.'),
+  ('Can I still use a spreadsheet?','Only with bridging software that sends the figures to HMRC digitally. Most people find full bookkeeping software simpler.'),
+  ('Do I pay tax every quarter?','No. Quarterly updates are reports only. Tax is still paid by 31 January and 31 July.')])
+
+guide('hospitality-and-restaurant-accountants','Accountants for restaurants, takeaways and hospitality businesses',
+ 'Hospitality and Restaurant Accountants UK | Fixed Fees | NextGen',
+ 'Chartered Accountants for UK restaurants, takeaways, cafes, pubs and hotels. Weekly payroll, tips and tronc, VAT on food, bookkeeping from till and delivery apps, year-end accounts. Fixed fees.',
+ '''<p class="lead">We look after the accounts, VAT, payroll and tax of restaurants, takeaways, cafes, pubs and small hotels across the UK. Sheryar Ahmed ACA FCCA has worked in hospitality finance, so the firm knows how the numbers in a kitchen and front of house actually behave.</p>
+<h2>What we do for hospitality businesses</h2>
+<ul><li><a href="/bookkeeping-and-vat">Bookkeeping</a> from till reports, card terminals and delivery platforms such as Just Eat, Uber Eats and Deliveroo, including their commission.</li>
+<li><a href="/vat-registration-and-returns">VAT returns</a> with the right split between standard-rated and zero-rated sales.</li>
+<li><a href="/payroll">Weekly or monthly payroll</a> for hourly staff, holiday pay, pensions and tips.</li>
+<li><a href="/limited-company-accounts">Year-end accounts and corporation tax</a>.</li>
+<li><a href="/management-accounts">Monthly management accounts</a> showing food cost, labour cost and margin.</li></ul>
+<h2>Tax points that catch restaurants out</h2>
+<ul><li><strong>VAT on food.</strong> Food eaten on the premises and hot takeaway food are standard-rated at 20%. Most cold takeaway food is zero-rated. The till needs to record the difference.</li>
+<li><strong>Tips.</strong> Since 1 October 2024 employers must pass on all tips, gratuities and service charges to staff without deductions, and keep a written tips policy and records.</li>
+<li><strong>Tronc.</strong> Tips shared through an independent tronc can be free of National Insurance if the scheme is run properly.</li>
+<li><strong>Delivery platforms.</strong> Sales are the gross amount the customer paid, not the net payout after commission.</li>
+<li><strong>Cash.</strong> HMRC compares card and cash ratios with similar businesses. Daily records protect you in an enquiry.</li></ul>
+<h2>Fees</h2>
+<table class="ft">
+<tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
+<tr><td>VAT return</td><td>£90 a quarter</td></tr>
+<tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
+<tr><td>Each extra employee</td><td>£4 a payslip</td></tr>
+<tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
+</table>'''+FEE_NOTE+'''
+<h2>How it works</h2>
+<p>Everything is done online. You send till and bank data, or we connect your bookkeeping software to the bank and the till. You have one named contact and replies within 1 hour, Monday to Saturday.</p>''',
+ [('Can you work with my EPOS system?','Yes, if it can export daily sales reports or connect to bookkeeping software. We tell you on the first call.'),
+  ('Do I have to charge VAT on takeaway food?','Hot takeaway food is standard-rated. Cold food taken away is usually zero-rated. Drinks and confectionery have their own rules.'),
+  ('How should tips be paid?','Tips must go to staff in full by the end of the month after the month they were received. Card tips paid by the employer go through payroll for tax.'),
+  ('I have fallen behind with VAT and payroll. Can you help?','Yes. We bring the records up to date, file what is overdue and deal with HMRC about penalties.')],
+ crumb='Sectors')
+
+guide('construction-and-cis-accountants','Accountants for construction businesses and CIS subcontractors',
+ 'Construction and CIS Accountants UK | Fixed Fees | NextGen CA',
+ 'Chartered Accountants for UK builders, contractors and CIS subcontractors. Monthly CIS returns, subcontractor verification, CIS refunds, VAT reverse charge, accounts and tax returns. Fixed fees.',
+ '''<p class="lead">We act for building contractors, trades and subcontractors across the UK. We file monthly CIS returns, reclaim CIS deductions, handle the VAT reverse charge and prepare the accounts and tax returns, for a fixed fee.</p>
+<h2>How the Construction Industry Scheme works</h2>
+<table class="ft">
+<tr><td>Subcontractor registered for CIS</td><td>20% deducted</td></tr>
+<tr><td>Subcontractor not registered</td><td>30% deducted</td></tr>
+<tr><td>Subcontractor with gross payment status</td><td>No deduction</td></tr>
+</table>
+<p>A contractor must verify each subcontractor with HMRC, deduct tax from the labour part of each payment, give the subcontractor a monthly statement, and file a CIS return by the 19th of each month for the tax month ending on the 5th. Deductions are paid to HMRC by the 22nd.</p>
+<h2>What we do</h2>
+<ul><li><strong>Contractors:</strong> subcontractor verification, <a href="/cis-returns">monthly CIS returns</a>, deduction statements, and <a href="/payroll">payroll</a> for employed staff.</li>
+<li><strong>Sole trader subcontractors:</strong> <a href="/self-assessment-tax-return">Self Assessment</a> with all expenses claimed, so the CIS tax already deducted is refunded where it is more than the tax due.</li>
+<li><strong>Limited company subcontractors:</strong> CIS suffered set against PAYE each month, and any balance reclaimed after the tax year.</li>
+<li><a href="/vat-registration-and-returns">VAT returns</a> using the domestic reverse charge for construction services.</li>
+<li><a href="/limited-company-accounts">Year-end accounts and corporation tax</a>, and help applying for gross payment status.</li></ul>
+<h2>Points that cause problems</h2>
+<ul><li><strong>Late CIS returns.</strong> The penalty is £100 for a late return, £200 after 2 months, and further penalties after 6 and 12 months.</li>
+<li><strong>Materials.</strong> CIS is deducted from labour only. Materials must be shown separately on the invoice.</li>
+<li><strong>VAT reverse charge.</strong> For most construction services between VAT-registered businesses, the customer accounts for the VAT, not the supplier. Invoices need the right wording.</li>
+<li><strong>Employed or self-employed.</strong> Calling someone a subcontractor does not make them one. HMRC looks at how the work is actually done.</li></ul>
+<h2>Fees</h2>
+<table class="ft">
+<tr><td>CIS monthly return</td><td>£25 a month</td></tr>
+<tr><td>Self Assessment for a CIS subcontractor</td><td>from £99</td></tr>
+<tr><td>VAT return</td><td>£90 a quarter</td></tr>
+<tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
+<tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
+</table>'''+FEE_NOTE,
+ [('How do I get my CIS refund?','Sole traders claim it through the Self Assessment return after 5 April. Limited companies set CIS against PAYE during the year and reclaim any balance afterwards.'),
+  ('Can I get gross payment status?','You need to pass HMRC\'s business, turnover and compliance tests, including filing and paying on time for the last 12 months. We check before you apply.'),
+  ('Do I need to file a CIS return if I paid no subcontractors?','If HMRC expects a return, yes, unless you have told HMRC you will not be paying subcontractors for a period.'),
+  ('What expenses can a subcontractor claim?','Tools, materials, protective clothing, van and fuel costs, insurance, phone and accountancy fees, as long as they are for the work.')],
+ crumb='Sectors')
+
+guide('ecommerce-accountants','Accountants for e-commerce and online sellers',
+ 'E-commerce Accountants UK | Amazon, eBay, Shopify | NextGen CA',
+ 'Chartered Accountants for UK online sellers on Amazon, eBay, Etsy, Shopify and TikTok Shop. Bookkeeping from marketplace reports, VAT, stock, multi-currency and year-end accounts. Fixed fees.',
+ '''<p class="lead">We prepare the accounts, VAT and tax returns of online sellers trading on Amazon, eBay, Etsy, Shopify, TikTok Shop and their own websites, from first sales through to a limited company with stock in several countries.</p>
+<h2>What makes e-commerce accounts different</h2>
+<ul><li><strong>Payouts are not sales.</strong> Marketplaces pay out after deducting fees, refunds and advertising. The accounts need gross sales, with fees shown as costs.</li>
+<li><strong>VAT registration.</strong> A UK-established seller must register once taxable turnover passes £90,000 in any rolling 12 months. Overseas sellers storing goods in the UK must register from their first sale.</li>
+<li><strong>Marketplace VAT rules.</strong> In some cases the marketplace, not the seller, accounts for the VAT, for example on sales by overseas sellers to UK consumers.</li>
+<li><strong>Selling to the EU.</strong> Goods sent to EU consumers have EU VAT, usually handled through the One Stop Shop or Import One Stop Shop schemes.</li>
+<li><strong>Stock.</strong> Year-end stock, including goods held at fulfilment centres and in transit, changes the profit.</li>
+<li><strong>HMRC already has your figures.</strong> Online platforms report sellers' income to HMRC every year.</li></ul>
+<h2>What we do</h2>
+<ul><li><a href="/bookkeeping-and-vat">Bookkeeping</a> from marketplace settlement reports, payment processors and bank feeds, in Xero, QuickBooks or FreeAgent.</li>
+<li><a href="/vat-registration-and-returns">VAT registration and returns</a>, including the right scheme for your margins.</li>
+<li><a href="/sole-trader-accounts">Sole trader accounts</a> or <a href="/limited-company-accounts">limited company accounts and CT600</a>.</li>
+<li>Advice on <a href="/sole-trader-to-limited-company">when to become a limited company</a>.</li>
+<li><a href="/non-resident-uk-tax">UK tax and VAT for overseas sellers</a>.</li></ul>
+<h2>Fees</h2>
+<table class="ft">
+<tr><td>Self-employed tax return, one income source</td><td>£99</td></tr>
+<tr><td>Limited company accounts and CT600</td><td>from £349</td></tr>
+<tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
+<tr><td>VAT registration</td><td>£39</td></tr>
+<tr><td>VAT return</td><td>£90 a quarter</td></tr>
+<tr><td>UK VAT registration for overseas sellers</td><td>£99</td></tr>
+</table>'''+FEE_NOTE,
+ [('I only sell a few things online. Do I need to tell HMRC?','If your trading income is over £1,000 in a tax year you must register for Self Assessment. Selling your own used belongings is not usually trading.'),
+  ('Do I pay VAT on Amazon fees?','Marketplace fees charged to UK sellers generally carry UK VAT. A VAT-registered seller can normally reclaim it.'),
+  ('Should I use the Flat Rate Scheme?','It rarely suits sellers of goods because the cost of stock is high, but we check the figures for you.'),
+  ('Can you work from my marketplace reports?','Yes. Give us read-only access or the settlement reports and we do the rest.')],
+ crumb='Sectors')
+
+guide('switching-accountants','How to switch accountants in the UK',
+ 'Switching Accountants UK: How to Change Accountant | NextGen CA',
+ 'How to change accountant in the UK: when you can switch, what your new accountant does for you, the professional clearance letter, what records are handed over and how long it takes.',
+ '''<p class="lead">You can change accountant at any time of year. You do not need to wait for the year end, and you do not need to have an awkward conversation: your new accountant contacts the old one and collects what is needed.</p>
+<h2>How switching works</h2>
+<ol><li><strong>Choose your new accountant</strong> and agree the fee and what it covers in writing.</li>
+<li><strong>Identity checks.</strong> By law the new firm must verify your identity before acting for you.</li>
+<li><strong>Tell your current accountant</strong> you are leaving. A short email is enough. Check your engagement letter for any notice period.</li>
+<li><strong>Professional clearance.</strong> The new accountant writes to the old one to ask whether there is any reason not to act and to request your records.</li>
+<li><strong>Handover.</strong> The old accountant passes on the information needed, such as last accounts, tax returns, trial balance, fixed asset records and payroll data.</li>
+<li><strong>HMRC authorisation.</strong> The new accountant becomes your agent with HMRC, and Companies House if needed.</li></ol>
+<p>A straightforward switch usually takes one to two weeks. Work on your accounts does not have to wait for the handover to finish.</p>
+<h2>Good times to switch</h2>
+<ul><li>Just after your accounts and tax return have been filed.</li>
+<li>Before the year end, so the new accountant can plan with you.</li>
+<li>Immediately, if deadlines are being missed or you cannot get replies.</li></ul>
+<h2>Signs it is time to change</h2>
+<ul><li>Returns filed at the last minute, or late.</li>
+<li>Slow replies, or a different person every time.</li>
+<li>Fees that change without explanation.</li>
+<li>No advice beyond filing: nothing on salary and dividends, VAT schemes or allowable expenses.</li>
+<li>Your accountant is not a member of a professional body.</li></ul>
+<h2>What to check first</h2>
+<ul><li>Any fees you still owe. Records are normally released once agreed fees are paid.</li>
+<li>Who holds the logins for your bookkeeping software, and whose subscription it is.</li>
+<li>That you have copies of your last accounts and tax returns.</li></ul>
+<h2>Switching to NextGen</h2>
+<p>We handle the clearance letter, the handover and the HMRC authorisation for you. You get a fixed fee in writing, one named contact and replies within 1 hour, Monday to Saturday. We are an ICAEW member firm, firm number C011010236. See <a href="/about">who we are</a>, our <a href="/fees">fees</a>, or <a href="/how-much-does-an-accountant-cost-uk">what accountants cost in the UK</a>.</p>''',
+ [('Can I switch accountants mid-year?','Yes, at any time. The new accountant picks up from the last period that was completed.'),
+  ('Will my old accountant charge me for the handover?','Providing handover information is normally done without charge, but work beyond that, or outstanding fees, may be billed.'),
+  ('Do I have to tell HMRC?','No. Your new accountant requests authorisation and you approve it.'),
+  ('What if my old accountant will not release my records?','Books and records that belong to you must be returned. If there is a problem, we raise it with the firm and, if needed, its professional body.')])

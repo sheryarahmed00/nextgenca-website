@@ -59,8 +59,8 @@ FOOT='''<footer>
         <p style="margin-top:14px">+44 7591 246395<br>info@nextgenca.co.uk<br>nextgenca.co.uk</p>
         <p style="margin-top:14px">Follow us: <a href="https://www.linkedin.com/company/nextgen-chartered-accountant" rel="me noopener" target="_blank">LinkedIn</a> · <a href="https://www.facebook.com/nextgencharteredaccountant" rel="me noopener" target="_blank">Facebook</a> · <a href="https://www.instagram.com/nextgencharteredaccountant/" rel="me noopener" target="_blank">Instagram</a><br><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener" target="_blank">ICAEW directory listing</a></p>
       </div>
-      <div><h4>Services</h4><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
-      <div><h4>Firm</h4><ul><li><a href="/about">About NextGen</a></li><li><a href="/limited-company-expenses-guide">Limited company expenses guide</a></li><li><a href="/tax-deadlines-for-company-directors">Deadlines for directors</a></li><li><a href="/accountant-or-bookkeeper">Accountant or bookkeeper?</a></li><li><a href="/corporation-tax-calculator">Corporation tax calculator</a></li><li><a href="/dividend-tax-calculator">Dividend tax calculator</a></li><li><a href="/salary-take-home-calculator">Take-home pay calculator</a></li><li><a href="/how-much-does-an-accountant-cost-uk">What an accountant costs</a></li><li><a href="/uk-company-non-resident-director-guide">Non-resident director guide</a></li><li><a href="/online-accountants-for-london-businesses">Online accountants for London</a></li><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
+      <div><p class="fh">Services</p><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
+      <div><p class="fh">Firm</p><ul><li><a href="/about">About NextGen</a></li><li><a href="/limited-company-expenses-guide">Limited company expenses guide</a></li><li><a href="/tax-deadlines-for-company-directors">Deadlines for directors</a></li><li><a href="/accountant-or-bookkeeper">Accountant or bookkeeper?</a></li><li><a href="/corporation-tax-calculator">Corporation tax calculator</a></li><li><a href="/dividend-tax-calculator">Dividend tax calculator</a></li><li><a href="/salary-take-home-calculator">Take-home pay calculator</a></li><li><a href="/how-much-does-an-accountant-cost-uk">What an accountant costs</a></li><li><a href="/uk-company-non-resident-director-guide">Non-resident director guide</a></li><li><a href="/online-accountants-for-london-businesses">Online accountants for London</a></li><li><a href="/making-tax-digital-for-income-tax">MTD for Income Tax guide</a></li><li><a href="/hospitality-and-restaurant-accountants">Restaurant accountants</a></li><li><a href="/construction-and-cis-accountants">Construction and CIS accountants</a></li><li><a href="/ecommerce-accountants">E-commerce accountants</a></li><li><a href="/switching-accountants">Switching accountants</a></li><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
     </div>
     <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number C011010236. © 2026 NextGen Chartered Accountant.</p>
   </div>
@@ -80,6 +80,18 @@ def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website')
     if len(title)>60 and ' | ' in title:
         _parts=title.split(' | ')
         if len(_parts)>2: title=' | '.join([_parts[0],_parts[-1]])
+    if len(title)>60 and slug.startswith('insights/') and ' | ' in title:
+        title=title.rsplit(' | ',1)[0]
+    if len(desc)>160:
+        _d=''
+        for _sn in re.split(r'(?<=[.?!])\s+',desc):
+            if len((_d+' '+_sn).strip())<=160: _d=(_d+' '+_sn).strip()
+            else: break
+        if len(_d)<70:
+            _d=desc[:157].rsplit(' ',1)[0].rstrip(',;:')+'...'
+        desc=_d
+    if not ld and not noindex:
+        ld=[{"@context":"https://schema.org","@type":"WebPage","name":title,"description":desc,"url":url,"isPartOf":{"@type":"WebSite","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"publisher":{"@type":"AccountingService","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant"}}]
     h=f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -310,8 +322,10 @@ page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | Next
 <h2>What we do for Luton businesses</h2>
 <ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a>, from £99</li>
 <li><a href="/limited-company-accounts">Limited company accounts and corporation tax</a>, from £349</li>
-<li><a href="/bookkeeping-and-vat">Bookkeeping and VAT returns</a>, from £49 a month</li>
-<li><a href="/payroll">Payroll and pensions</a>, from £10 a month</li>
+<li><a href="/bookkeeping-and-vat">Monthly bookkeeping</a>, from £49 a month</li>
+<li><a href="/vat-registration-and-returns">VAT returns</a>, £90 a quarter</li>
+<li><a href="/director-only-payroll">Director-only payroll</a>, £10 a month</li>
+<li><a href="/payroll">Staff payroll, up to 5 employees</a>, £25 a month</li>
 <li><a href="/landlord-tax-return">Landlord tax returns</a>, from £129</li>
 <li><a href="/company-formation">Company formation</a>, from £49</li>
 <li><a href="/management-accounts">Management accounts and virtual Finance Director</a>, from £99 a month</li>
@@ -436,6 +450,6 @@ if '/chat.js?v=6' not in s:
     s=s.replace('</body>','<script src="/chat.js?v=6" defer></script>\n</body>')
 exec(open(R+'src/extras.py').read())
 open(R+'index.html','w').write(s)
-slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','limited-company-expenses-guide','tax-deadlines-for-company-directors','accountant-or-bookkeeper','online-accountants-for-london-businesses','corporation-tax-calculator','dividend-tax-calculator','salary-take-home-calculator','how-much-does-an-accountant-cost-uk','uk-company-non-resident-director-guide','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
+slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','limited-company-expenses-guide','tax-deadlines-for-company-directors','accountant-or-bookkeeper','online-accountants-for-london-businesses','corporation-tax-calculator','dividend-tax-calculator','salary-take-home-calculator','making-tax-digital-for-income-tax','hospitality-and-restaurant-accountants','construction-and-cis-accountants','ecommerce-accountants','switching-accountants','how-much-does-an-accountant-cost-uk','uk-company-non-resident-director-guide','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
 open(R+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>https://nextgenca.co.uk/{x}</loc><lastmod>'+str(datetime.date.today())+'</lastmod></url>\n' for x in slugs)+'</urlset>\n')
 print('built')

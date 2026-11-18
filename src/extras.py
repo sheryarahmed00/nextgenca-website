@@ -228,6 +228,7 @@ if _fm:
 <h1>Full price list</h1>
 <p class="lead">Every price below is a starting fee for a straightforward case. You get an exact fixed quote after a free 15-minute call, and it does not change unless your work does.</p>
 <p><a class="btn btn-gold" href="/#estimate">Estimate your monthly fee</a> <a class="btn btn-navy" href="/#contact">Book a free call</a></p>
+<h2>Prices by service</h2>
 <div class="ledger"><div class="ledger-cols">{_ledger}</div>
 <p class="note">Fees depend on turnover, number of transactions and the state of the records. Companies House and other official filing fees are charged at cost.</p></div>
 {CTA}'''

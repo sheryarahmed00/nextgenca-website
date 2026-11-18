@@ -483,3 +483,16 @@ EXTRA_LINKS+= [
  ('Contractor and self-employed accounting','/contractor-and-self-employed-accounting'),
  ('Business tax planning and advisory','/business-tax-planning'),
 ]
+
+# Link established pages to the UK-wide service pages
+for _k,_v in {'limited-company-accounts':['corporation-tax-returns','small-business-accounting'],
+ 'self-assessment-tax-return':['contractor-and-self-employed-accounting'],
+ 'bookkeeping-and-vat':['vat-registration-and-returns','small-business-accounting'],
+ 'payroll':['small-business-accounting'],
+ 'company-formation':['business-tax-planning','corporation-tax-returns'],
+ 'sole-trader-accounts':['contractor-and-self-employed-accounting'],
+ 'director-salary-and-dividends':['business-tax-planning'],
+ 'making-tax-digital':['vat-registration-and-returns'],
+ 'sole-trader-to-limited-company':['business-tax-planning','contractor-and-self-employed-accounting'],
+ 'management-accounts':['small-business-accounting']}.items():
+    REL[_k]=[x for x in _v if x not in REL.get(_k,[])]+REL.get(_k,[])

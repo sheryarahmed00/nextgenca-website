@@ -121,6 +121,13 @@ def fees(rows):
 def faq(qs): return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in qs)
 NAMES={}
 REL={}
+EXTRA_FAQ={
+ 'limited-company-accounts':[('What is the difference between the accounts and the CT600?','The accounts go to Companies House and show the company\'s results. The CT600 is the corporation tax return that goes to HMRC with a tax computation. We prepare and file both. See our corporation tax return page for more.'),('What happens if my accounts are filed late?','Companies House charges an automatic penalty that starts at £150 for a private company and rises the later the accounts are. HMRC charges separate penalties for a late CT600.')],
+ 'self-assessment-tax-return':[('Can I claim expenses if I am an employee?','Some employees can claim for things like work uniforms, professional fees or business mileage in their own car. We check what applies to you when we prepare the return.'),('I am a contractor. Should I use a limited company?','It depends on your income, IR35 status and plans. Our contractor and self-employed page explains the options, and we can compare the figures for you.')],
+ 'bookkeeping-and-vat':[('When must I register for VAT?','When your VAT taxable turnover goes over £90,000 in any rolling 12 months, or you expect it to in the next 30 days. You can also register voluntarily. Our VAT registration page explains the schemes.')],
+ 'payroll':[('Do I need payroll if I am the only director?','If you pay yourself a salary, yes. A director-only payroll keeps the salary, National Insurance and RTI filings correct, usually from £10 a month.')],
+ 'company-formation':[('Will you handle the accounts after formation?','Yes. Most clients move straight on to our fixed-fee limited company accounts and CT600 service, so the company is set up correctly from day one.')],
+}
 def svc(slug,name,title,desc,lead,inc,feerows,steps,dates,qs,dates_title='Dates worth knowing',who=None,need=None,crumb='Services'):
     body=f'''<p class="crumb"><a href="/">Home</a> / <a href="/#services">Services</a> / {name}</p>
 <p class="eyebrow" style="margin-top:22px">Services</p>
@@ -133,12 +140,12 @@ def svc(slug,name,title,desc,lead,inc,feerows,steps,dates,qs,dates_title='Dates 
 {('<h2>What we need from you</h2><ul>'+''.join(f'<li>{i}</li>' for i in need)+'</ul>') if need else ''}
 <h2>{dates_title}</h2><ul>{''.join(f'<li>{i}</li>' for i in dates)}</ul>
 <p class="note">Rules and deadlines are set by HMRC and Companies House and can change. We confirm what applies to you before any work starts.</p>
-<h2>Questions</h2>{faq(qs)}
+<h2>Questions</h2>{faq(qs+EXTRA_FAQ.get(slug,[]))}
 @@REL:{slug}@@
 {CTA}'''
     ld=[{"@context":"https://schema.org","@type":"Service","name":name,"serviceType":name,"url":"https://nextgenca.co.uk/"+slug,"areaServed":{"@type":"Country","name":"United Kingdom"},"provider":{"@type":"AccountingService","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/","telephone":"+447591246395"}},
         {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":name,"item":"https://nextgenca.co.uk/"+slug}]},
-        {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in qs]}]
+        {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in qs+EXTRA_FAQ.get(slug,[])]}]
     NAMES[slug]=name
     page(slug,title,desc,body,ld)
 
@@ -152,7 +159,7 @@ svc('self-assessment-tax-return','Self Assessment tax returns',
  ['The tax year runs from 6 April to 5 April.','Online returns and any tax owed are due by 31 January after the tax year ends.','Payments on account may be due on 31 January and 31 July.','Making Tax Digital for Income Tax applies from April 2026 to sole traders and landlords with qualifying income over £50,000.'],
  [('I have never filed a tax return. Can you register me?','Yes. We register you for Self Assessment with HMRC and then prepare your first return.'),
   ('My return is late. What should I do?','Send us what you have. We will tell you what to file first and what penalties are likely, then get the return in.'),
-  ('Do I need to live in Luton?','No. Everything is done online, so we act for clients anywhere in the UK and abroad.')])
+  ('Do I need to live near you?','No. Everything is done online, so we act for clients anywhere in the UK and abroad.')])
 
 svc('limited-company-accounts','Limited company accounts and corporation tax',
  'Limited Company Accounts and CT600 | From £349 | NextGen Chartered Accountant',

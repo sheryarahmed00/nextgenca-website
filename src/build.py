@@ -58,7 +58,7 @@ FOOT='''<footer>
         <p style="margin-top:14px">Follow us: <a href="https://www.linkedin.com/company/nextgen-chartered-accountant" rel="me noopener" target="_blank">LinkedIn</a> · <a href="https://www.facebook.com/nextgencharteredaccountant" rel="me noopener" target="_blank">Facebook</a> · <a href="https://www.instagram.com/nextgencharteredaccountant/" rel="me noopener" target="_blank">Instagram</a><br><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener" target="_blank">ICAEW directory listing</a></p>
       </div>
       <div><h4>Services</h4><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
-      <div><h4>Firm</h4><ul><li><a href="/about">About NextGen</a></li><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
+      <div><h4>Firm</h4><ul><li><a href="/about">About NextGen</a></li><li><a href="/limited-company-expenses-guide">Limited company expenses guide</a></li><li><a href="/tax-deadlines-for-company-directors">Deadlines for directors</a></li><li><a href="/accountant-or-bookkeeper">Accountant or bookkeeper?</a></li><li><a href="/online-accountants-for-london-businesses">Online accountants for London</a></li><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
     </div>
     <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number C011010236. © 2026 NextGen Chartered Accountant.</p>
   </div>
@@ -67,7 +67,7 @@ FOOT='''<footer>
 const menuBtn=document.getElementById("menuBtn"),nav=document.getElementById("mainNav");
 menuBtn.addEventListener("click",()=>{const open=nav.classList.toggle("open");menuBtn.setAttribute("aria-expanded",open);menuBtn.setAttribute("aria-label",open?"Close menu":"Open menu");});
 </script>
-<script src="/chat.js?v=5" defer></script>'''
+<script src="/chat.js?v=6" defer></script>'''
 CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need. We reply within 1 hour, Monday to Saturday, 9am to 7pm, and send a fixed fee after a free call.</p>
 <a class="btn btn-navy" href="/#contact">Book a free call</a><a class="btn btn-wa" href="https://wa.me/447591246395">Message on WhatsApp</a></div>'''
 PAGES={}
@@ -263,6 +263,7 @@ svc('non-resident-uk-tax','UK tax for non-residents',
 
 exec(open(R+'src/more.py').read())
 exec(open(R+'src/insights.py').read())
+exec(open(R+'src/guides.py').read())
 
 page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
  'NextGen Chartered Accountant is a UK firm of Chartered Accountants, an ICAEW member firm based in Luton, England, founded by Sheryar Ahmed ACA FCCA. Who we are, what we do and how to verify us.',
@@ -429,10 +430,10 @@ if 'apple-touch-icon' not in s:
 btn='<button class="btn btn-gold" type="submit">Request my free call</button>'
 if 'privacy notice</a>' not in s.split('</form>')[0]:
     s=s.replace(btn,btn+'\n      <p style="margin-top:12px;font-size:.82rem;opacity:.8">We use your details only to reply to your enquiry. See our <a href="/privacy">privacy notice</a>.</p>')
-if '/chat.js?v=5' not in s:
-    s=s.replace('</body>','<script src="/chat.js?v=5" defer></script>\n</body>')
+if '/chat.js?v=6' not in s:
+    s=s.replace('</body>','<script src="/chat.js?v=6" defer></script>\n</body>')
 exec(open(R+'src/extras.py').read())
 open(R+'index.html','w').write(s)
-slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
+slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','limited-company-expenses-guide','tax-deadlines-for-company-directors','accountant-or-bookkeeper','online-accountants-for-london-businesses','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
 open(R+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>https://nextgenca.co.uk/{x}</loc><lastmod>'+str(datetime.date.today())+'</lastmod></url>\n' for x in slugs)+'</urlset>\n')
 print('built')

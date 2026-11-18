@@ -42,3 +42,6 @@
   document.body.appendChild(box);document.body.appendChild(btn);
   }
 })();
+
+  // Mobile call and WhatsApp bar
+  (function(){try{var st=document.createElement("style");st.textContent=".ng-mbar{display:none}@media(max-width:720px){.ng-mbar{display:flex;position:fixed;left:12px;bottom:18px;z-index:59;gap:8px}.ng-mbar a{display:inline-flex;align-items:center;padding:12px 16px;border-radius:999px;font:700 .9rem Manrope,system-ui,Arial,sans-serif;text-decoration:none;color:#fff;box-shadow:0 8px 24px rgba(11,27,52,.3)}.ng-mbar .c{background:#12284a}.ng-mbar .w{background:#1f7a4d}}";document.head.appendChild(st);var d=document.createElement("div");d.className="ng-mbar";d.innerHTML='<a class="c" href="tel:+447591246395">Call</a><a class="w" href="https://wa.me/447591246395" target="_blank" rel="noopener">WhatsApp</a>';document.body.appendChild(d);}catch(e){}})();

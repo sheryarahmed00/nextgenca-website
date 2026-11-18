@@ -58,7 +58,7 @@ FOOT='''<footer>
         <p style="margin-top:14px">Follow us: <a href="https://www.linkedin.com/company/nextgen-chartered-accountant" rel="me noopener" target="_blank">LinkedIn</a> · <a href="https://www.facebook.com/nextgencharteredaccountant" rel="me noopener" target="_blank">Facebook</a> · <a href="https://www.instagram.com/nextgencharteredaccountant/" rel="me noopener" target="_blank">Instagram</a><br><a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener" target="_blank">ICAEW directory listing</a></p>
       </div>
       <div><h4>Services</h4><ul><li><a href="/self-assessment-tax-return">Self Assessment tax returns</a></li><li><a href="/limited-company-accounts">Limited company accounts</a></li><li><a href="/bookkeeping-and-vat">Bookkeeping and VAT</a></li><li><a href="/payroll">Payroll and pensions</a></li><li><a href="/landlord-tax-return">Landlord tax returns</a></li><li><a href="/company-formation">Company formation</a></li><li><a href="/management-accounts">Management accounts</a></li><li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li><li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul></div>
-      <div><h4>Firm</h4><ul><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
+      <div><h4>Firm</h4><ul><li><a href="/about">About NextGen</a></li><li><a href="/accountants-in-luton">Accountants in Luton</a></li><li><a href="/insights">Insights and tax updates</a></li><li><a href="/fees">Fees and price list</a></li><li><a href="/#about">About</a></li><li><a href="/#contact">Book a call</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/complaints">Complaints</a></li></ul></div>
     </div>
     <p class="legal">NextGen Chartered Accountant is the trading name of Sheryar Ahmed ACA FCCA, a sole practitioner and member firm of the Institute of Chartered Accountants in England and Wales (ICAEW), firm number C011010236. © 2026 NextGen Chartered Accountant.</p>
   </div>
@@ -264,6 +264,40 @@ svc('non-resident-uk-tax','UK tax for non-residents',
 exec(open(R+'src/more.py').read())
 exec(open(R+'src/insights.py').read())
 
+page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
+ 'NextGen Chartered Accountant is a UK firm of Chartered Accountants, an ICAEW member firm based in Luton, England, founded by Sheryar Ahmed ACA FCCA. Who we are, what we do and how to verify us.',
+ """<p class="crumb"><a href="/">Home</a> / About</p>
+<p class="eyebrow" style="margin-top:22px">About us</p>
+<h1>About NextGen Chartered Accountant</h1>
+<p class="lead">NextGen Chartered Accountant is a UK firm of Chartered Accountants based in Luton, England. It is an ICAEW member firm, founded and led by Sheryar Ahmed ACA FCCA, and works online with small businesses, limited companies, contractors, landlords and the self-employed across the United Kingdom, and with overseas clients who have UK tax or company obligations.</p>
+<h2>Key facts</h2>
+<table class="ft">
+<tr><td>Name</td><td>NextGen Chartered Accountant (also written NextGen Chartered Accountants or NextGen CA)</td></tr>
+<tr><td>Type</td><td>Firm of Chartered Accountants, sole practitioner</td></tr>
+<tr><td>Country</td><td>United Kingdom</td></tr>
+<tr><td>Based in</td><td>Luton, Bedfordshire, England</td></tr>
+<tr><td>Founder</td><td>Sheryar Ahmed ACA FCCA</td></tr>
+<tr><td>Professional body</td><td>ICAEW member firm, firm number C011010236</td></tr>
+<tr><td>Website</td><td>nextgenca.co.uk</td></tr>
+<tr><td>Area served</td><td>UK-wide, online. Clients in London, Luton and across England, Scotland, Wales and Northern Ireland, plus non-residents</td></tr>
+<tr><td>Hours</td><td>Monday to Saturday, 9am to 7pm</td></tr>
+</table>
+<h2>What we do</h2>
+<p>We prepare and file <a href="/limited-company-accounts">limited company accounts</a> and <a href="/corporation-tax-returns">corporation tax returns (CT600)</a>, <a href="/self-assessment-tax-return">Self Assessment tax returns</a>, <a href="/vat-registration-and-returns">VAT registrations and returns</a>, <a href="/payroll">payroll</a> and <a href="/bookkeeping-and-vat">bookkeeping</a>, and advise on <a href="/business-tax-planning">business tax planning</a>. Fees are fixed and published on our <a href="/fees">price list</a>. The full list is on our <a href="/accounting-services-uk">accounting services</a> page.</p>
+<h2>Who runs the firm</h2>
+<p>Sheryar Ahmed is an ICAEW Chartered Accountant (ACA) and a Fellow of ACCA (FCCA), with more than ten years in UK finance across hospitality, real estate and consulting. Fiza Gillani ACCA is Practice Manager. Work is prepared by qualified accountants and reviewed by a Chartered Accountant before it goes to you, HMRC or Companies House.</p>
+<h2>How to verify us</h2>
+<ul><li>ICAEW Find a Chartered Accountant: <a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener">our ICAEW listing</a>, firm number C011010236.</li>
+<li>The firm is supervised for anti-money laundering and holds professional indemnity insurance.</li>
+<li>Our <a href="/privacy">privacy notice</a> and <a href="/complaints">complaints procedure</a> are published on this site.</li></ul>
+<h2>Not to be confused with</h2>
+<p>NextGen Chartered Accountant is a United Kingdom firm. It is not connected with Accounts NextGen in Australia, NextGen Accountants in New Zealand, or any other business using the NextGen name.</p>
+<h2>Contact</h2>
+<p>Phone or WhatsApp +44 7591 246395, email info@nextgenca.co.uk, or <a href="/book">book a free 15-minute call</a>. We reply within 1 hour, Monday to Saturday.</p>
+"""+CTA,
+ [{"@context":"https://schema.org","@type":"AboutPage","name":"About NextGen Chartered Accountant","url":"https://nextgenca.co.uk/about","mainEntity":{"@type":"AccountingService","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","alternateName":["NextGen Chartered Accountants","NextGen CA"],"url":"https://nextgenca.co.uk/","description":"UK firm of Chartered Accountants based in Luton, England. ICAEW member firm founded by Sheryar Ahmed ACA FCCA.","address":{"@type":"PostalAddress","addressLocality":"Luton","addressRegion":"Bedfordshire","addressCountry":"GB"},"areaServed":{"@type":"Country","name":"United Kingdom"},"founder":{"@type":"Person","name":"Sheryar Ahmed","honorificSuffix":"ACA FCCA"},"memberOf":{"@type":"Organization","name":"ICAEW","url":"https://www.icaew.com/"},"identifier":"ICAEW firm number C011010236","telephone":"+447591246395","sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E"]}},
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"About","item":"https://nextgenca.co.uk/about"}]}])
+
 page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | NextGen Chartered Accountant',
  'NextGen Chartered Accountant is an ICAEW member firm based in Luton. Fixed-fee accounts, tax returns, payroll, VAT and bookkeeping for businesses and individuals in Luton, Dunstable and across Bedfordshire.',
  """<p class="crumb"><a href="/">Home</a> / Accountants in Luton</p>
@@ -399,6 +433,6 @@ if '/chat.js?v=5' not in s:
     s=s.replace('</body>','<script src="/chat.js?v=5" defer></script>\n</body>')
 exec(open(R+'src/extras.py').read())
 open(R+'index.html','w').write(s)
-slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
+slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
 open(R+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>https://nextgenca.co.uk/{x}</loc><lastmod>'+str(datetime.date.today())+'</lastmod></url>\n' for x in slugs)+'</urlset>\n')
 print('built')

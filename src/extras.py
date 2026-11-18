@@ -49,10 +49,10 @@ EST = '''<!--est-->
           </fieldset>
           <fieldset><legend>Add what you need</legend>
             <label><input type="checkbox" name="bk"> <span>Monthly bookkeeping<small>£49 per month</small></span></label>
-            <label><input type="checkbox" name="vat"> <span>Quarterly VAT returns<small>£45 per quarter</small></span></label>
-            <label class="ltd-only"><input type="checkbox" name="pay"> <span>Payroll for staff<small>£20 per month for up to 5, then £4 per extra employee</small></span></label>
+            <label><input type="checkbox" name="vat"> <span>Quarterly VAT returns<small>£90 per quarter</small></span></label>
+            <label class="ltd-only"><input type="checkbox" name="pay"> <span>Payroll for staff<small>£25 per month for up to 5, then £4 per extra employee</small></span></label>
             <div class="staff ltd-only" id="est-staff" hidden>Employees <input type="number" name="n" min="1" max="200" value="3"></div>
-            <label class="st-only"><input type="checkbox" name="mtd"> <span>Making Tax Digital quarterly updates<small>£25 per quarter</small></span></label>
+            <label class="st-only"><input type="checkbox" name="mtd"> <span>Making Tax Digital quarterly updates<small>£30 per quarter</small></span></label>
             <label><input type="checkbox" name="cis"> <span>CIS monthly returns<small>£25 per month</small></span></label>
             <label class="ltd-only"><input type="checkbox" name="ma"> <span>Monthly management accounts<small>£99 per month</small></span></label>
           </fieldset>
@@ -68,15 +68,15 @@ EST = '''<!--est-->
     </div>
     <script>
     (function(){var f=document.getElementById('est-form');if(!f)return;
-    function upd(){var t=f.t.value,ltd=t==='ltd',items=[],m=ltd?59:25;
-      items.push(ltd?'Limited company package: £59':'Sole trader package: £25');
+    function upd(){var t=f.t.value,ltd=t==='ltd',items=[],m=ltd?69:25;
+      items.push(ltd?'Limited company package: £69':'Sole trader package: £25');
       document.querySelectorAll('.ltd-only').forEach(function(e){e.classList.toggle('est-hide',!ltd)});
       document.querySelectorAll('.st-only').forEach(function(e){e.classList.toggle('est-hide',ltd)});
       document.getElementById('est-staff').hidden=!(ltd&&f.pay.checked);
       if(f.bk.checked){m+=49;items.push('Bookkeeping: £49')}
-      if(f.vat.checked){m+=15;items.push('VAT returns: £15 (£45 a quarter)')}
-      if(ltd&&f.pay.checked){var n=Math.max(1,parseInt(f.n.value)||1),p=20+Math.max(0,n-5)*4;m+=p;items.push('Payroll, '+n+' staff: £'+p)}
-      if(!ltd&&f.mtd.checked){m+=25/3;items.push('MTD updates: £8.33 (£25 a quarter)')}
+      if(f.vat.checked){m+=30;items.push('VAT returns: £30 (£90 a quarter)')}
+      if(ltd&&f.pay.checked){var n=Math.max(1,parseInt(f.n.value)||1),p=25+Math.max(0,n-5)*4;m+=p;items.push('Payroll, '+n+' staff: £'+p)}
+      if(!ltd&&f.mtd.checked){m+=10;items.push('MTD updates: £10 (£30 a quarter)')}
       if(f.cis.checked){m+=25;items.push('CIS returns: £25')}
       if(ltd&&f.ma.checked){m+=99;items.push('Management accounts: £99')}
       var g=ltd&&f.bk.checked&&f.vat.checked&&f.pay.checked&&(parseInt(f.n.value)||1)<=5;

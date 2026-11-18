@@ -73,6 +73,11 @@ CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need. We 
 PAGES={}
 def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website'):
     url='https://nextgenca.co.uk/'+slug
+    if len(title)>60:
+        title=title.replace(' | NextGen Chartered Accountant',' | NextGen CA').replace(' | NextGen Chartered Accountants',' | NextGen CA')
+    if len(title)>60 and ' | ' in title:
+        _parts=title.split(' | ')
+        if len(_parts)>2: title=' | '.join([_parts[0],_parts[-1]])
     h=f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>

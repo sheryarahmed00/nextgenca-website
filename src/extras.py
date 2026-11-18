@@ -252,3 +252,13 @@ s = s.replace('“thank you very much Sheryar Ahmad as usual. this is the third 
 for _a, _b in [('>up 9% on October<', '>Up 9% on October<'), ('>target 58%<', '>Target 58%<'), ('>due 31 January<', '>Due 31 January<'),
                ('>five-star reviews<', '>Five-star reviews<'), ('<small>years in UK accounting</small>', '<small>Years in UK accounting</small>')]:
     s = s.replace(_a, _b)
+
+# UK-wide home title and description
+_HT='Chartered Accountants UK | Online Accountants | NextGen'
+_HD='ICAEW Chartered Accountants for UK small businesses, limited companies, contractors and the self-employed. Fixed fees, online across the UK, based in Luton.'
+s=_re.sub(r'<title>.*?</title>','<title>'+_HT+'</title>',s,count=1,flags=_re.S)
+s=_re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="'+_HD+'">',s,count=1)
+s=_re.sub(r'<meta property="og:title" content="[^"]*">','<meta property="og:title" content="'+_HT+'">',s,count=1)
+s=_re.sub(r'<meta property="og:description" content="[^"]*">','<meta property="og:description" content="'+_HD+'">',s,count=1)
+s=s.replace('"description":"ICAEW member firm of Chartered Accountants in Luton, Bedfordshire. Fixed-fee','"description":"ICAEW member firm of Chartered Accountants serving clients across the UK, based in Luton, Bedfordshire. Fixed-fee',1)
+s=s.replace('"areaServed":[{"@type":"City","name":"Luton"},{"@type":"AdministrativeArea","name":"Bedfordshire"},{"@type":"Country","name":"United Kingdom"}]','"areaServed":[{"@type":"Country","name":"United Kingdom"},{"@type":"City","name":"London"},{"@type":"City","name":"Luton"},{"@type":"AdministrativeArea","name":"Bedfordshire"}]',1)

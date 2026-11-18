@@ -19,7 +19,7 @@ EXTRA='''
 .prose a.btn{color:#fff}
 .ft{width:100%;border-collapse:collapse;margin:6px 0 10px}
 .ft td{padding:13px 0;border-bottom:1px solid var(--rule)}
-.ft td:last-child{text-align:right;font-weight:800;color:var(--navy);white-space:nowrap}
+.ft td:last-child{text-align:right;font-weight:800;color:var(--navy);white-space:nowrap}@media(max-width:640px){.ft td{padding-right:10px;overflow-wrap:anywhere}.ft td:last-child{white-space:normal;padding-right:0;min-width:34%}}
 .note{color:var(--muted);font-size:.92rem}
 .cta{margin-top:44px;padding:28px;background:var(--mist);border-left:3px solid var(--gold)}
 .cta p{margin:0 0 16px}

@@ -146,7 +146,7 @@ guide('online-accountants-for-london-businesses','Online accountants for London 
 <tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
 <tr><td>Director-only payroll</td><td>£10 a month</td></tr>
 <tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
-</table><p class="note">NextGen is not VAT registered, so no VAT is added to these fees. Many firms quote prices plus VAT at 20%, so compare like with like.</p>
+</table>
 <p class="note">Prices are starting fees. NextGen is not VAT registered, so no VAT is added to our fees. See the <a href="/fees">full price list</a>.</p>
 <h2>Is an accountant outside London right for you?</h2>
 <p>Company accounts, tax returns, VAT and payroll are filed online with HMRC and Companies House, so where your accountant sits makes no difference to the filing. If you want regular face-to-face meetings at an office in London, a local firm will suit you better. If you want qualified work, a named contact and a fixed fee, working online does the same job.</p>''',
@@ -261,7 +261,7 @@ guide('how-much-does-an-accountant-cost-uk','How much does an accountant cost in
 <tr><td>Director-only payroll</td><td>£10 a month</td></tr>
 <tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
 <tr><td>Monthly bookkeeping</td><td>from £49 a month</td></tr>
-</table>
+</table><p class="note">NextGen is not VAT registered, so no VAT is added to these fees. Many firms quote prices plus VAT at 20%, so compare like with like.</p>
 <p>The <a href="/fees">full price list</a> shows every service. Your fee is fixed in writing before work starts.</p>
 <h2>Monthly retainer or annual fixed fee?</h2>
 <p>A retainer suits a business with regular work: monthly bookkeeping, payroll, VAT and frequent questions. A fixed annual fee suits a company with simple affairs that mainly needs accounts and a tax return once a year. A company paying £90 a month on a retainer spends £1,080 a year; if it only needs year-end accounts, a CT600 and a confirmation statement, a fixed fee is usually much less.</p>

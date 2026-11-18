@@ -270,3 +270,25 @@ if '<!--uksvc-->' not in s:
 '''
     _k=s.rfind('</div>',_i,_j)
     if _i>0 and _k>0: s=s[:_k]+_blk+s[_k:]
+
+# Free tools section near the top of the home page
+if '<!--tools-->' not in s:
+    _tools='''<!--tools--><section id="tools" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Free tools</p>
+      <h2>Work out your tax in seconds</h2>
+      <p class="lead">Free calculators and guides for UK company directors and the self-employed, built and checked by a Chartered Accountant.</p>
+    </div>
+    <style>.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:26px}.tool{display:block;background:#fff;border:1px solid var(--rule);border-top:3px solid var(--gold);padding:24px 22px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}.tool:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(11,27,52,.12)}.tool small{display:block;font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}.tool b{display:block;color:var(--navy);font-size:1.12rem;line-height:1.3;margin-bottom:8px}.tool span{display:block;color:var(--muted);font-size:.93rem}.tool i{display:block;margin-top:14px;font-style:normal;font-weight:800;color:var(--navy)}@media(max-width:980px){.tools{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.tools{grid-template-columns:1fr}}</style>
+    <div class="tools">
+      <a class="tool" href="/corporation-tax-calculator"><small>Calculator</small><b>Corporation tax calculator</b><span>19%, 25% and marginal relief for 2026 to 2027.</span><i>Calculate →</i></a>
+      <a class="tool" href="/dividend-tax-calculator"><small>Calculator</small><b>Dividend tax calculator</b><span>See the tax on your salary and dividend mix.</span><i>Calculate →</i></a>
+      <a class="tool" href="/tax-deadlines-for-company-directors"><small>Guide</small><b>Deadlines for directors</b><span>Every filing date and the penalty for missing it.</span><i>Read the guide →</i></a>
+      <a class="tool" href="/limited-company-expenses-guide"><small>Guide</small><b>What can my company claim?</b><span>Expenses a limited company can and cannot claim.</span><i>Read the guide →</i></a>
+    </div>
+  </div>
+</section>
+'''
+    s=s.replace('<section id="insights">',_tools+'<section id="insights">',1)
+    s=s.replace('<a href="#insights">Insights</a>','<a href="#tools">Free tools</a>\n      <a href="#insights">Insights</a>',1)

@@ -147,7 +147,7 @@ guide('online-accountants-for-london-businesses','Online accountants for London 
 <tr><td>Director-only payroll</td><td>£10 a month</td></tr>
 <tr><td>Staff payroll, up to 5 employees</td><td>£25 a month</td></tr>
 </table>
-<p class="note">Prices are starting fees. See the <a href="/fees">full price list</a>.</p>
+<p class="note">Prices are starting fees. NextGen is not VAT registered, so no VAT is added to our fees. See the <a href="/fees">full price list</a>.</p>
 <h2>Is an accountant outside London right for you?</h2>
 <p>Company accounts, tax returns, VAT and payroll are filed online with HMRC and Companies House, so where your accountant sits makes no difference to the filing. If you want regular face-to-face meetings at an office in London, a local firm will suit you better. If you want qualified work, a named contact and a fixed fee, working online does the same job.</p>''',
  [('Do you have an office in London?','No. We are based in Luton and work with London clients by video call, phone, email and WhatsApp.'),
@@ -358,7 +358,7 @@ g("tky").textContent=f(net);g("tkm").textContent=f(net/12);g("tkw").textContent=
   ('What is the 60% tax trap?','Between £100,000 and £125,140 you lose £1 of personal allowance for every £2 earned, so the effective income tax rate on that slice is 60%. Pension contributions can reduce it.')],
  crumb='Calculators')
 
-FEE_NOTE='<p class="note">Prices are starting fees and are fixed in writing before work starts. See the <a href="/fees">full price list</a>.</p>'
+FEE_NOTE='<p class="note">Prices are starting fees and are fixed in writing before work starts. NextGen is not VAT registered, so no VAT is added to our fees. See the <a href="/fees">full price list</a>.</p>'
 
 guide('making-tax-digital-for-income-tax','Making Tax Digital for Income Tax: who it applies to and what to do',
  'Making Tax Digital for Income Tax UK | 2026 Guide | NextGen CA',

@@ -131,7 +131,7 @@ def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website')
 '''
     PAGES[slug]=h
 def fees(rows):
-    return '<table class="ft">'+''.join(f'<tr><td>{a}</td><td>{b if b.startswith(("Quoted","Included","At cost")) else "from "+b}</td></tr>' for a,b in rows)+'</table><p class="note">Prices are starting fees. Your quote is fixed for the work described in your engagement letter.</p>'
+    return '<table class="ft">'+''.join(f'<tr><td>{a}</td><td>{b if b.startswith(("Quoted","Included","At cost")) else "from "+b}</td></tr>' for a,b in rows)+'</table><p class="note">Prices are starting fees. Your quote is fixed for the work described in your engagement letter. NextGen is not VAT registered, so no VAT is added to our fees.</p>'
 def faq(qs): return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in qs)
 NAMES={}
 REL={}

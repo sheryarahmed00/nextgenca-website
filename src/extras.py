@@ -231,6 +231,13 @@ if _fm:
 <h2>Prices by service</h2>
 <div class="ledger"><div class="ledger-cols">{_ledger}</div>
 <p class="note">Fees depend on turnover, number of transactions and the state of the records. Companies House and other official filing fees are charged at cost.</p></div>
+<h2>What is included</h2>
+<p>NextGen is not VAT registered, so no VAT is added to any fee on this page. The price you are quoted is the price you pay.</p>
+<ul><li><b>One-off fees</b> cover preparing the accounts or return named, a review by a Chartered Accountant, filing with HMRC or Companies House once you approve it, and your questions about that work by email and WhatsApp.</li>
+<li><b>Sole trader package, from £25 a month:</b> annual accounts, Self Assessment tax return, a tax estimate before each deadline, email and WhatsApp support.</li>
+<li><b>Limited company package, from £69 a month:</b> year-end accounts and corporation tax return, confirmation statement, director's payroll and Self Assessment, salary and dividend planning, email and WhatsApp support.</li>
+<li><b>Growing business package, from £129 a month:</b> everything in the Limited company package, plus monthly bookkeeping, quarterly VAT returns, payroll for up to 5 staff and quarterly management accounts.</li>
+<li><b>Not included:</b> Companies House and other official filing fees, which are charged at cost, software subscriptions, and catch-up work on earlier years, which is quoted separately.</li></ul>
 {CTA}'''
     page('fees', 'Accountant Fees and Full Price List | NextGen Chartered Accountant',
          'Fixed-fee price list for accounts, tax returns, payroll, VAT, bookkeeping and company services from NextGen Chartered Accountant, an ICAEW member firm in Luton.', _body)

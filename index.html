@@ -75,11 +75,11 @@ header.site{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);ba
 .brand small{display:block;font-size:.58rem;font-weight:700;letter-spacing:.3em;color:var(--navy);margin-top:5px}
 nav.main{display:flex;gap:26px;font-size:.9rem;font-weight:600}
 nav.main a{text-decoration:none;color:var(--ink);padding:6px 0;border-bottom:2px solid transparent}
-nav.main a:hover{border-color:var(--gold);color:var(--navy)}nav.main a,.bar-right .btn{white-space:nowrap}.brand span{white-space:nowrap}nav.main{gap:18px;font-size:.86rem}.brand b{font-size:1.4rem}
+nav.main a:hover{border-color:var(--gold);color:var(--navy)}nav.main a,.bar-right .btn{white-space:nowrap}.brand span{white-space:nowrap}nav.main{gap:15px;font-size:.84rem;margin-left:auto}.brand b{font-size:1.4rem}.brand{flex:none}.brand small{letter-spacing:.24em}.bar{gap:18px}
 .menu{display:none;background:none;border:1px solid var(--rule);border-radius:3px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
 .menu i{display:block;width:20px;height:2px;background:var(--navy)}
 .bar-right{display:flex;align-items:center;gap:12px}
-@media (max-width:1120px){
+@media (max-width:1180px){
   .menu{display:flex}
   nav.main{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--rule);flex-direction:column;gap:0;padding:8px 24px 16px;box-shadow:0 18px 30px -20px rgba(11,27,52,.35)}
   nav.main.open{display:flex}
@@ -339,7 +339,7 @@ footer a:hover{color:#fff}
       <span>Professional indemnity <strong>insured</strong></span>
     </div>
     <!--herocalc--><div class="hcalc">
-      <style>.hcalc{margin:30px 0 0;max-width:640px;padding:20px 22px;border:1px solid rgba(201,162,77,.45);border-left:3px solid var(--gold);background:rgba(255,255,255,.05)}.hcalc small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.hcalc b.t{display:block;color:#fff;font-size:1.08rem;margin:6px 0 14px}.hcalc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}.hcalc input{width:170px;padding:11px 12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font:inherit}.hcalc .res{color:rgba(255,255,255,.85)}.hcalc .res strong{color:#fff;font-size:1.25rem}.hcalc p{margin:14px 0 0;font-size:.9rem}.hcalc p a{color:var(--gold-2,#e3c178);font-weight:700;margin-right:18px;white-space:nowrap}</style>
+      <style>.hcalc{margin:30px 0 0;max-width:640px;padding:20px 22px;border:1px solid rgba(201,162,77,.45);border-left:3px solid var(--gold);background:rgba(255,255,255,.05)}.hcalc small{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.hcalc b.t{display:block;color:#fff;font-size:1.08rem;margin:6px 0 14px}.hcalc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}.hcalc input{width:170px;padding:11px 12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font:inherit}.hcalc .res{color:rgba(255,255,255,.85)}.hcalc .res strong{color:#fff;font-size:1.25rem}.hcalc p{margin:16px 0 0;font-size:.9rem;display:flex;flex-wrap:wrap;gap:8px 20px}.hcalc p a{color:var(--gold-2,#e3c178);font-weight:700;white-space:nowrap}.hcalc .row label{flex:0 0 132px}.hcalc .row{flex-wrap:nowrap}.hcalc input{flex:0 0 150px;width:150px;min-width:0}@media(max-width:520px){.hcalc .row{flex-wrap:wrap}.hcalc .row label{flex:1 0 100%}}</style>
       <small>Free tools</small>
       <b class="t">Quick tax check, 2026 to 2027</b>
       <div class="row"><label for="hcp" style="color:rgba(255,255,255,.85)">Company profit £</label><input id="hcp" type="number" min="0" step="1000" value="60000" inputmode="numeric"><span class="res">Tax due <strong id="hcr">-</strong></span></div>
@@ -353,7 +353,7 @@ footer a:hover{color:#fff}
     <!--latest-->
     <a class="hero-latest" href="/insights/companies-house-identity-verification-one-year-on-missed-deadline"><span>Latest from Sheryar Ahmed ACA FCCA</span><b>Companies House identity verification one year on: what to do if a director has still not verified</b><i>Read the article →</i></a>
     <!--/latest-->
-                                                                                                                                                                                                                                                                               <aside class="cal" aria-label="UK filing deadlines we manage">
+                                                                                                                                                                                                                                                                                   <aside class="cal" aria-label="UK filing deadlines we manage">
     <p class="cal-by">Guides by Sheryar Ahmed ACA FCCA</p>
     <h2>Deadlines we keep for you</h2>
     <p class="sub">You run the business. We watch the calendar.</p>
@@ -497,7 +497,7 @@ footer a:hover{color:#fff}
       </div>
     </div>
     <!--/exp-->
-                                                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                                                      </div>
 </section>
 
 
@@ -548,6 +548,7 @@ footer a:hover{color:#fff}
       </div>
     </div>
 
+    
     
     
     
@@ -671,15 +672,11 @@ footer a:hover{color:#fff}
       <div class="head" style="margin-bottom:0">
         <p class="eyebrow">Client reviews on Fiverr</p>
         <h2>What clients say about working with Sheryar</h2>
-        <p class="lead">Ten of the five-star reviews clients have left on Sheryar's Fiverr profile, quoted as they were written. <a href="https://www.fiverr.com/pro_chartereda" target="_blank" rel="noopener">Read all the reviews on Fiverr ↗</a></p>
+        <p class="lead">Nine of the five-star reviews clients have left on Sheryar's Fiverr profile, quoted as they were written. <a href="https://www.fiverr.com/pro_chartereda" target="_blank" rel="noopener">Read all the reviews on Fiverr ↗</a></p>
       </div>
       <a class="score" href="https://www.fiverr.com/pro_chartereda" target="_blank" rel="noopener" style="text-decoration:none"><b>350+</b><span>Five-star reviews on Fiverr</span><small>Verify on Fiverr ↗</small></a>
     </div>
     <div class="revs">
-      <figure class="rev">
-        <div class="rev-top"><span class="dp" aria-hidden="true">M</span><div><b>mary48610</b><span>United Kingdom</span></div><span class="rate" aria-label="Rated 5 out of 5 on Fiverr">★★★★★</span></div>
-        <blockquote>“Sheryar has been filing my company accounts for the past 3 years. He is extremely knowledgeable and responsive. His prices are reasonable and I will continue to use him for years to come. Thanks for your professionalism and great work always.”</blockquote>
-      </figure>
       <figure class="rev">
         <div class="rev-top"><span class="dp" aria-hidden="true">K</span><div><b>kenlovin24</b><span>United Kingdom</span></div><span class="rate" aria-label="Rated 5 out of 5 on Fiverr">★★★★★</span></div>
         <blockquote>“Sheryar Ahmad delivered an exceptional service with impeccable attention to detail and professionalism that went above and beyond expectations. His proactive communication and swift responsiveness made working with him an absolute breeze. Highly RECOMMENDED for all your tax consulting needs! 👍”</blockquote>
@@ -720,9 +717,13 @@ footer a:hover{color:#fff}
     <!--upwork-->
     <div class="head" style="margin:48px 0 28px">
       <p class="eyebrow">Client reviews on Upwork</p>
-      <p class="lead">Four of the five-star reviews clients have left on Sheryar's Upwork profile, quoted as they were written. <a href="https://www.upwork.com/freelancers/sheryarahmedaca" target="_blank" rel="noopener">See the profile on Upwork ↗</a></p>
+      <p class="lead">Five of the five-star reviews clients have left on Sheryar's Upwork profile, quoted as they were written. <a href="https://www.upwork.com/freelancers/sheryarahmedaca" target="_blank" rel="noopener">See the profile on Upwork ↗</a></p>
     </div>
     <div class="revs">
+      <figure class="rev">
+        <div class="rev-top"><span class="dp" aria-hidden="true">U</span><div><b>Upwork client</b><span>Company accounts and CT600, October 2025</span></div><span class="rate" aria-label="Rated 5 out of 5 on Upwork">★★★★★</span></div>
+        <blockquote>“Sheryar has been filing my company accounts for the past 3 years. He is extremely knowledgeable and responsive. His prices are reasonable and I will continue to use him for years to come. Thanks for your professionalism and great work always.”</blockquote>
+      </figure>
       <figure class="rev">
         <div class="rev-top"><span class="dp" aria-hidden="true">U</span><div><b>Upwork client</b><span>Xero bookkeeping, October 2025</span></div><span class="rate" aria-label="Rated 5 out of 5 on Upwork">★★★★★</span></div>
         <blockquote>“The freelancer accurately categorized all 50 transactions in Xero with attention to detail and consistency. Their knowledge of accounting principles and Xero software was impressive. Great communication and timely delivery too!”</blockquote>

@@ -1,0 +1,34 @@
+# Tells Bing (which also feeds ChatGPT search and Copilot) which pages changed, so they are re-read within minutes.
+name: IndexNow
+on:
+  push:
+    branches: [main]
+    paths: ['**.html']
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Wait for Cloudflare Pages to deploy
+        run: sleep 150
+      - name: Submit changed pages
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, urllib.request
+          KEY = "a487cbcfe245dc1aeb7dec54465ca9e8"
+          files = subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD", "--", "*.html"], capture_output=True, text=True).stdout.split()
+          urls = []
+          for f in files:
+              if f.startswith(("google", "404")) or "/" in f and not f.startswith("insights/"):
+                  continue
+              slug = f[:-5]
+              urls.append("https://nextgenca.co.uk/" + ("" if slug == "index" else slug))
+          if not urls:
+              print("nothing to submit"); raise SystemExit
+          body = json.dumps({"host": "nextgenca.co.uk", "key": KEY, "keyLocation": f"https://nextgenca.co.uk/{KEY}.txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body, headers={"Content-Type": "application/json; charset=utf-8"})
+          with urllib.request.urlopen(req) as r:
+              print(r.status, len(urls), "URLs submitted")
+          PY

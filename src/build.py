@@ -134,6 +134,7 @@ def fees(rows):
     return '<table class="ft">'+''.join(f'<tr><td>{a}</td><td>{b if b.startswith(("Quoted","Included","At cost")) else "from "+b}</td></tr>' for a,b in rows)+'</table><p class="note">Prices are starting fees. Your quote is fixed for the work described in your engagement letter. NextGen is not VAT registered, so no VAT is added to our fees.</p>'
 def faq(qs): return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in qs)
 NAMES={}
+FEE1={}
 REL={}
 EXTRA_FAQ={
  'limited-company-accounts':[('What is the difference between the accounts and the CT600?','The accounts go to Companies House and show the company\'s results. The CT600 is the corporation tax return that goes to HMRC with a tax computation. We prepare and file both. See our corporation tax return page for more.'),('What happens if my accounts are filed late?','Companies House charges an automatic penalty that starts at £150 for a private company and rises the later the accounts are. HMRC charges separate penalties for a late CT600.')],
@@ -143,10 +144,14 @@ EXTRA_FAQ={
  'company-formation':[('Will you handle the accounts after formation?','Yes. Most clients move straight on to our fixed-fee limited company accounts and CT600 service, so the company is set up correctly from day one.')],
 }
 def svc(slug,name,title,desc,lead,inc,feerows,steps,dates,qs,dates_title='Dates worth knowing',who=None,need=None,crumb='Services'):
+    _f1=feerows[0] if feerows and feerows[0][1].startswith('£') and not re.search(r'\bif\b|afterwards|needed',feerows[0][0]) else None
+    FEE1[slug]=_f1
+    _kf=f'<p class="note"><b>At a glance:</b> {name} from NextGen Chartered Accountant, an ICAEW member firm of Chartered Accountants based in Luton that works online with clients across the UK.'+(f' Fees start from {_f1[1]} ({_f1[0]}), fixed in your engagement letter before work begins.' if _f1 else ' You get a fixed fee in writing before work begins.')+' Enquiries are answered within 1 hour, Monday to Saturday, 9am to 7pm.</p>'
     body=f'''<p class="crumb"><a href="/">Home</a> / <a href="/#services">Services</a> / {name}</p>
 <p class="eyebrow" style="margin-top:22px">Services</p>
 <h1>{name}</h1>
 <p class="lead">{lead}</p>
+{_kf}
 {('<h2>Who it is for</h2><ul>'+''.join(f'<li>{i}</li>' for i in who)+'</ul>') if who else ''}
 <h2>What is included</h2><ul>{''.join(f'<li>{i}</li>' for i in inc)}</ul>
 <h2>Fees</h2>{fees(feerows)}
@@ -453,3 +458,4 @@ open(R+'index.html','w').write(s)
 slugs=['','self-assessment-tax-return','limited-company-accounts','bookkeeping-and-vat','payroll','landlord-tax-return','company-formation','management-accounts','non-resident-uk-tax','outsourcing-for-accountancy-firms','about','limited-company-expenses-guide','tax-deadlines-for-company-directors','accountant-or-bookkeeper','online-accountants-for-london-businesses','corporation-tax-calculator','dividend-tax-calculator','salary-take-home-calculator','making-tax-digital-for-income-tax','hospitality-and-restaurant-accountants','construction-and-cis-accountants','ecommerce-accountants','switching-accountants','how-much-does-an-accountant-cost-uk','uk-company-non-resident-director-guide','accountants-in-luton','privacy','complaints','fees']+NEW_SLUGS+POST_SLUGS
 open(R+'sitemap.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>https://nextgenca.co.uk/{x}</loc><lastmod>'+str(datetime.date.today())+'</lastmod></url>\n' for x in slugs)+'</urlset>\n')
 print('built')
+exec(open(R+'src/aeo.py').read())

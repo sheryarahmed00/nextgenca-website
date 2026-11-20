@@ -1,0 +1,26 @@
+{
+ "slug": "mandatory-payrolling-benefits-in-kind-april-2027",
+ "date": "2026-11-20",
+ "sort": "2026-11-19",
+ "label": "HMRC update · 19 November 2026",
+ "title": "Company cars and medical cover move into payroll from 6 April 2027: what employers need to do",
+ "summary": "From 6 April 2027 company cars, car fuel, vans, van fuel and medical benefits leave employees' tax codes and must be reported and taxed through payroll in real time, with Class 1A NICs paid through payroll too.",
+ "tags": [
+  "HMRC",
+  "Payroll",
+  "Employers",
+  "Benefits in kind"
+ ],
+ "body": "<p>HMRC's latest Agent Update, published on 19 November 2026, points employers to updated guidance on the mandatory payrolling of benefits in kind. If your business provides a company car, a van or private medical cover to staff, including to yourself as a director, the way these benefits are taxed is changing from the start of the 2027 to 2028 tax year.</p><h2>What changes on 6 April 2027</h2><ul><li><b>Benefits covered first:</b> company cars, car fuel, vans, van fuel and medical benefits.</li><li><b>Out of tax codes:</b> these benefits will no longer be collected by adjusting the employee's tax code.</li><li><b>Into payroll:</b> employers must report them through payroll and deduct the tax in real time, each pay period.</li><li><b>Class 1A NICs:</b> the associated Class 1A National Insurance must be paid through payroll.</li></ul><p>HMRC says mandatory payrolling for most other benefits will follow from April 2028.</p><h2>Staff who work across borders</h2><p>For eligible globally mobile employees, employers can choose to exclude them using a new exception cases online form, which has been available since 5 November 2026. For anyone excluded this way, you carry on reporting on the P11D and P11D(b) as now.</p><h2>Payrolling other benefits voluntarily</h2><p>If you want to payroll other benefits before it becomes compulsory, you can register for the 2027 to 2028 tax year through HMRC's Payrolling Benefits and Expenses service. Registration opened on 5 November 2026 and must be done on or before 5 April 2027. Employers who already payroll benefits voluntarily are carried over automatically, but HMRC notes that Class 1A NICs must now go through payroll.</p><p>HMRC's guidance includes worked examples and a template letter you can use to tell employees about the change.</p><h2>Why this matters for small companies</h2><p>Many owner-managed companies have only one or two benefits, often a car or medical cover for the directors. Until now these have usually been dealt with once a year on the P11D, with the tax collected through the tax code. From April 2027 they become a monthly payroll item. That means:</p><ul><li>your payroll software, or your payroll provider, needs the cash equivalent of each benefit before the first pay run of the tax year;</li><li>take-home pay will change for affected employees, because the tax is taken in each pay period rather than through a reduced tax code;</li><li>Class 1A NICs will be paid through payroll, so your monthly PAYE payments to HMRC will change.</li></ul><h2>What I would do now</h2><ul><li>List every benefit your company provides and who receives it, including directors.</li><li>Check that your payroll software can handle payrolled benefits for 2027 to 2028.</li><li>If any staff are globally mobile, decide whether to use the exception cases form.</li><li>If you want to payroll other benefits as well, register before 5 April 2027.</li><li>Let employees know before April, so a change in their monthly pay does not come as a surprise.</li></ul><p>If you would like us to review your benefits and get your payroll ready for April 2027, get in touch and we can work through it with you.</p>",
+ "sources": [
+  {
+   "title": "Issue 149 of Agent Update (HMRC, GOV.UK, 19 November 2026)",
+   "url": "https://www.gov.uk/government/publications/agent-update-issue-149/issue-149-of-agent-update"
+  }
+ ],
+ "related": [
+  "payroll",
+  "payslips-p45-p60-p11d",
+  "director-only-payroll"
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "slug": "mtd-income-tax-31-january-2027-payments-two-accounts",
+ "date": "2026-11-20",
+ "sort": "2026-11-19",
+ "label": "HMRC update · 19 November 2026",
+ "title": "Moved to Making Tax Digital in April 2026? Your 31 January 2027 payments may show in two accounts",
+ "summary": "HMRC is writing to people who joined Making Tax Digital for Income Tax from 6 April 2026. The amounts due on 31 January 2027 may be split between your Self Assessment statement and your MTD account.",
+ "tags": [
+  "HMRC",
+  "Making Tax Digital",
+  "Sole traders",
+  "Landlords"
+ ],
+ "body": "<p>If you are a sole trader or landlord who had to start using Making Tax Digital (MTD) for Income Tax from the 2026 to 2027 tax year, HMRC has started writing to you about your January payments. Its Agent Update, published on 19 November 2026, explains what the letters say.</p><h2>What HMRC is sending</h2><p>Since 9 November 2026, HMRC has been writing to customers who are required to use MTD for Income Tax from 2026 to 2027. The letter explains how the payments due on 31 January 2027 will appear.</p><h2>Why the payments may be in two places</h2><p>For people who moved to MTD from 6 April 2026, the amounts due by 31 January 2027 may appear across two different accounts:</p><ul><li>any <b>balancing payment for 2025 to 2026</b>, which relates to the tax return for the year before you joined MTD; and</li><li>the <b>first payment on account for 2026 to 2027</b>, the first MTD year.</li></ul><p>HMRC is clear that the move to MTD does not change the amounts you owe or the dates they are due. It only changes where they are shown.</p><h2>What HMRC says to check</h2><ul><li>Look at your Self Assessment statement.</li><li>If an amount is marked as \"transferred to digital\", check your MTD account under \"what you owe\".</li><li>Check both accounts, so you can see the full amount due.</li><li>Make sure everything is paid by 31 January 2027.</li></ul><h2>Why this matters</h2><p>The risk is simple: if you only look at one account, you could pay part of what is due and think you are up to date. Paying in full by 31 January 2027 avoids problems later.</p><h2>If you cannot pay in full</h2><p>HMRC's update also reminds customers that if they cannot pay in full and on time, they may be able to set up a Time to Pay arrangement and pay in affordable instalments. It is better to contact HMRC before the deadline than after it.</p><h2>What I would do now</h2><ul><li>Keep the HMRC letter when it arrives and read it alongside both statements.</li><li>Add up the 2025 to 2026 balancing payment and the first 2026 to 2027 payment on account so you know the total for 31 January.</li><li>Use the correct payment reference for each amount.</li><li>Set aside the money now, rather than in the last week of January.</li></ul><p>If you are not sure what you owe, or which account a payment belongs to, get in touch and we can check both statements with you before 31 January.</p>",
+ "sources": [
+  {
+   "title": "Issue 149 of Agent Update (HMRC, GOV.UK, 19 November 2026)",
+   "url": "https://www.gov.uk/government/publications/agent-update-issue-149/issue-149-of-agent-update"
+  }
+ ],
+ "related": [
+  "making-tax-digital-for-income-tax",
+  "self-assessment-tax-return",
+  "landlord-tax-return"
+ ]
+}

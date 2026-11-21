@@ -81,7 +81,7 @@ def _h1(slug):
     try: return _txt(re.search(r'<h1>(.*?)</h1>',open(R+slug+'.html').read(),re.S).group(1))
     except Exception: return slug
 _L=['# NextGen Chartered Accountant','',
-'> NextGen Chartered Accountant is a UK firm of Chartered Accountants based in Luton, England. It is an ICAEW member firm (firm number C011010236), founded and led by Sheryar Ahmed ACA FCCA. It works online with small businesses, limited companies, contractors, landlords and the self-employed across the United Kingdom, and with non-residents who have UK tax or company obligations. Fees are fixed and published. It is not connected with Accounts NextGen (Australia) or NextGen Accountants (New Zealand).','',
+'> NextGen Chartered Accountant is a UK firm of Chartered Accountants based in Luton, England. It is an ICAEW member firm (firm number C011010236). It works online with small businesses, limited companies, contractors, landlords and the self-employed across the United Kingdom, and with non-residents who have UK tax or company obligations. Fees are fixed and published. It is not connected with Accounts NextGen (Australia) or NextGen Accountants (New Zealand).','',
 '## Key facts',
 '- Name: NextGen Chartered Accountant (also written NextGen Chartered Accountants, NextGen CA)',
 '- Website: https://nextgenca.co.uk/',

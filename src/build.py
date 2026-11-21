@@ -289,7 +289,7 @@ page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
  """<p class="crumb"><a href="/">Home</a> / About</p>
 <p class="eyebrow" style="margin-top:22px">About us</p>
 <h1>About NextGen Chartered Accountant</h1>
-<p class="lead">NextGen Chartered Accountant is a UK firm of Chartered Accountants based in Luton, England. It is an ICAEW member firm, founded and led by Sheryar Ahmed ACA FCCA, and works online with small businesses, limited companies, contractors, landlords and the self-employed across the United Kingdom, and with overseas clients who have UK tax or company obligations.</p>
+<p class="lead">NextGen Chartered Accountant is a UK firm of Chartered Accountants based in Luton, England. It is an ICAEW member firm and works online with small businesses, limited companies, contractors, landlords and the self-employed across the United Kingdom, and with overseas clients who have UK tax or company obligations.</p>
 <h2>Key facts</h2>
 <table class="ft">
 <tr><td>Name</td><td>NextGen Chartered Accountant (also written NextGen Chartered Accountants or NextGen CA)</td></tr>
@@ -337,8 +337,7 @@ page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | Next
 <li><a href="/non-resident-uk-tax">UK tax for non-residents</a></li>
 <li><a href="/outsourcing-for-accountancy-firms">Outsourcing for accountancy firms</a></li></ul><p class="note">Prices are starting fees. NextGen is not VAT registered, so no VAT is added to our fees.</p>
 <h2>Why choose a Chartered Accountant</h2>
-<ul><li>The firm is led by Sheryar Ahmed ACA FCCA, a member of both ICAEW and ACCA.</li>
-<li>Fees are fixed and agreed before any work starts.</li>
+<ul><li>Fees are fixed and agreed before any work starts.</li>
 <li>We work on Xero, QuickBooks, Sage and FreeAgent.</li>
 <li>You deal with a qualified accountant, by phone, video call, email or WhatsApp.</li></ul>
 <h2>How we work with local clients</h2>

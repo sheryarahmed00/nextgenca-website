@@ -296,7 +296,7 @@ page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
 <tr><td>Type</td><td>Firm of Chartered Accountants, sole practitioner</td></tr>
 <tr><td>Country</td><td>United Kingdom</td></tr>
 <tr><td>Based in</td><td>Luton, Bedfordshire, England</td></tr>
-<tr><td>Principal</td><td>S. Ahmed ACA (ICAEW)</td></tr>
+<tr><td>Principal</td><td>Ahmed ACA (ICAEW)</td></tr>
 <tr><td>Professional body</td><td>ICAEW member firm, firm number C011010236</td></tr>
 <tr><td>Website</td><td>nextgenca.co.uk</td></tr>
 <tr><td>Area served</td><td>UK-wide, online. Clients in London, Luton and across England, Scotland, Wales and Northern Ireland, plus non-residents</td></tr>
@@ -305,7 +305,7 @@ page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
 <h2>What we do</h2>
 <p>We prepare and file <a href="/limited-company-accounts">limited company accounts</a> and <a href="/corporation-tax-returns">corporation tax returns (CT600)</a>, <a href="/self-assessment-tax-return">Self Assessment tax returns</a>, <a href="/vat-registration-and-returns">VAT registrations and returns</a>, <a href="/payroll">payroll</a> and <a href="/bookkeeping-and-vat">bookkeeping</a>, and advise on <a href="/business-tax-planning">business tax planning</a>. Fees are fixed and published on our <a href="/fees">price list</a>. The full list is on our <a href="/accounting-services-uk">accounting services</a> page.</p>
 <h2>Who runs the firm</h2>
-<p>Team NextGen Chartered Accountant. The firm is led by S. Ahmed ACA, an ICAEW Chartered Accountant, supported by a team of ACCA-qualified accountants with more than ten years in UK finance across hospitality, real estate and consulting. Work is prepared by qualified accountants and reviewed by a Chartered Accountant before it goes to you, HMRC or Companies House.</p>
+<p>Team NextGen Chartered Accountant. The firm is led by Ahmed ACA, an ICAEW Chartered Accountant, supported by a team of ACCA-qualified accountants with more than ten years in UK finance across hospitality, real estate and consulting. Work is prepared by qualified accountants and reviewed by a Chartered Accountant before it goes to you, HMRC or Companies House.</p>
 <h2>How to verify us</h2>
 <ul><li>ICAEW Find a Chartered Accountant: <a href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" rel="noopener">our ICAEW listing</a>, firm number C011010236.</li>
 <li>The firm is supervised for anti-money laundering and holds professional indemnity insurance.</li>
@@ -315,7 +315,7 @@ page('about','About NextGen Chartered Accountant | ICAEW Firm, UK',
 <h2>Contact</h2>
 <p>Phone or WhatsApp +44 7591 246395, email info@nextgenca.co.uk, or <a href="/book">book a free 15-minute call</a>. We reply within 1 hour, Monday to Saturday.</p>
 """+CTA,
- [{"@context":"https://schema.org","@type":"AboutPage","name":"About NextGen Chartered Accountant","url":"https://nextgenca.co.uk/about","mainEntity":{"@type":"AccountingService","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","alternateName":["NextGen Chartered Accountants","NextGen CA"],"url":"https://nextgenca.co.uk/","description":"UK firm of Chartered Accountants based in Luton, England. ICAEW member firm led by S. Ahmed ACA.","address":{"@type":"PostalAddress","addressLocality":"Luton","addressRegion":"Bedfordshire","addressCountry":"GB"},"areaServed":{"@type":"Country","name":"United Kingdom"},"founder":{"@type":"Person","name":"S. Ahmed","honorificSuffix":"ACA"},"memberOf":{"@type":"Organization","name":"ICAEW","url":"https://www.icaew.com/"},"identifier":"ICAEW firm number C011010236","telephone":"+447591246395","sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://www.tiktok.com/@nextgenca.co.uk","https://www.youtube.com/@nextgencharteredaccountant","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E"]}},
+ [{"@context":"https://schema.org","@type":"AboutPage","name":"About NextGen Chartered Accountant","url":"https://nextgenca.co.uk/about","mainEntity":{"@type":"AccountingService","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","alternateName":["NextGen Chartered Accountants","NextGen CA"],"url":"https://nextgenca.co.uk/","description":"UK firm of Chartered Accountants based in Luton, England. ICAEW member firm led by S. Ahmed ACA.","address":{"@type":"PostalAddress","addressLocality":"Luton","addressRegion":"Bedfordshire","addressCountry":"GB"},"areaServed":{"@type":"Country","name":"United Kingdom"},"founder":{"@type":"Person","name":"Ahmed","honorificSuffix":"ACA"},"memberOf":{"@type":"Organization","name":"ICAEW","url":"https://www.icaew.com/"},"identifier":"ICAEW firm number C011010236","telephone":"+447591246395","sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://www.tiktok.com/@nextgenca.co.uk","https://www.youtube.com/@nextgencharteredaccountant","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E"]}},
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"About","item":"https://nextgenca.co.uk/about"}]}])
 
 page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | NextGen Chartered Accountant',
@@ -386,7 +386,7 @@ page('complaints','Complaints Procedure | NextGen Chartered Accountant','How to 
 <li>Tell us what happened, when, and what you would like us to do.</li></ul>
 <h2>What we will do</h2>
 <ul><li>Acknowledge your complaint within 5 working days.</li>
-<li>The principal, S. Ahmed ACA, will look into it and may contact you for more detail.</li>
+<li>The principal, Ahmed ACA, will look into it and may contact you for more detail.</li>
 <li>Send you a written response, normally within 4 weeks, explaining what we found and what we will do.</li></ul>
 <h2>If you are still not satisfied</h2>
 <p>NextGen Chartered Accountant is an ICAEW member firm (firm number C011010236). If we have not resolved your complaint, you can raise it with the Institute of Chartered Accountants in England and Wales. Details are at <a href="https://www.icaew.com/complaints">icaew.com/complaints</a>.</p>''')

@@ -26,7 +26,7 @@ EXP = '''<!--exp-->
     <div class="exp">
       <div class="yrs">10+<small>years in UK accounting</small></div>
       <div>
-        <p>Sheryar has spent more than ten years in UK finance, in senior finance and payroll roles as well as practice work. He knows these sectors from the inside, not just from their tax returns:</p>
+        <p>Our team has more than ten years in UK finance, in senior finance and payroll roles as well as practice work. We know these sectors from the inside, not just from their tax returns:</p>
         <div class="chips"><span>Hospitality</span><span>Real estate</span><span>Consulting</span><span>Salons and retail</span><span>Multi-site payroll</span></div>
       </div>
     </div>
@@ -108,7 +108,7 @@ s = s.replace('You will get a reply with a time to talk and, after the call, a f
 s = s.replace('Prefer not to book now? We will reply within one working day.',
               'Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.', 1)
 
-# Deadlines box: each date links to Sheryar's article on it
+# Deadlines box: each date links to our article on it
 _DL = [
  ('31 January', 'Self Assessment tax return and payment', 'start-your-self-assessment-tax-return-now'),
  ('Every month', 'Payroll, RTI submissions and PAYE payment', 'payroll-deadlines-fps-on-payday-pay-hmrc-by-22nd'),
@@ -193,7 +193,7 @@ s = _re.sub(r'\n    <div class="tools"><span>(We work on|Certified in)</span>.*?
 TRUST = '''<!--trust-->
 <div class="trustbar"><div class="wrap">
   <a class="tb" href="https://find.icaew.com/firms/luton/nextgen/Z1qgR7E" target="_blank" rel="noopener"><b>ICAEW</b><span>Member firm C011010236</span></a>
-  <div class="tb"><b>ACCA</b><span>Fellow, FCCA</span></div>
+  <div class="tb"><b>HMRC</b><span>Registered tax agent</span></div>
   <div class="tb"><b>Xero</b><span>Certified</span></div>
   <div class="tb"><b>QuickBooks</b><span>Certified ProAdvisor</span></div>
   <div class="tb"><b>Sage</b><span>Certified</span></div>

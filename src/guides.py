@@ -405,7 +405,7 @@ guide('making-tax-digital-for-income-tax','Making Tax Digital for Income Tax: wh
 guide('hospitality-and-restaurant-accountants','Accountants for restaurants, takeaways and hospitality businesses',
  'Hospitality and Restaurant Accountants UK | Fixed Fees | NextGen',
  'Chartered Accountants for UK restaurants, takeaways, cafes, pubs and hotels. Weekly payroll, tips and tronc, VAT on food, bookkeeping from till and delivery apps, year-end accounts. Fixed fees.',
- '''<p class="lead">We look after the accounts, VAT, payroll and tax of restaurants, takeaways, cafes, pubs and small hotels across the UK. Sheryar Ahmed ACA FCCA has worked in hospitality finance, so the firm knows how the numbers in a kitchen and front of house actually behave.</p>
+ '''<p class="lead">We look after the accounts, VAT, payroll and tax of restaurants, takeaways, cafes, pubs and small hotels across the UK. Our team has worked in hospitality finance, so the firm knows how the numbers in a kitchen and front of house actually behave.</p>
 <h2>What we do for hospitality businesses</h2>
 <ul><li><a href="/bookkeeping-and-vat">Bookkeeping</a> from till reports, card terminals and delivery platforms such as Just Eat, Uber Eats and Deliveroo, including their commission.</li>
 <li><a href="/vat-registration-and-returns">VAT returns</a> with the right split between standard-rated and zero-rated sales.</li>

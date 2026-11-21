@@ -4,16 +4,15 @@
 # - llms.txt and robots.txt regenerated from the pages that exist
 import glob as _glob
 _ORG='https://nextgenca.co.uk/#org'
-_PER='https://nextgenca.co.uk/about#sheryar-ahmed'
+_PER='https://nextgenca.co.uk/about#principal'
 _FIRM='NextGen Chartered Accountant'
 _LD=re.compile(r'<script type="application/ld\+json">(.*?)</script>',re.S)
 def _txt(x): return html.unescape(re.sub(r'<[^>]+>','',x)).strip()
 def _gbp(x):
     m=re.search(r'£([\d,]+(?:\.\d+)?)',x)
     return m.group(1).replace(',','') if m else None
-_FOUNDER={"@type":"Person","@id":_PER,"name":"Sheryar Ahmed","honorificSuffix":"ACA FCCA","jobTitle":"Founder and Chartered Accountant","url":"https://nextgenca.co.uk/about","image":"https://nextgenca.co.uk/img/sheryar.jpg","worksFor":{"@id":_ORG},
- "hasCredential":[{"@type":"EducationalOccupationalCredential","name":"ACA","credentialCategory":"Professional qualification","recognizedBy":{"@type":"Organization","name":"Institute of Chartered Accountants in England and Wales (ICAEW)","url":"https://www.icaew.com/"}},
-                  {"@type":"EducationalOccupationalCredential","name":"FCCA","credentialCategory":"Professional qualification","recognizedBy":{"@type":"Organization","name":"Association of Chartered Certified Accountants (ACCA)","url":"https://www.accaglobal.com/"}}],
+_FOUNDER={"@type":"Person","@id":_PER,"name":"S. Ahmed","honorificSuffix":"ACA","jobTitle":"Principal, Chartered Accountant","url":"https://nextgenca.co.uk/about","worksFor":{"@id":_ORG},
+ "hasCredential":[{"@type":"EducationalOccupationalCredential","name":"ACA","credentialCategory":"Professional qualification","recognizedBy":{"@type":"Organization","name":"Institute of Chartered Accountants in England and Wales (ICAEW)","url":"https://www.icaew.com/"}}],
  "knowsAbout":["UK corporation tax","Self Assessment","VAT","Payroll","Limited company accounts","Making Tax Digital","UK tax for non-residents"]}
 def _walk(n,top=False):
     if isinstance(n,list): return [_walk(x) for x in n]
@@ -23,7 +22,7 @@ def _walk(n,top=False):
     if t in('AccountingService','Organization') and n.get('name')==_FIRM:
         n={'@type':'AccountingService' if t=='AccountingService' else t,'@id':_ORG,**{k:v for k,v in n.items() if k not in('@type','@id')}}
         n.setdefault('url','https://nextgenca.co.uk/')
-    if t=='Person' and n.get('name')=='Sheryar Ahmed':
+    if t=='Person' and n.get('name') in ('Sheryar Ahmed','S. Ahmed'):
         n={'@type':'Person','@id':_PER,**{k:v for k,v in n.items() if k not in('@type','@id')}}
         n['url']='https://nextgenca.co.uk/about'
     return n
@@ -60,7 +59,7 @@ for _f in sorted(_glob.glob(R+'*.html')+_glob.glob(R+'insights/*.html')):
         for _x in _n:
             if _x.get('@type')=='AccountingService':
                 _x['founder']=_FOUNDER
-                _x['employee']=[{"@id":_PER},{"@type":"Person","name":"Fiza Gillani","honorificSuffix":"ACCA","jobTitle":"Practice Manager","worksFor":{"@id":_ORG}}]
+                _x['employee']=[{"@id":_PER}]
                 _x['identifier']={"@type":"PropertyValue","propertyID":"ICAEW firm number","value":"C011010236"}
                 _x['memberOf']={"@type":"Organization","name":"Institute of Chartered Accountants in England and Wales (ICAEW)","url":"https://www.icaew.com/"}
                 _x['knowsAbout']=["Limited company accounts","Corporation tax returns (CT600)","Self Assessment tax returns","VAT registration and returns","Payroll","Bookkeeping","Making Tax Digital","UK tax for non-residents","Outsourced accounting for accountancy firms"]
@@ -86,7 +85,7 @@ _L=['# NextGen Chartered Accountant','',
 '- Name: NextGen Chartered Accountant (also written NextGen Chartered Accountants, NextGen CA)',
 '- Website: https://nextgenca.co.uk/',
 '- Type: firm of Chartered Accountants, sole practitioner, ICAEW member firm number C011010236',
-'- Founder: Sheryar Ahmed ACA FCCA. Practice Manager: Fiza Gillani ACCA',
+'- Principal: S. Ahmed ACA (ICAEW). Team of ACCA-qualified accountants',
 '- Based in: Luton, Bedfordshire, England. No London office. Works online with clients anywhere in the UK and abroad',
 '- Hours: Monday to Saturday, 9am to 7pm UK time. Enquiries answered within 1 hour in those hours',
 '- Pricing: fixed starting fees, published. Not VAT registered, so no VAT is added',

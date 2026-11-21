@@ -120,7 +120,7 @@ for _d, _t, _sl in _DL:
     s = s.replace(f'<li><b>{_d}</b><span>{_t}</span></li>',
                   f'<li><a class="dl" href="/insights/{_sl}"><b>{_d}</b><span>{_t}<i>Read the guide →</i></span></a></li>', 1)
 s = s.replace('<p class="foot-note">We remind you early and file before the date, not on it.</p>',
-              '<p class="foot-note">Tap a date for Sheryar\'s guide to it. We remind you early and file before the date, not on it.</p>', 1)
+              '<p class="foot-note">Tap a date for our guide to it. We remind you early and file before the date, not on it.</p>', 1)
 DL_CSS = ('/*dl*/.cal li a.dl{display:contents;color:inherit;text-decoration:none}.cal li a.dl i{display:block;font-style:normal;font-size:.78rem;font-weight:700;color:var(--gold-soft);margin-top:4px;opacity:.85}'
           '.cal li:hover{background:rgba(255,255,255,.04)}.cal li a.dl:hover i{text-decoration:underline;opacity:1}'
           '#insights+.wrap.showcase,.showcase{margin-top:24px}/*/dl*/')
@@ -159,7 +159,7 @@ s = _re.sub(r'(<nav class="main" id="mainNav" aria-label="Main">\n).*?(    </nav
 # byline on the deadlines box
 s = _re.sub(r'<p class="cal-by">.*?</p>\n    ', '', s)
 s = s.replace('<h2>Deadlines we keep for you</h2>',
-              '<p class="cal-by">Guides by Sheryar Ahmed ACA FCCA</p>\n    <h2>Deadlines we keep for you</h2>', 1)
+              '<p class="cal-by">Guides by Team NextGen Chartered Accountant</p>\n    <h2>Deadlines we keep for you</h2>', 1)
 s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}#insights~.wrap.showcase{margin-top:0}', 1)
 
 # Social profiles: tell Google which profiles belong to the firm

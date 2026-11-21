@@ -65,7 +65,7 @@ def make(slug, label, headline, sub=''):
     chip.paste(mark, ((150 - mark.width) // 2, (112 - mark.height) // 2))
     img.paste(chip, (pad, H - 200))
     d.text((pad + 180, H - 196), 'NextGen Chartered Accountant', font=font('Inter-Bold.otf', 38), fill=WHITE)
-    d.text((pad + 180, H - 146), 'By Sheryar Ahmed ACA FCCA  ·  nextgenca.co.uk', font=font('Inter-Regular.otf', 30), fill=MIST)
+    d.text((pad + 180, H - 146), 'By Team NextGen Chartered Accountant  ·  nextgenca.co.uk', font=font('Inter-Regular.otf', 30), fill=MIST)
     os.makedirs(R + 'social', exist_ok=True)
     out = R + 'social/' + slug + '.png'
     img.save(out, optimize=True)

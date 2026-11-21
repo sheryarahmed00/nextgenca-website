@@ -7,9 +7,9 @@ def guide(slug,h1,title,desc,body,qs,crumb='Guides'):
 <h1>{h1}</h1>
 {body}
 <h2>Questions</h2>{faq(qs)}
-<p class="note">Written by Sheryar Ahmed ACA FCCA. Rates and rules are those in force for the 2026 to 2027 tax year and can change. This guide is general information, not advice for your circumstances.</p>
+<p class="note">Written by Team NextGen Chartered Accountant. Rates and rules are those in force for the 2026 to 2027 tax year and can change. This guide is general information, not advice for your circumstances.</p>
 {CTA}'''
-    ld=[{"@context":"https://schema.org","@type":"Article","headline":h1,"description":desc,"url":"https://nextgenca.co.uk/"+slug,"author":{"@type":"Person","name":"Sheryar Ahmed","honorificSuffix":"ACA FCCA"},"publisher":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"dateModified":str(datetime.date.today())},
+    ld=[{"@context":"https://schema.org","@type":"Article","headline":h1,"description":desc,"url":"https://nextgenca.co.uk/"+slug,"author":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"publisher":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"dateModified":str(datetime.date.today())},
         {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":h1,"item":"https://nextgenca.co.uk/"+slug}]},
         {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in qs]}]
     page(slug,title,desc,b,ld,ogtype='article')

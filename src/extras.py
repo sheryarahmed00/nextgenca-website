@@ -256,7 +256,7 @@ s = s.replace('<aside class="card-cred alt"', '<aside class="card-cred" style="m
 
 # Start every list item and review with a capital letter
 s = _re.sub(r'<li>([a-z])', lambda m: '<li>' + m.group(1).upper(), s)
-s = s.replace('“thank you very much [Ahmed] as usual. this is the third year i work', '“Thank you very much [Ahmed] as usual. This is the third year I work', 1)
+s = s.replace('“thank you very much Ahmed as usual. this is the third year i work', '“Thank you very much Ahmed as usual. This is the third year I work', 1)
 for _a, _b in [('>up 9% on October<', '>Up 9% on October<'), ('>target 58%<', '>Target 58%<'), ('>due 31 January<', '>Due 31 January<'),
                ('>five-star reviews<', '>Five-star reviews<'), ('<small>years in UK accounting</small>', '<small>Years in UK accounting</small>')]:
     s = s.replace(_a, _b)

@@ -48,3 +48,20 @@ page('insights','Insights: UK Tax and Accounting Updates | NextGen Chartered Acc
  [{"@context":"https://schema.org","@type":"Blog","name":"NextGen Chartered Accountant Insights","url":"https://nextgenca.co.uk/insights","author":{"@type":"Person","name":"Sheryar Ahmed"},
    "blogPost":[{"@type":"BlogPosting","headline":p['title'],"datePublished":p['date'],"url":"https://nextgenca.co.uk/insights/"+p['slug']} for p in POSTS]}])
 POST_SLUGS=['insights']+['insights/'+p['slug'] for p in POSTS]
+
+# RSS feed for LinkedIn "External content sources" and other readers: /rss.xml
+from email.utils import format_datetime as _fmt
+from xml.sax.saxutils import escape as _x
+_items=[]
+for p in sorted(POSTS,key=lambda p:p['date'],reverse=True)[:30]:
+    _u='https://nextgenca.co.uk/insights/'+p['slug']
+    _d=_fmt(datetime.datetime.fromisoformat(p['date']+'T08:00:00+00:00'))
+    _img=f'https://nextgenca.co.uk/social/{p["slug"]}.png'
+    _items.append(f'<item><title>{_x(p["title"])}</title><link>{_u}</link><guid isPermaLink="true">{_u}</guid><pubDate>{_d}</pubDate><description>{_x(p["summary"])}</description>'
+                  +(f'<enclosure url="{_img}" type="image/png" length="0"/>' if os.path.exists(f'social/{p["slug"]}.png') else '')+'</item>')
+_now=_fmt(datetime.datetime.now(datetime.timezone.utc))
+open('rss.xml','w').write('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+  '<title>NextGen Chartered Accountant: UK tax and accounting updates</title><link>https://nextgenca.co.uk/insights</link>'
+  '<atom:link href="https://nextgenca.co.uk/rss.xml" rel="self" type="application/rss+xml"/>'
+  '<description>New UK tax, payroll and Companies House rules, explained for small businesses, landlords and individuals.</description>'
+  f'<language>en-gb</language><lastBuildDate>{_now}</lastBuildDate>'+''.join(_items)+'</channel></rss>\n')

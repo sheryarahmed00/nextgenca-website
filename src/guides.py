@@ -7,7 +7,7 @@ def guide(slug,h1,title,desc,body,qs,crumb='Guides'):
 <h1>{h1}</h1>
 {body}
 <h2>Questions</h2>{faq(qs)}
-<p class="note">Written by Team NextGen Chartered Accountant. Rates and rules are those in force for the 2026 to 2027 tax year and can change. This guide is general information, not advice for your circumstances.</p>
+<p class="note">Written by Ahmed ACA, founder of NextGen Chartered Accountant. Rates and rules are those in force for the 2026 to 2027 tax year and can change. This guide is general information, not advice for your circumstances.</p>
 {CTA}'''
     ld=[{"@context":"https://schema.org","@type":"Article","headline":h1,"description":desc,"url":"https://nextgenca.co.uk/"+slug,"author":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"publisher":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"dateModified":str(datetime.date.today())},
         {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":h1,"item":"https://nextgenca.co.uk/"+slug}]},

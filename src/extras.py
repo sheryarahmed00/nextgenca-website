@@ -159,7 +159,7 @@ s = _re.sub(r'(<nav class="main" id="mainNav" aria-label="Main">\n).*?(    </nav
 # byline on the deadlines box
 s = _re.sub(r'<p class="cal-by">.*?</p>\n    ', '', s)
 s = s.replace('<h2>Deadlines we keep for you</h2>',
-              '<p class="cal-by">Guides by Team NextGen Chartered Accountant</p>\n    <h2>Deadlines we keep for you</h2>', 1)
+              '<p class="cal-by">Guides by Ahmed ACA, founder of NextGen Chartered Accountant</p>\n    <h2>Deadlines we keep for you</h2>', 1)
 s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}#insights~.wrap.showcase{margin-top:0}', 1)
 
 # Social profiles: tell Google which profiles belong to the firm

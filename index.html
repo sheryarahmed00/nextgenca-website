@@ -866,8 +866,8 @@ footer a:hover{color:#fff}
         <label for="f-type">You are a<select id="f-type" name="type"><option>Sole trader or freelancer</option><option>Limited company</option><option>Landlord</option><option>Client outside the UK</option><option>Accountancy firm (outsourcing)</option><option>Individual</option></select></label>
         <label for="f-svc">Service you need<select id="f-svc" name="service"><option>Self Assessment tax return</option><option>Limited company accounts and corporation tax</option><option>Bookkeeping and VAT</option><option>Payroll</option><option>Landlord tax</option><option>Company formation</option><option>Management accounts or advisory</option><option>UK tax for non-residents</option><option>Outsourcing for my practice</option><option>Not sure yet</option></select></label>
       </div>
-      <label for="f-source">How did you hear about us? (optional)
-        <select id="f-source" name="How did you hear about us?">
+      <label for="f-source">How did you hear about us? (required)
+        <select id="f-source" name="How did you hear about us?" required>
           <option value="">Select an option</option>
           <option>Google Search</option>
           <option>Google Maps or Business Profile</option>
@@ -883,13 +883,17 @@ footer a:hover{color:#fff}
           <option>Online advert</option>
           <option>AI assistant (such as ChatGPT)</option>
           <option>Other</option>
-          <option>Prefer not to say</option>
         </select>
       </label>
+      <div id="f-source-other-row" hidden>
+        <label for="f-source-other">Please tell us where you heard about us
+          <input id="f-source-other" name="Other source" maxlength="150" disabled>
+        </label>
+      </div>
       <label for="f-msg">Describe what you need help with<textarea id="f-msg" name="message" required placeholder="For example: what the issue is, your turnover, number of staff, any deadline or HMRC letter"></textarea></label>
       <p style="margin:4px 0 16px;font-size:.9rem;opacity:.9">After you send this form, you will get a link to pick a time for your free 15-minute call.</p>
       <button class="btn btn-gold" type="submit">Send and choose a call time</button>
-      <p style="margin-top:12px;font-size:.82rem;opacity:.8">We use your details to reply to your enquiry. Your optional answer helps us understand how people find us. See our <a href="/privacy">privacy notice</a>.</p>
+      <p style="margin-top:12px;font-size:.82rem;opacity:.8">We use your details to reply to your enquiry. Your answer helps us understand how people find us. See our <a href="/privacy">privacy notice</a>.</p>
       <p id="formNote" role="status" hidden></p>
     </form>
   </div>
@@ -974,6 +978,18 @@ menuBtn.addEventListener("click", () => {
 });
 nav.addEventListener("click", e => { if (e.target.tagName === "A") { nav.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); } });
 
+const enquirySource = document.getElementById("f-source");
+const enquiryOtherSource = document.getElementById("f-source-other");
+const enquiryOtherSourceRow = document.getElementById("f-source-other-row");
+function updateEnquirySource() {
+  const isOther = enquirySource.value === "Other";
+  enquiryOtherSourceRow.hidden = !isOther;
+  enquiryOtherSource.disabled = !isOther;
+  enquiryOtherSource.required = isOther;
+  if (!isOther) enquiryOtherSource.value = "";
+}
+enquirySource.addEventListener("change", updateEnquirySource);
+window.addEventListener("pageshow", updateEnquirySource);
 document.getElementById("enquiry").addEventListener("submit", e => {
   e.preventDefault();
   const form = e.target, note = document.getElementById("formNote"), btn = form.querySelector("button[type=submit]");
@@ -993,11 +1009,21 @@ document.getElementById("enquiry").addEventListener("submit", e => {
     note.textContent = "Please describe in a sentence or two what you need help with.";
     return;
   }
+  if (!enquirySource.value) {
+    note.textContent = "Please select how you heard about us.";
+    enquirySource.focus();
+    return;
+  }
+  if (enquirySource.value === "Other" && !enquiryOtherSource.value.trim()) {
+    note.textContent = "Please tell us where you heard about us.";
+    enquiryOtherSource.focus();
+    return;
+  }
   btn.disabled = true;
   note.textContent = "Sending your enquiry.";
   fetch("https://formsubmit.co/ajax/info@nextgenca.co.uk", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(Object.fromEntries(new FormData(form))) })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); note.innerHTML = 'Thank you. Your enquiry has been sent. Now pick a time for your free 15-minute call:<br><a class="btn btn-navy" style="margin-top:12px" href="/book" target="_blank" rel="noopener">Pick a time for your call</a><br><span style="display:inline-block;margin-top:10px">Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.</span>'; })
+    .then(d => { if (String(d.success) !== "true") throw new Error("not sent"); form.reset(); updateEnquirySource(); note.innerHTML = 'Thank you. Your enquiry has been sent. Now pick a time for your free 15-minute call:<br><a class="btn btn-navy" style="margin-top:12px" href="/book" target="_blank" rel="noopener">Pick a time for your call</a><br><span style="display:inline-block;margin-top:10px">Prefer not to book now? We reply within 1 hour, Monday to Saturday, 9am to 7pm.</span>'; })
     .catch(() => { note.textContent = "Your enquiry could not be sent from this page. Please email info@nextgenca.co.uk or call +44 7591 246395."; })
     .finally(() => { btn.disabled = false; });
 });

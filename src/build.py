@@ -73,7 +73,7 @@ menuBtn.addEventListener("click",()=>{const open=nav.classList.toggle("open");me
 CTA='''<div class="cta"><p><b>Want a fixed quote?</b> Tell us what you need. We reply within 1 hour, Monday to Saturday, 9am to 7pm, and send a fixed fee after a free call.</p>
 <a class="btn btn-navy" href="/#contact">Book a free call</a><a class="btn btn-wa" href="https://wa.me/447591246395">Message on WhatsApp</a></div>'''
 PAGES={}
-def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website'):
+def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website',include_chat=True):
     url='https://nextgenca.co.uk/'+slug
     if len(title)>60:
         title=title.replace(' | NextGen Chartered Accountant',' | NextGen CA').replace(' | NextGen Chartered Accountants',' | NextGen CA')
@@ -125,7 +125,7 @@ def page(slug,title,desc,body,ld=None,noindex=False,image=None,ogtype='website')
 <main class="page"><div class="wrap"><div class="prose">
 {body}
 </div></div></main>
-{FOOT}
+{FOOT if include_chat else FOOT.rsplit('<script src="/chat.js', 1)[0]}
 </body>
 </html>
 '''
@@ -391,6 +391,34 @@ page('complaints','Complaints Procedure | NextGen Chartered Accountant','How to 
 <h2>If you are still not satisfied</h2>
 <p>NextGen Chartered Accountant is an ICAEW member firm (firm number C011010236). If we have not resolved your complaint, you can raise it with the Institute of Chartered Accountants in England and Wales. Details are at <a href="https://www.icaew.com/complaints">icaew.com/complaints</a>.</p>''')
 
+# Set each URL only after confirming that it accepts reviews for NextGen.
+review_platforms = {
+    'Trustpilot': 'https://www.trustpilot.com/evaluate/nextgenca.co.uk',
+    'Google': None,
+}
+review_actions = []
+for platform, url in review_platforms.items():
+    label = f'Review on {platform}'
+    if url:
+        review_actions.append(
+            f'<a class="btn btn-navy" href="{html.escape(url, quote=True)}" rel="noreferrer">{label}</a>'
+        )
+    else:
+        review_actions.append(
+            f'<button class="btn" type="button" disabled>{label} (unavailable)</button>'
+        )
+
+page('review', 'Leave a review | NextGen Chartered Accountant',
+     'Share your experience with NextGen Chartered Accountant on Trustpilot or Google.', f'''
+<h1>Leave a review</h1>
+<p class="lead">If you’ve used our services, you’re welcome to share your honest experience with NextGen Chartered Accountant.</p>
+<p>If you choose to review us on both platforms, please submit a review separately on each. Reviews aren’t shared automatically between Trustpilot and Google.</p>
+<div class="cta" role="group" aria-label="Review platforms">
+  {chr(10).join(review_actions)}
+</div>
+<p style="margin-top:20px">Reviews are public. Please leave out tax references, financial details and other confidential information. See our <a href="/privacy">privacy notice</a>.</p>
+''', noindex=True, include_chat=False)
+
 page('404','Page not found | NextGen Chartered Accountant','Page not found.','''
 <p class="eyebrow">Not found</p>
 <h1>We could not find that page</h1>
@@ -438,6 +466,8 @@ if RECENT_POSTS:
     s=s.replace('   <div class="hero-side">\n',f'   <div class="hero-side">\n    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Ahmed ACA, founder of NextGen Chartered Accountant</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n',1)
 old_foot=re.search(r'<footer>.*?</footer>',s,re.S).group(0)
 new_foot=re.search(r'<footer>.*?</footer>',FOOT,re.S).group(0).replace('href="/#','href="#')
+if any(review_platforms.values()):
+    new_foot = new_foot.replace('<li><a href="/privacy">', '<li><a href="/review">Leave a review</a></li><li><a href="/privacy">', 1)
 s=s.replace(old_foot,new_foot)
 
 LINKS=[('Year-end accounts for limited companies','/limited-company-accounts'),('Self Assessment tax returns','/self-assessment-tax-return'),('Corporation tax returns (CT600)','/limited-company-accounts'),('Landlord and rental income tax','/landlord-tax-return'),('Weekly and monthly payroll with RTI filing','/payroll'),('Monthly bookkeeping and bank reconciliation','/bookkeeping-and-vat'),('VAT registration, scheme choice and returns','/bookkeeping-and-vat'),('Monthly management accounts and KPIs','/management-accounts'),('Company formation and share structure','/company-formation')]

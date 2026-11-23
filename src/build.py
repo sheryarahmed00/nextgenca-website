@@ -410,7 +410,7 @@ for k,h in PAGES.items():
 s=idx
 if '<a href="/insights">Insights</a>' not in s:
     s=s.replace('      <a href="#questions">Questions</a>','      <a href="/insights">Insights</a>\n      <a href="#questions">Questions</a>',1)
-latest=''.join(f'<article class="post"><p class="post-meta">{html.escape(p.get("label",nice(p["date"])))}</p><p class="post-by">By Ahmed ACA, founder of NextGen Chartered Accountant</p><h3><a href="/insights/{p["slug"]}">{html.escape(p["title"])}</a></h3><p>{html.escape(p["summary"])}</p></article>' for p in POSTS[:4])
+latest=''.join(f'<article class="post"><p class="post-meta">{html.escape(p.get("label",nice(p["date"])))}</p><p class="post-by">By Ahmed ACA, founder of NextGen Chartered Accountant</p><h3><a href="/insights/{p["slug"]}">{html.escape(p["title"])}</a></h3><p>{html.escape(p["summary"])}</p></article>' for p in RECENT_POSTS[:4])
 INS=f'''<!--insights-->
 <section id="insights">
   <div class="wrap">
@@ -431,8 +431,8 @@ INS=f'''<!--insights-->
 s=re.sub(r'<!--insights-->.*?<!--/insights-->\n','',s,flags=re.S)
 s=s.replace('<div class="wrap showcase">',INS+'<div class="wrap showcase">',1)
 s=re.sub(r'<!--latest-->.*?<!--/latest-->\n','',s,flags=re.S)
-if POSTS:
-    lp=POSTS[0]
+if RECENT_POSTS:
+    lp=RECENT_POSTS[0]
     if '<div class="hero-side">' not in s:
         s=s.replace('   <aside class="cal"','   <div class="hero-side">\n   <aside class="cal"',1).replace('   </aside>','   </aside>\n   </div>',1)
     s=s.replace('   <div class="hero-side">\n',f'   <div class="hero-side">\n    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Ahmed ACA, founder of NextGen Chartered Accountant</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n',1)

@@ -6,6 +6,7 @@ POSTS=[]
 for f in glob.glob(R+'src/posts/*.json'):
     POSTS.append(json.load(open(f)))
 POSTS.sort(key=lambda p:p.get('sort',p['date']),reverse=True)
+RECENT_POSTS = sorted(POSTS, key=lambda post: post['date'], reverse=True)
 os.makedirs(R+'insights',exist_ok=True)
 AUTHOR='Ahmed ACA, founder of NextGen Chartered Accountant'
 def nice(d): return datetime.date.fromisoformat(d).strftime('%-d %B %Y')
@@ -33,7 +34,7 @@ for p in POSTS:
         {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://nextgenca.co.uk/insights"},{"@type":"ListItem","position":3,"name":p['title'],"item":url}]}]
     page('insights/'+p['slug'],p['title']+' | NextGen Chartered Accountant',p['summary'],body,ld,image=('https://nextgenca.co.uk/social/'+p['slug']+'.png') if os.path.exists(R+'social/'+p['slug']+'.png') else None,ogtype='article')
 
-cards=''.join(f'''<article class="post"><p class="post-meta">{html.escape(p.get('label',nice(p['date'])))}</p><p class="post-by">By Ahmed ACA, founder of NextGen Chartered Accountant</p><h3><a href="/insights/{p['slug']}">{html.escape(p['title'])}</a></h3><p>{html.escape(p['summary'])}</p><a href="/insights/{p['slug']}">Read the article</a></article>''' for p in POSTS)
+cards=''.join(f'''<article class="post"><p class="post-meta">{html.escape(p.get('label',nice(p['date'])))}</p><p class="post-by">By Ahmed ACA, founder of NextGen Chartered Accountant</p><h3><a href="/insights/{p['slug']}">{html.escape(p['title'])}</a></h3><p>{html.escape(p['summary'])}</p><a href="/insights/{p['slug']}">Read the article</a></article>''' for p in RECENT_POSTS)
 page('insights','Insights: UK Tax and Accounting Updates | NextGen Chartered Accountant',
  'Plain-English articles on new UK tax rules, HMRC changes and deadlines by Ahmed ACA, founder of NextGen Chartered Accountant, with the latest HMRC and Companies House news.',
  f'''<p class="crumb"><a href="/">Home</a> / Insights</p>
@@ -46,14 +47,14 @@ page('insights','Insights: UK Tax and Accounting Updates | NextGen Chartered Acc
 {FEED}
 {CTA}''',
  [{"@context":"https://schema.org","@type":"Blog","name":"NextGen Chartered Accountant Insights","url":"https://nextgenca.co.uk/insights","author":{"@type":"Organization","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},
-   "blogPost":[{"@type":"BlogPosting","headline":p['title'],"datePublished":p['date'],"url":"https://nextgenca.co.uk/insights/"+p['slug']} for p in POSTS]}])
+   "blogPost":[{"@type":"BlogPosting","headline":p['title'],"datePublished":p['date'],"url":"https://nextgenca.co.uk/insights/"+p['slug']} for p in RECENT_POSTS]}])
 POST_SLUGS=['insights']+['insights/'+p['slug'] for p in POSTS]
 
 # RSS feed for LinkedIn "External content sources" and other readers: /rss.xml
 from email.utils import format_datetime as _fmt
 from xml.sax.saxutils import escape as _x
 _items=[]
-for p in sorted(POSTS,key=lambda p:p['date'],reverse=True)[:30]:
+for p in RECENT_POSTS[:30]:
     _u='https://nextgenca.co.uk/insights/'+p['slug']
     _d=_fmt(datetime.datetime.fromisoformat(p['date']+'T08:00:00+00:00'))
     _img=f'https://nextgenca.co.uk/social/{p["slug"]}.png'

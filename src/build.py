@@ -411,8 +411,7 @@ for platform, url in review_platforms.items():
 page('review', 'Leave a review | NextGen Chartered Accountant',
      'Share your experience with NextGen Chartered Accountant on Trustpilot or Google.', f'''
 <h1>Leave a review</h1>
-<p class="lead">If you’ve used our services, you’re welcome to share your honest experience with NextGen Chartered Accountant.</p>
-<p>If you choose to review us on both platforms, please submit a review separately on each. Reviews aren’t shared automatically between Trustpilot and Google.</p>
+<p class="lead">If you’ve used our services, we’d love to hear about your experience. Please leave an honest review on Trustpilot and Google by submitting it separately on each platform.</p>
 <div class="cta" role="group" aria-label="Review platforms">
   {chr(10).join(review_actions)}
 </div>

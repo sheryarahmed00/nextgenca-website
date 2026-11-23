@@ -1,0 +1,33 @@
+{
+ "slug": "christmas-payroll-2026-early-payment-fps",
+ "date": "2026-11-23",
+ "sort": "2026-10-21",
+ "label": "HMRC Employer Bulletin · 21 October 2026",
+ "title": "Paying staff early for Christmas 2026? Which date to report to HMRC",
+ "summary": "If you bring forward regular December wages for Christmas, keep the normal payday on your Full Payment Submission. Here is how to check the dates before you run payroll.",
+ "tags": [
+  "HMRC",
+  "PAYE",
+  "Payroll",
+  "Employers"
+ ],
+ "body": "<p>If your business closes over Christmas, you may bring forward the December bank transfer so staff receive their wages before the break. HMRC’s October Employer Bulletin says to use the usual or contractual payday on the Full Payment Submission (FPS) when you pay regular wages early for Christmas. The FPS is the report your payroll software sends to HMRC with pay and deduction details.</p>\n<h2>Which date goes on the FPS?</h2>\n<p>Suppose your normal monthly payday is 18 December 2026 and you transfer wages on 11 December. Use <b>18 December 2026</b> as the payment date on the FPS and submit it by 18 December. Record the transfer in your banking records on the day it actually happened. Keeping both dates visible makes it easier to explain the difference when reconciling payroll with your bank statement.</p>\n<h2>Why the reported date matters</h2>\n<p>HMRC says that keeping the regular payday on the FPS helps protect employees’ entitlement to income-based benefits such as Universal Credit. Using the early transfer date can affect which assessment period wages fall into. If employees ask why the money arrived on a different date from the one shown on the payroll paperwork, explain that the early bank transfer was a one-off and confirm when they should expect their next payment.</p>\n<h2>What to check before the Christmas break</h2>\n<ul><li><b>Confirm the normal payday for each pay group.</b> If you pay some staff weekly and others monthly, check each payroll separately before setting the bank transfer dates.</li>\n<li><b>Agree the deadline for hours and payroll changes.</b> Make sure whoever approves overtime, holiday pay and deductions knows when you need the information, especially if they will be away.</li>\n<li><b>Check the payment date on the FPS preview.</b> A change to the bank payment schedule can be easy to miss in payroll software. Review the date before submitting and keep the submission confirmation with your payroll records.</li>\n<li><b>Assign cover for the filing.</b> Decide who will submit the FPS and check it was accepted if the usual payroll contact is away.</li></ul>\n<h2>Can you send the FPS before the usual payday?</h2>\n<p>HMRC allows early submission if, for example, your payroll team will be on holiday. Send it once you have confirmed the figures and dates. If something changes after you send it, such as an employee leaving or a tax code changing, HMRC says you will need to send a corrected FPS.</p>\n<p>If you use a payroll provider, send them both dates before they process December pay. If you need help reviewing your December payroll timetable, contact NextGen Chartered Accountant.</p>",
+ "sources": [
+  {
+   "title": "HMRC Employer Bulletin, October 2026",
+   "url": "https://www.gov.uk/government/publications/employer-bulletin-october-2026/october-2026-issue-of-the-employer-bulletin"
+  },
+  {
+   "title": "HMRC employer further guide to PAYE and National Insurance contributions, 2026 to 2027",
+   "url": "https://www.gov.uk/government/publications/cwg2-further-guide-to-paye-and-national-insurance-contributions/2026-to-2027-employer-further-guide-to-paye-and-national-insurance-contributions"
+  },
+  {
+   "title": "GOV.UK running payroll and reporting an FPS",
+   "url": "https://www.gov.uk/running-payroll/reporting-to-hmrc"
+  }
+ ],
+ "related": [
+  "payroll",
+  "small-business-accounting"
+ ]
+}

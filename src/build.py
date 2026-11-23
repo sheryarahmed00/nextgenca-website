@@ -391,29 +391,12 @@ page('complaints','Complaints Procedure | NextGen Chartered Accountant','How to 
 <h2>If you are still not satisfied</h2>
 <p>NextGen Chartered Accountant is an ICAEW member firm (firm number C011010236). If we have not resolved your complaint, you can raise it with the Institute of Chartered Accountants in England and Wales. Details are at <a href="https://www.icaew.com/complaints">icaew.com/complaints</a>.</p>''')
 
-# Set each URL only after confirming that it accepts reviews for NextGen.
-review_platforms = {
-    'Trustpilot': 'https://www.trustpilot.com/evaluate/nextgenca.co.uk',
-    'Google': None,
-}
-review_actions = []
-for platform, url in review_platforms.items():
-    label = f'Review on {platform}'
-    if url:
-        review_actions.append(
-            f'<a class="btn btn-navy" href="{html.escape(url, quote=True)}" rel="noreferrer">{label}</a>'
-        )
-    else:
-        review_actions.append(
-            f'<button class="btn" type="button" disabled>{label} (unavailable)</button>'
-        )
-
 page('review', 'Leave a review | NextGen Chartered Accountant',
-     'Share your experience with NextGen Chartered Accountant on Trustpilot or Google.', f'''
+     'Share your experience with NextGen Chartered Accountant on Trustpilot.', '''
 <h1>Leave a review</h1>
-<p class="lead">If you’ve used our services, we’d love to hear about your experience. Please leave an honest review on Trustpilot and Google by submitting it separately on each platform.</p>
-<div class="cta" role="group" aria-label="Review platforms">
-  {chr(10).join(review_actions)}
+<p class="lead">If you’ve used our services, we’d love to hear about your experience. Please leave an honest review on Trustpilot.</p>
+<div class="cta">
+  <a class="btn btn-navy" href="https://www.trustpilot.com/evaluate/nextgenca.co.uk" rel="noreferrer">Review on Trustpilot</a>
 </div>
 <p style="margin-top:20px">Reviews are public. Please leave out tax references, financial details and other confidential information. See our <a href="/privacy">privacy notice</a>.</p>
 ''', noindex=True, include_chat=False)
@@ -465,8 +448,7 @@ if RECENT_POSTS:
     s=s.replace('   <div class="hero-side">\n',f'   <div class="hero-side">\n    <!--latest-->\n    <a class="hero-latest" href="/insights/{lp["slug"]}"><span>Latest from Ahmed ACA, founder of NextGen Chartered Accountant</span><b>{html.escape(lp["title"])}</b><i>Read the article →</i></a>\n    <!--/latest-->\n',1)
 old_foot=re.search(r'<footer>.*?</footer>',s,re.S).group(0)
 new_foot=re.search(r'<footer>.*?</footer>',FOOT,re.S).group(0).replace('href="/#','href="#')
-if any(review_platforms.values()):
-    new_foot = new_foot.replace('<li><a href="/privacy">', '<li><a href="/review">Leave a review</a></li><li><a href="/privacy">', 1)
+new_foot = new_foot.replace('<li><a href="/privacy">', '<li><a href="/review">Leave a review</a></li><li><a href="/privacy">', 1)
 s=s.replace(old_foot,new_foot)
 
 LINKS=[('Year-end accounts for limited companies','/limited-company-accounts'),('Self Assessment tax returns','/self-assessment-tax-return'),('Corporation tax returns (CT600)','/limited-company-accounts'),('Landlord and rental income tax','/landlord-tax-return'),('Weekly and monthly payroll with RTI filing','/payroll'),('Monthly bookkeeping and bank reconciliation','/bookkeeping-and-vat'),('VAT registration, scheme choice and returns','/bookkeeping-and-vat'),('Monthly management accounts and KPIs','/management-accounts'),('Company formation and share structure','/company-formation')]

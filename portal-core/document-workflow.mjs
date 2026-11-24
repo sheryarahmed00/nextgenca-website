@@ -5,7 +5,7 @@
  */
 export function createDocumentWorkflow({reservations,lifecycle,storage}){
   if(!reservations?.reserve||!lifecycle?.markReady||
-     !lifecycle?.getReadyMetadata||!storage?.createUploadTicket||
+     !lifecycle?.getReadyMetadata||!lifecycle?.getPendingMetadata||!storage?.createUploadTicket||
      !storage?.verifyUploadedObject||!storage?.createDownloadUrl)
     throw Error('document_workflow_dependencies_required');
   return {

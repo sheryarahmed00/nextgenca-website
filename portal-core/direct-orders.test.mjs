@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {validateDirectOrderInput,registerDirectOrder,approveDirectOrder} from './direct-orders.mjs';
-const admin={id:'a1',isAdmin:true,mfaVerified:true};
+const admin={id:'a1',isAdmin:true,mfaVerified:true,serverValidated:true};
 test('direct orders accept supported sources and reject invalid input',()=>{
   assert.equal(validateDirectOrderInput({customerId:' c1 ',serviceId:'s1',source:'whatsapp',reference:'call'}).customerId,'c1');
   assert.throws(()=>validateDirectOrderInput({customerId:'',serviceId:'s1',source:'phone',reference:''}),/customer_required/);

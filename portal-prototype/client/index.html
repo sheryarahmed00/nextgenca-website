@@ -13,21 +13,21 @@ button{background:#163f64;color:white;padding:11px 15px;border:0;border-radius:8
 </style></head><body>
 <header><strong>NextGen Chartered Accountant</strong><div>Secure Client Portal · Development Preview</div></header>
 <main><h1>Your accounting services, in one place</h1>
-<div class="warning"><strong>Prototype only.</strong> Registration, login, activation and document access are not connected. Do not enter personal information or a real service code.</div>
+<div class="warning"><strong>Prototype only.</strong> Staging-only Auth integration. Signup and login require a configured staging URL and email redirects. Activation and documents are not connected. Do not enter real service codes.</div>
 <div class="grid">
-<section class="card"><h2>Create account</h2><p class="muted">Anyone can create an account after email verification. Services stay locked until a valid code is redeemed.</p>
-<label for="name">Full name</label><input id="name" placeholder="Your name" disabled>
-<label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" disabled>
-<label for="password">Password</label><input id="password" type="password" placeholder="Secure password" disabled>
-<button disabled>Register & verify email</button></section>
-<section class="card"><h2>Existing client login</h2><p class="muted">Use your verified email account to manage activated services.</p>
-<label for="login-email">Email address</label><input id="login-email" type="email" placeholder="you@example.com" disabled>
-<label for="login-password">Password</label><input id="login-password" type="password" disabled>
-<button disabled>Sign in securely</button><p class="muted">MFA will be supported by the selected authentication provider.</p></section>
+<section class="card"><h2>Create account</h2><form id="signup"><p class="muted">Anyone can create an account after email verification. Services stay locked until a valid code is redeemed.</p>
+
+<label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+<label for="password">Password</label><input id="password" type="password" placeholder="Secure password" minlength="12" autocomplete="new-password" required>
+<button type="submit">Register & verify email</button></form></section>
+<section class="card"><h2>Existing client login</h2><form id="signin"><p class="muted">Use your verified email account to manage activated services.</p>
+<label for="login-email">Email address</label><input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" required>
+<label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" required>
+<button type="submit">Sign in securely</button></form><p id="session-status" class="muted">Not signed in</p><button id="logout" disabled>Sign out</button><p class="muted">MFA will be supported by the selected authentication provider.</p></section>
 <section class="card"><h2>Activate a service</h2><p class="muted">Have a code from NextGen? Enter it after signing in. Each code can only activate its assigned service for the intended client.</p>
 <label for="code">Single-use activation code</label><input id="code" autocomplete="off" placeholder="Activation code" disabled>
 <button disabled>Activate service</button></section>
 <section class="card"><h2>My services</h2><p><span class="chip">No active services in preview</span></p>
 <p class="muted">After activation, services such as VAT Returns, Payroll, Company Accounts and Self Assessment will appear here.</p>
 <p class="muted">Documents and messages will require additional server-side ownership checks.</p></section>
-</div></main></body></html>
+</div><p id="auth-status" role="status" aria-live="polite"></p></main><script type="module" src="./auth.mjs"></script></body></html>

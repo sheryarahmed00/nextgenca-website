@@ -7,6 +7,7 @@ test('document requests resolve customer identity from verified session, never b
  const calls=[];
  const db={maybeOne:async(_sql,params)=>{calls.push(['identity',params]);return {id,disabled:false,email_verified:true};}};
  const workflow={
+  listDocuments:async input=>{calls.push(['list',input]);return {documents:[]};},
   beginUpload:async input=>{calls.push(['upload',input]);return {ok:true};},
   completeUpload:async input=>{calls.push(['complete',input]);return {ok:true};},
   download:async input=>{calls.push(['download',input]);return {ok:true};}
@@ -18,7 +19,14 @@ test('document requests resolve customer identity from verified session, never b
 });
 test('unverified identity cannot upload',async()=>{
  const db={maybeOne:async()=>{throw Error('should_not_query');}};
- const workflow={beginUpload:async()=>{},completeUpload:async()=>{},download:async()=>{}};
+ const workflow={listDocuments:async()=>({documents:[]}),beginUpload:async()=>{},completeUpload:async()=>{},download:async()=>{}};
  const handlers=createDocumentApiHandlers({db,workflow});
  await assert.rejects(handlers.beginDocumentUpload({verifiedSession:{...verifiedSession,emailVerified:false},body:{}}),/verified_identity_required/);
+});
+
+test('document listing is scoped to verified identity',async()=>{
+ const db={maybeOne:async()=>({id,disabled:false,email_verified:true})};
+ const workflow={listDocuments:async input=>({customerId:input.customerId}),beginUpload:async()=>{},completeUpload:async()=>{},download:async()=>{}};
+ const handlers=createDocumentApiHandlers({db,workflow});
+ assert.deepEqual(await handlers.listDocuments({verifiedSession,body:{customerId:'attacker'}}),{customerId:id});
 });

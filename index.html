@@ -236,6 +236,11 @@ section{padding:104px 0}
 .tools span:first-child{color:var(--gold)}
 
 .rev-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:40px}
+.trustpilot-review-links{margin:0 0 40px}
+.trustpilot-review-links h3{margin:0 0 16px}
+.trustpilot-review-links .rev{gap:8px;text-decoration:none}
+.trustpilot-review-links .rev:hover,.trustpilot-review-links .rev:focus-visible{border-color:var(--navy)}
+.trustpilot-review-links .rev span{text-decoration:underline;text-underline-offset:.2em}
 .score{border:1px solid var(--rule);border-top:3px solid var(--gold);padding:18px 26px;display:grid;justify-items:start;min-width:210px}
 .score b{font-family:var(--display);font-size:3.4rem;font-weight:600;line-height:1;color:var(--navy);font-variant-numeric:lining-nums}
 .score span{font-size:.85rem;color:var(--muted)}
@@ -696,14 +701,24 @@ footer a:hover{color:#fff}
 
 <section id="reviews" style="padding-top:0">
   <div class="wrap">
+    <div class="trustpilot-review-links">
+      <h3>Trustpilot reviews</h3>
+      <div class="revs">
+        <a class="rev" href="https://uk.trustpilot.com/reviews/6b04e27ee095a882c4aa6b13">
+          <strong><time datetime="2026-11-24">24 November 2026</time></strong>
+          <span>Read and verify on Trustpilot</span>
+        </a>
+        <a class="rev" href="https://uk.trustpilot.com/reviews/6b04cdef2d92eb77299c5995">
+          <strong><time datetime="2026-11-23">23 November 2026</time></strong>
+          <span>Read and verify on Trustpilot</span>
+        </a>
+      </div>
+    </div>
     <div class="rev-head">
       <div class="head" style="margin-bottom:0">
         <p class="eyebrow">Client reviews on Fiverr</p>
         <h2>What clients say about working with us</h2>
         <p class="lead">Nine of the five-star reviews clients have left on our founder's Fiverr profile.</p>
-        <p style="margin:16px 0 0">
-          <a class="btn btn-navy" href="https://uk.trustpilot.com/review/nextgenca.co.uk">Read our Trustpilot reviews</a>
-        </p>
       </div>
       <div class="score"><b>350+</b><span>Five-star reviews on Fiverr</span></div>
     </div>

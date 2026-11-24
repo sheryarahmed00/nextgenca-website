@@ -19,6 +19,22 @@ export function createPortalHandlers({ db, secret, rateLimit }) {
   async function customer(session) { return resolveCustomerAccount({ db, verifiedSession: session }); }
   async function admin(session) { return resolveAdminAccount({ db, verifiedSession: session }); }
   return {
+    async listMyServices({ verifiedSession }) {
+      const user = await customer(verifiedSession);
+      const row = await db.maybeOne(`SELECT COALESCE(json_agg(json_build_object(
+        'serviceId',service_id,'title',title,'activatedAt',activated_at)
+        ORDER BY activated_at DESC), '[]'::json) AS services
+        FROM (SELECT DISTINCT ON (e.service_id) e.service_id,s.title,e.activated_at
+          FROM portal_private.entitlements e
+          JOIN portal_private.services s ON s.id=e.service_id
+          JOIN portal_private.order_items oi ON oi.id=e.order_item_id
+          JOIN portal_private.orders o ON o.id=oi.order_id
+          WHERE e.customer_id=$1 AND o.customer_id=$1
+            AND e.revoked_at IS NULL AND s.active=true
+            AND o.status IN ('approved','fulfilled')
+          ORDER BY e.service_id,e.activated_at DESC) active_services`,[user.id]);
+      return {services:row?.services??[]};
+    },
     async createDirectOrder({ verifiedSession, body }) {
       const actor = await admin(verifiedSession);
       return registerDirectOrder({ db, admin: actor, input: body });

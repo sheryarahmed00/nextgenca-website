@@ -15,7 +15,7 @@ export function validateDirectOrderInput({ customerId, serviceId, source, refere
   return { customerId: customerId.trim(), serviceId: serviceId.trim(), source, reference: reference.trim() };
 }
 export async function registerDirectOrder({ db, admin, input }) {
-  if (!admin?.id || !admin.isAdmin || !admin.mfaVerified) throw new Error('admin_auth_required');
+  if (!admin?.id || !admin.isAdmin || !admin.mfaVerified || admin.serverValidated !== true) throw new Error('admin_auth_required');
   const data = validateDirectOrderInput(input);
   return db.transaction(async tx => {
     const service = await tx.maybeOne('SELECT id FROM portal_private.services WHERE id=$1 AND active=true', [data.serviceId]);
@@ -31,7 +31,7 @@ export async function registerDirectOrder({ db, admin, input }) {
   });
 }
 export async function approveDirectOrder({ db, admin, orderId, verificationConfirmed }) {
-  if (!admin?.id || !admin.isAdmin || !admin.mfaVerified) throw new Error('admin_auth_required');
+  if (!admin?.id || !admin.isAdmin || !admin.mfaVerified || admin.serverValidated !== true) throw new Error('admin_auth_required');
   if (verificationConfirmed !== true) throw new Error('verification_required');
   return db.transaction(async tx => {
     const order = await tx.one('SELECT * FROM portal_private.orders WHERE id=$1 FOR UPDATE', [orderId]);

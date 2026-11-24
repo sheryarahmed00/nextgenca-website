@@ -11,7 +11,7 @@ export function createDocumentWorkflow({reservations,lifecycle,storage}){
   return {
     async beginUpload({customerId,mimeType,sizeBytes,originalFilename}){
       const reservation=await reservations.reserve({customerId,mimeType,sizeBytes,originalFilename});
-      // A failed ticket leaves a pending reservation: cleanup must release it.
+      // Release the reservation if the signed ticket cannot be issued.
       let ticket;
       try{
         ticket=await storage.createUploadTicket({objectPath:reservation.objectPath});

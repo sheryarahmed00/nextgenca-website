@@ -63,3 +63,21 @@ test('document finalization and download accept only valid document IDs',async()
  }
  assert.deepEqual(called,['complete','download']);
 });
+
+test('document listing requires authentication and rejects customer ID injection',async()=>{
+ let calls=0;
+ const dispatch=createHttpBoundary({
+  handlers:{listDocuments:async({verifiedSession})=>{
+   calls++;assert.equal(verifiedSession.serverValidated,true);
+   return {documents:[]};
+  }},
+  verifyBearerToken:async token=>token==='good'?{serverValidated:true}:null,
+  checkRequestOrigin:()=>true
+ });
+ const req={method:'POST',path:'/client/documents/list',authorization:'Bearer good',
+   origin:'https://staging.example',bodyText:'{}'};
+ assert.deepEqual(await dispatch(req),{status:200,body:{documents:[]}});
+ assert.equal((await dispatch({...req,bodyText:JSON.stringify({customerId:id})})).status,400);
+ assert.equal((await dispatch({...req,authorization:'Bearer bad'})).status,401);
+ assert.equal(calls,1);
+});

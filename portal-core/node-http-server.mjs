@@ -30,7 +30,7 @@ export function createPortalHttpServer({handlers,verifyBearerToken,allowedOrigin
     if(req.method==='OPTIONS'){
       res.writeHead(permitted?204:403);res.end();return;
     }
-    if(req.method!=='POST'||!req.url?.startsWith('/api/')){
+    if(req.method!=='POST'||typeof req.url!=='string'||!/^\/api\/(?:admin|client)\/[a-z-]+$/.test(req.url)){
       res.writeHead(404);res.end(JSON.stringify({error:'not_found'}));return;
     }
     if(!permitted){
@@ -43,7 +43,7 @@ export function createPortalHttpServer({handlers,verifyBearerToken,allowedOrigin
     try{
       for await(const chunk of req){
         bytes+=chunk.length;
-        if(bytes>maxBodyBytes){res.writeHead(413);res.end(JSON.stringify({error:'invalid_body'}));return;}
+        if(bytes>maxBodyBytes){res.writeHead(413);res.end(JSON.stringify({error:'invalid_body'}));req.resume();return;}
         body+=chunk.toString('utf8');
       }
       const result=await dispatch({

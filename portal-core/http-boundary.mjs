@@ -10,6 +10,7 @@ const routes={
   'POST /admin/approve-order':{handler:'approveDirectOrder',fields:['orderId','verificationConfirmed']},
   'POST /admin/issue-code':{handler:'issueCode',fields:['orderItemId','customerId','expiresAt']},
   'POST /client/redeem-code':{handler:'redeemCode',fields:['code']},
+  'POST /client/my-services':{handler:'listMyServices',fields:[]},
   'POST /client/check-service':{handler:'checkService',fields:['serviceId']},
   'POST /client/documents/list':{handler:'listDocuments',fields:[]},
   'POST /client/documents/begin-upload':{handler:'beginDocumentUpload',fields:['mimeType','sizeBytes','originalFilename']},
@@ -22,7 +23,7 @@ function validBody(body,fields){
     fields.every(key=>Object.hasOwn(body,key));
 }
 function validateRoute(handler,body){
-  if(handler==='listDocuments')return true;
+  if(handler==='listDocuments'||handler==='listMyServices')return true;
   if(handler==='createDirectOrder')return uuid.test(body.customerId)&&uuid.test(body.serviceId)&&
     ['phone','email','whatsapp','in_person','other'].includes(body.source)&&typeof body.reference==='string'&&body.reference.length<=120;
   if(handler==='approveDirectOrder')return uuid.test(body.orderId)&&body.verificationConfirmed===true;

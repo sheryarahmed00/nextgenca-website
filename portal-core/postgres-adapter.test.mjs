@@ -34,3 +34,5 @@ test('rejects missing and multiple rows',async()=>{
   await assert.rejects(createPortalDb(fakePool({rows:[]})).transaction(tx=>tx.one('SELECT test')),/expected_exactly_one_row/);
   await assert.rejects(createPortalDb(fakePool({rows:[{id:1},{id:2}]})).transaction(tx=>tx.maybeOne('SELECT test')),/expected_at_most_one_row/);
 });
+
+test('execute permits zero affected rows',async()=>{const pool=fakePool({rows:[]});await assert.doesNotReject(createPortalDb(pool).transaction(tx=>tx.execute('UPDATE portal_private.service_codes SET status=$1',['revoked'])));});

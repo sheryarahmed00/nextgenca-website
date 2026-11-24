@@ -10,6 +10,7 @@ function setup(){
   calls.push(['reserve',input]);return {documentId,objectPath,remainingBytes:100};
  }};
  const lifecycle={
+  cancelPending:async input=>{calls.push(['cancel',input]);return true;},
   getPendingMetadata:async input=>{
    calls.push(['pending',input]);return {object_path:objectPath,mime_type:'application/pdf',size_bytes:50};
   },
@@ -43,4 +44,5 @@ test('retrieves owner-scoped ready metadata before signing download',async()=>{
 test('fails closed on a mismatched upload path',async()=>{
  const d=setup();d.storage.createUploadTicket=async()=>({path:'other/file.pdf',token:'signed'});
  await assert.rejects(createDocumentWorkflow(d).beginUpload({customerId,mimeType:'application/pdf',sizeBytes:50,originalFilename:'a.pdf'}),/storage_path_mismatch/);
+ assert.deepEqual(d.calls.map(x=>x[0]),['reserve','cancel']);
 });

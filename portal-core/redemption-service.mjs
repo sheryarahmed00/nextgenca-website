@@ -8,7 +8,7 @@ import { validateIssuance, validateRedemption } from './order-policy.mjs';
  * Database service role must not be exposed to browsers.
  */
 export async function issueServiceCode({ db, actor, orderItemId, customerId, mode, secret, expiresAt }) {
-  if (!actor?.id || !actor?.isAdmin || !actor?.mfaVerified) throw new Error('admin_auth_required');
+  if (!actor?.id || !actor?.isAdmin || !actor?.mfaVerified || actor?.serverValidated !== true) throw new Error('admin_auth_required');
   if (!['automatic', 'manual'].includes(mode)) throw new Error('invalid_mode');
   if (!(expiresAt instanceof Date) || expiresAt <= new Date()) throw new Error('invalid_expiry');
   return db.transaction(async tx => {
@@ -16,7 +16,8 @@ export async function issueServiceCode({ db, actor, orderItemId, customerId, mod
     const order = await tx.one('SELECT * FROM portal_private.orders WHERE id = $1 FOR UPDATE', [item.order_id]);
     const result = validateIssuance({ order, item, customerId, mode, actorIsAdmin: actor.isAdmin });
     if (!result.ok) throw new Error(result.reason);
-    const existing = await tx.maybeOne('SELECT id FROM portal_private.service_codes WHERE order_item_id = $1 AND issuance_type = $2', [orderItemId, mode]);
+    await tx.one('UPDATE portal_private.service_codes SET status = \'revoked\' WHERE order_item_id = $1 AND status = \'issued\' AND expires_at <= now() RETURNING id', [orderItemId]).catch(error => { if (error?.code !== 'P0002') throw error; });
+    const existing = await tx.maybeOne('SELECT id FROM portal_private.service_codes WHERE order_item_id = $1 AND status = 'issued'', [orderItemId]);
     if (existing) throw new Error('already_issued');
     const code = generateServiceCode();
     const digest = digestServiceCode(code, secret);
@@ -38,7 +39,7 @@ export async function issueServiceCode({ db, actor, orderItemId, customerId, mod
  * Avoid exposing detailed rejection reasons in public API responses.
  */
 export async function redeemServiceCode({ db, user, code, secret, now = new Date() }) {
-  if (!user?.id || !user?.emailVerified) throw new Error('verified_login_required');
+  if (!user?.id || !user?.emailVerified || user?.serverValidated !== true) throw new Error('verified_login_required');
   const digest = digestServiceCode(code, secret);
   return db.transaction(async tx => {
     const row = await tx.maybeOne('SELECT * FROM portal_private.service_codes WHERE digest = $1 FOR UPDATE', [digest]);

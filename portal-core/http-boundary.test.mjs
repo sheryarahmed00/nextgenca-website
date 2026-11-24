@@ -41,7 +41,7 @@ test('document routes reject forged identities, control characters, and oversize
  assert.equal((await request(valid)).status,200);
  assert.equal((await request({...valid,customerId:id})).status,400);
  assert.equal((await request({...valid,sizeBytes:10485761})).status,400);
- assert.equal((await request({...valid,originalFilename:'bad\\nname.pdf'})).status,400);
+ assert.equal((await request({...valid,originalFilename:'bad\nname.pdf'})).status,400);
  assert.equal((await request({...valid,mimeType:'text/html'})).status,400);
  assert.equal(calls.length,1);
 });

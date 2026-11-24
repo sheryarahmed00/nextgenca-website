@@ -21,6 +21,15 @@ export function createDocumentLifecycle({db}){
         return {documentId,state:'ready'};
       });
     },
+    async getPendingMetadata({customerId,documentId}){
+      return db.transaction(async tx=>{
+        const row=await tx.maybeOne(`SELECT id,object_path,mime_type,size_bytes
+          FROM portal_private.client_documents
+          WHERE id=$1 AND customer_id=$2 AND state='pending'`,[documentId,customerId]);
+        if(!row)throw Error('document_not_found');
+        return row;
+      });
+    },
     async getReadyMetadata({customerId,documentId}){
       return db.transaction(async tx=>{
         const row=await tx.maybeOne(`SELECT id,object_path,mime_type,size_bytes,original_filename

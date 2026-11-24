@@ -11,8 +11,13 @@ import { createPortalHandlers } from './api-handlers.mjs';
 import { createRedemptionRateLimiter } from './redemption-rate-limit.mjs';
 import { createSupabaseTokenVerifier } from './supabase-auth.mjs';
 import { createPortalHttpServer } from './node-http-server.mjs';
+import { createDocumentReservationService } from './document-reservations.mjs';
+import { createDocumentLifecycle } from './document-lifecycle.mjs';
+import { createPrivateDocumentStorage } from './private-document-storage.mjs';
+import { createDocumentWorkflow } from './document-workflow.mjs';
+import { createDocumentApiHandlers } from './document-api-handlers.mjs';
 
-const required=['DATABASE_URL','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','PORTAL_CODE_HMAC_SECRET','PORTAL_ALLOWED_ORIGIN'];
+const required=['DATABASE_URL','SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','PORTAL_CODE_HMAC_SECRET','PORTAL_ALLOWED_ORIGIN','SUPABASE_SECRET_KEY'];
 for(const key of required)if(!process.env[key])throw Error('missing_required_env_'+key);
 const url=new URL(process.env.SUPABASE_URL);
 if(url.protocol!=='https:'||!url.hostname.endsWith('.supabase.co'))throw Error('invalid_supabase_url');
@@ -31,10 +36,20 @@ const auth=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_PUBLISHABL
 const verifyBearerToken=createSupabaseTokenVerifier({
   auth,issuer:process.env.SUPABASE_URL.replace(/\/$/,'')+'/auth/v1'
 });
-const handlers=createPortalHandlers({
+const serviceHandlers=createPortalHandlers({
   db,secret:process.env.PORTAL_CODE_HMAC_SECRET,
   rateLimit:createRedemptionRateLimiter({db})
 });
+const storageClient=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{
+  auth:{persistSession:false,autoRefreshToken:false}
+});
+const documentWorkflow=createDocumentWorkflow({
+  reservations:createDocumentReservationService({db,bytesPerClient:Number(process.env.PORTAL_CLIENT_STORAGE_BYTES||524288000)}),
+  lifecycle:createDocumentLifecycle({db}),
+  storage:createPrivateDocumentStorage({storage:storageClient.storage})
+});
+const documentHandlers=createDocumentApiHandlers({db,workflow:documentWorkflow});
+const handlers={...serviceHandlers,...documentHandlers};
 const server=createPortalHttpServer({
   handlers,verifyBearerToken,allowedOrigins:[process.env.PORTAL_ALLOWED_ORIGIN]
 });

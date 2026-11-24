@@ -24,3 +24,42 @@ test('rejects oversized and malformed bodies',async()=>{
   assert.equal((await make().dispatch({...req,bodyText:'x'.repeat(5000)})).status,413);
   assert.equal((await make().dispatch({...req,bodyText:'{'})).status,400);
 });
+
+test('document routes reject forged identities, control characters, and oversize files',async()=>{
+ const calls=[];
+ const dispatch=createHttpBoundary({
+  handlers:{beginDocumentUpload:async({verifiedSession,body})=>{
+   calls.push({verifiedSession,body});return {accepted:true};
+  }},
+  verifyBearerToken:async()=>({serverValidated:true,subject:'verified-user'}),
+  checkRequestOrigin:()=>true
+ });
+ const base={method:'POST',path:'/client/documents/begin-upload',
+   authorization:'Bearer valid-token',origin:'https://staging.example'};
+ const request=bodyText=>dispatch({...base,bodyText:JSON.stringify(bodyText)});
+ const valid={mimeType:'application/pdf',sizeBytes:100,originalFilename:'document.pdf'};
+ assert.equal((await request(valid)).status,200);
+ assert.equal((await request({...valid,customerId:id})).status,400);
+ assert.equal((await request({...valid,sizeBytes:10485761})).status,400);
+ assert.equal((await request({...valid,originalFilename:'bad\\nname.pdf'})).status,400);
+ assert.equal((await request({...valid,mimeType:'text/html'})).status,400);
+ assert.equal(calls.length,1);
+});
+test('document finalization and download accept only valid document IDs',async()=>{
+ const called=[];
+ const dispatch=createHttpBoundary({
+  handlers:{
+   completeDocumentUpload:async()=>{called.push('complete');return {ok:true};},
+   downloadDocument:async()=>{called.push('download');return {ok:true};}
+  },
+  verifyBearerToken:async()=>({serverValidated:true}),checkRequestOrigin:()=>true
+ });
+ for(const [path,action] of [['/client/documents/complete-upload','complete'],['/client/documents/download','download']]){
+  const base={method:'POST',path,authorization:'Bearer valid-token',
+    origin:'https://staging.example'};
+  assert.equal((await dispatch({...base,bodyText:JSON.stringify({documentId:id})})).status,200);
+  assert.equal((await dispatch({...base,bodyText:JSON.stringify({documentId:'../../admin'})})).status,400);
+  assert.equal(called.at(-1),action);
+ }
+ assert.deepEqual(called,['complete','download']);
+});

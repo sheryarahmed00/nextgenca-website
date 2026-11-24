@@ -10,7 +10,10 @@ const routes={
   'POST /admin/approve-order':{handler:'approveDirectOrder',fields:['orderId','verificationConfirmed']},
   'POST /admin/issue-code':{handler:'issueCode',fields:['orderItemId','customerId','expiresAt']},
   'POST /client/redeem-code':{handler:'redeemCode',fields:['code']},
-  'POST /client/check-service':{handler:'checkService',fields:['serviceId']}
+  'POST /client/check-service':{handler:'checkService',fields:['serviceId']},
+  'POST /client/documents/begin-upload':{handler:'beginDocumentUpload',fields:['mimeType','sizeBytes','originalFilename']},
+  'POST /client/documents/complete-upload':{handler:'completeDocumentUpload',fields:['documentId']},
+  'POST /client/documents/download':{handler:'downloadDocument',fields:['documentId']}
 };
 function validBody(body,fields){
   return body && typeof body==='object' && !Array.isArray(body) &&
@@ -25,6 +28,8 @@ function validateRoute(handler,body){
     typeof body.expiresAt==='string'&&Number.isFinite(Date.parse(body.expiresAt));
   if(handler==='redeemCode')return typeof body.code==='string'&&/^[A-Za-z0-9_-]{43}$/.test(body.code);
   if(handler==='checkService')return uuid.test(body.serviceId);
+  if(handler==='beginDocumentUpload')return ['application/pdf','image/png','image/jpeg'].includes(body.mimeType)&&Number.isSafeInteger(body.sizeBytes)&&body.sizeBytes>0&&body.sizeBytes<=10485760&&typeof body.originalFilename==='string'&&body.originalFilename.length>0&&body.originalFilename.length<=255&&!/[\\x00-\\x1f\\x7f]/.test(body.originalFilename);
+  if(handler==='completeDocumentUpload'||handler==='downloadDocument')return uuid.test(body.documentId);
   return false;
 }
 export function createHttpBoundary({handlers,verifyBearerToken,checkRequestOrigin,maxBodyBytes=4096}){

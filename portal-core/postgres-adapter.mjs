@@ -5,6 +5,7 @@
 export function createPortalDb(pool) {
   if (!pool || typeof pool.connect !== 'function') throw new TypeError('pg_pool_required');
   const queries = client => ({
+    async execute(sql, params = []) { const result = await client.query(sql, params); return result.rowCount; },
     async maybeOne(sql, params = []) {
       const result = await client.query(sql, params);
       if (result.rows.length > 1) throw new Error('expected_at_most_one_row');

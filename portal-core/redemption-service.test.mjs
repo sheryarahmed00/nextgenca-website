@@ -13,6 +13,7 @@ function mockDb(state) {
   return { transaction: async fn => {
     const snapshot = structuredClone(state);
     const tx = {
+      async execute(sql) { if (!sql.includes('UPDATE portal_private.service_codes')) throw Error('unexpected execute'); if (snapshot.row?.status === 'issued' && new Date(snapshot.row.expires_at) <= new Date()) {snapshot.row.status='revoked';return 1;} return 0; },
       async one(sql, params) {
         if (sql.includes('FROM portal_private.order_items')) return item;
         if (sql.includes('FROM portal_private.orders')) return order;
@@ -23,7 +24,6 @@ function mockDb(state) {
         throw new Error('unexpected query '+sql);
       },
       async maybeOne(sql,params) {
-        if (sql.includes('UPDATE portal_private.service_codes')) return null;
         if (sql.includes('WHERE digest')) return snapshot.row?.digest===params[0]?snapshot.row:null;
         if (sql.includes('WHERE order_item_id')) return snapshot.row?.status==='issued'?{id:snapshot.row.id}:null;
         throw new Error('unexpected query');

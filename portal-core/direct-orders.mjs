@@ -18,6 +18,8 @@ export async function registerDirectOrder({ db, admin, input }) {
   if (!admin?.id || !admin.isAdmin || !admin.mfaVerified || admin.serverValidated !== true) throw new Error('admin_auth_required');
   const data = validateDirectOrderInput(input);
   return db.transaction(async tx => {
+    const customer = await tx.maybeOne('SELECT id FROM portal_private.customer_accounts WHERE id=$1 AND email_verified=true AND disabled=false', [data.customerId]);
+    if (!customer) throw new Error('verified_customer_required');
     const service = await tx.maybeOne('SELECT id FROM portal_private.services WHERE id=$1 AND active=true', [data.serviceId]);
     if (!service) throw new Error('service_unavailable');
     const order = await tx.one(`INSERT INTO portal_private.orders(customer_id,status,source,external_reference)

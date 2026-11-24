@@ -6,13 +6,16 @@ import {resolveCustomerAccount} from './identity-mapping.mjs';
  * These handlers require an HTTP boundary with strict route validation.
  */
 export function createDocumentApiHandlers({db,workflow}){
- if(typeof db?.maybeOne!=='function'||typeof workflow?.beginUpload!=='function'||typeof workflow?.completeUpload!=='function'||typeof workflow?.download!=='function')
+ if(typeof db?.maybeOne!=='function'||typeof workflow?.beginUpload!=='function'||typeof workflow?.completeUpload!=='function'||typeof workflow?.download!=='function'||typeof workflow?.listDocuments!=='function')
    throw Error('document_api_dependencies_required');
  async function customerId(verifiedSession){
    const customer=await resolveCustomerAccount({db,verifiedSession});
    return customer.id;
  }
  return {
+   async listDocuments({verifiedSession}){
+     return workflow.listDocuments({customerId:await customerId(verifiedSession)});
+   },
    async beginDocumentUpload({verifiedSession,body}){
      return workflow.beginUpload({customerId:await customerId(verifiedSession),
        mimeType:body.mimeType,sizeBytes:body.sizeBytes,

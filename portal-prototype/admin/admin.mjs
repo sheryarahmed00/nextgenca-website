@@ -8,6 +8,24 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]
 const ids=['customer','source','service','reference','order','order-item','issue-customer','expiry','create-order','approve-order','issue-code'];
 const status=message=>{el('admin-status').textContent=message;};
 let factorId=null;
+el('enrol-mfa').addEventListener('click',async()=>{
+ try{
+  const {data:{user}}=await supabase.auth.getUser();
+  if(!user?.email_confirmed_at)throw Error('sign_in_required');
+  const {data:existing,error:listError}=await supabase.auth.mfa.listFactors();
+  if(listError)throw listError;
+  if(existing.totp?.some(f=>f.status==='verified'))throw Error('already_enrolled');
+  const {data,error}=await supabase.auth.mfa.enroll({factorType:'totp',friendlyName:'NextGen admin authenticator'});
+  if(error||!data?.id||!data.totp?.qr_code)throw Error('enrolment_failed');
+  factorId=data.id;
+  const qr=data.totp.qr_code;
+  if(!qr.startsWith('data:image/svg+xml;')&&!qr.startsWith('data:image/png;'))throw Error('invalid_qr');
+  el('mfa-qr').src=qr;
+  el('mfa-secret').textContent='Manual setup key: '+data.totp.secret;
+  el('mfa-setup').hidden=false;
+  status('Enter the authenticator code to finish enrollment. Do not share your setup key.');
+ }catch{status('MFA setup unavailable. Sign in first or use your already enrolled authenticator.');}
+});
 async function sessionReady(){
  if(!ready)return false;
  const {data:{user}}=await supabase.auth.getUser();
@@ -48,11 +66,11 @@ el('admin-mfa').addEventListener('submit',async event=>{
   if(challengeError)throw challengeError;
   const {error}=await supabase.auth.mfa.verify({factorId,challengeId:challenge.id,code:el('mfa-code').value});
   if(error)throw error;
-  el('mfa-code').value='';await refresh();
+  el('mfa-code').value='';el('mfa-setup').hidden=true;el('mfa-qr').removeAttribute('src');el('mfa-secret').textContent='';await refresh();
  }catch{status('MFA failed. Ensure your authenticator is enrolled and try again.');}
 });
 el('admin-logout').addEventListener('click',async()=>{
- await supabase.auth.signOut();factorId=null;el('issued-code').textContent='';await refresh();
+ await supabase.auth.signOut();factorId=null;el('issued-code').textContent='';el('mfa-setup').hidden=true;el('mfa-qr').removeAttribute('src');el('mfa-secret').textContent='';await refresh();
 });
 el('create-order').addEventListener('click',async()=>{
  try{

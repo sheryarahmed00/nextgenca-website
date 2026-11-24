@@ -1,14 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { requireVerifiedUser, requireMfaAdmin, requireActiveService } from './access-policy.mjs';
-const client={user:{id:'client-1',emailVerified:true,role:'client'}};
+const client={user:{id:'client-1',emailVerified:true,serverValidated:true,role:'client'}};
 test('public and unverified accounts are denied',()=>{
   assert.throws(()=>requireVerifiedUser({}),/authentication_required/);
   assert.throws(()=>requireVerifiedUser({user:{id:'u',emailVerified:false}}),/authentication_required/);
   assert.equal(requireVerifiedUser(client).id,'client-1');
+  assert.throws(()=>requireVerifiedUser({user:{...client.user,serverValidated:false}}),/authentication_required/);
 });
 test('admin role alone is insufficient without server validation and MFA',()=>{
-  const admin={user:{id:'admin',emailVerified:true,role:'admin',mfaVerified:true}};
+  const admin={user:{id:'admin',emailVerified:true,serverValidated:true,role:'admin',mfaVerified:true}};
   assert.throws(()=>requireMfaAdmin(admin),/admin_authorization_required/);
   assert.equal(requireMfaAdmin({...admin,serverValidated:true}).id,'admin');
 });

@@ -17,12 +17,13 @@ function mockDb(state) {
         if (sql.includes('FROM portal_private.order_items')) return item;
         if (sql.includes('FROM portal_private.orders')) return order;
         if (sql.includes('INSERT INTO portal_private.service_codes')) { snapshot.row={id:'c1',order_item_id:'i1',customer_id:'u1',digest:params[2],status:'issued',expires_at:params[5]}; return {id:'c1'}; }
-        if (sql.includes('UPDATE portal_private.service_codes')) { snapshot.row.status='redeemed';snapshot.row.redeemed_by=params[1];snapshot.row.redeemed_at=params[2];return {id:'c1'}; }
+        if (sql.includes("SET status='redeemed'")) { snapshot.row.status='redeemed';snapshot.row.redeemed_by=params[1];snapshot.row.redeemed_at=params[2];return {id:'c1'}; }
         if (sql.includes('INSERT INTO portal_private.entitlements')) { snapshot.entitlement=true; return {id:'e1'}; }
         if (sql.includes('INSERT INTO portal_private.audit_events')) return {id:1};
         throw new Error('unexpected query '+sql);
       },
       async maybeOne(sql,params) {
+        if (sql.includes('UPDATE portal_private.service_codes')) return null;
         if (sql.includes('WHERE digest')) return snapshot.row?.digest===params[0]?snapshot.row:null;
         if (sql.includes('WHERE order_item_id')) return snapshot.row?.status==='issued'?{id:snapshot.row.id}:null;
         throw new Error('unexpected query');

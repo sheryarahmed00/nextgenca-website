@@ -16,7 +16,7 @@ test('approval requires explicit verification',async()=>{
 test('direct order is initially pending and then can be approved',async()=>{
   let status='awaiting_verification';
   const db={transaction:async fn=>fn({
-    maybeOne:async()=>({id:'s1'}),
+    maybeOne:async(sql)=>sql.includes('customer_accounts')?{id:'c1'}:{id:'s1'},
     one:async(sql)=>{
       if(sql.includes('INSERT INTO portal_private.orders')) return {id:'o1'};
       if(sql.includes('INSERT INTO portal_private.order_items')) return {id:'i1'};
@@ -30,4 +30,9 @@ test('direct order is initially pending and then can be approved',async()=>{
   assert.equal(registered.status,'awaiting_verification');
   const approved=await approveDirectOrder({db,admin,orderId:'o1',verificationConfirmed:true});
   assert.equal(approved.status,'approved');
+});
+
+test('direct order rejects missing verified customer',async()=>{
+  const db={transaction:async work=>work({maybeOne:async()=>null})};
+  await assert.rejects(registerDirectOrder({db,admin,input:{customerId:'missing',serviceId:'s1',source:'phone',reference:''}}),/verified_customer_required/);
 });

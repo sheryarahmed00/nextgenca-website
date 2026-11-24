@@ -7,6 +7,18 @@
 export function createDocumentLifecycle({db}){
   if(typeof db?.transaction!=='function')throw Error('db_required');
   return {
+    async listReady({customerId}){
+      return db.transaction(async tx=>{
+        const rows=await tx.one(`SELECT COALESCE(json_agg(json_build_object(
+          'documentId',id,'filename',original_filename,'mimeType',mime_type,
+          'sizeBytes',size_bytes,'uploadedAt',completed_at) ORDER BY completed_at DESC), '[]'::json) AS documents
+          FROM (SELECT id,original_filename,mime_type,size_bytes,completed_at
+                FROM portal_private.client_documents
+                WHERE customer_id=$1 AND state='ready'
+                ORDER BY completed_at DESC LIMIT 100) d`,[customerId]);
+        return {documents:rows.documents};
+      });
+    },
     async cancelPending({customerId,documentId}){
       return db.transaction(async tx=>{
         const row=await tx.maybeOne(`DELETE FROM portal_private.client_documents

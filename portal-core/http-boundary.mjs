@@ -28,7 +28,7 @@ function validateRoute(handler,body){
     typeof body.expiresAt==='string'&&Number.isFinite(Date.parse(body.expiresAt));
   if(handler==='redeemCode')return typeof body.code==='string'&&/^[A-Za-z0-9_-]{43}$/.test(body.code);
   if(handler==='checkService')return uuid.test(body.serviceId);
-  if(handler==='beginDocumentUpload')return ['application/pdf','image/png','image/jpeg'].includes(body.mimeType)&&Number.isSafeInteger(body.sizeBytes)&&body.sizeBytes>0&&body.sizeBytes<=10485760&&typeof body.originalFilename==='string'&&body.originalFilename.length>0&&body.originalFilename.length<=255&&!/[\\x00-\\x1f\\x7f]/.test(body.originalFilename);
+  if(handler==='beginDocumentUpload')return ['application/pdf','image/png','image/jpeg'].includes(body.mimeType)&&Number.isSafeInteger(body.sizeBytes)&&body.sizeBytes>0&&body.sizeBytes<=10485760&&typeof body.originalFilename==='string'&&body.originalFilename.length>0&&body.originalFilename.length<=255&&!Array.from(body.originalFilename).some(c=>c.charCodeAt(0)<32||c.charCodeAt(0)===127);
   if(handler==='completeDocumentUpload'||handler==='downloadDocument')return uuid.test(body.documentId);
   return false;
 }

@@ -49,6 +49,8 @@ const update=async()=>{
  byId('logout').disabled=!user;
  byId('code').disabled=!(user?.email_confirmed_at&&apiReady);
  byId('activate').disabled=!(user?.email_confirmed_at&&apiReady);
+ byId('document-file').disabled=!(user?.email_confirmed_at&&apiReady);
+ byId('upload-button').disabled=!(user?.email_confirmed_at&&apiReady);
  if(user?.email_confirmed_at)await loadDashboard();
  else {
   showItems('services-list',[],x=>x);showItems('documents-list',[],x=>x);
@@ -80,6 +82,35 @@ byId('activate').addEventListener('click',async()=>{
   await loadDashboard();
  }catch{message('Activation unavailable or code invalid.');}
  finally{const {data:{user}}=await supabase.auth.getUser();byId('activate').disabled=!(user?.email_confirmed_at&&apiReady);}
+});
+byId('upload-form').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const file=byId('document-file').files?.[0];
+ if(!file)return;
+ if(!['application/pdf','image/png','image/jpeg'].includes(file.type)||file.size<1||file.size>10485760){
+  message('Choose a PDF, PNG or JPEG under 10 MB.');return;
+ }
+ byId('upload-button').disabled=true;
+ try{
+  const ticket=await api('documents/begin-upload',{
+   mimeType:file.type,sizeBytes:file.size,originalFilename:file.name
+  });
+  if(typeof ticket.objectPath!=='string'||typeof ticket.uploadToken!=='string')throw Error('invalid_ticket');
+  const {error}=await supabase.storage.from('nextgenca-client-documents')
+   .uploadToSignedUrl(ticket.objectPath,ticket.uploadToken,file,{
+    contentType:file.type,upsert:false
+   });
+  if(error)throw error;
+  await api('documents/complete-upload',{documentId:ticket.documentId});
+  byId('document-file').value='';
+  message('Document uploaded securely.');
+  await loadDashboard();
+ }catch{
+  message('Upload could not be completed. Please try again later.');
+ }finally{
+  const {data:{user}}=await supabase.auth.getUser();
+  byId('upload-button').disabled=!(user?.email_confirmed_at&&apiReady);
+ }
 });
 byId('logout').addEventListener('click',async()=>{
  await supabase.auth.signOut();message('Signed out.');await update();

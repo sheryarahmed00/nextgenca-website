@@ -20,8 +20,8 @@ export async function registerDirectOrder({ db, admin, input }) {
   return db.transaction(async tx => {
     const service = await tx.maybeOne('SELECT id FROM portal_private.services WHERE id=$1 AND active=true', [data.serviceId]);
     if (!service) throw new Error('service_unavailable');
-    const order = await tx.one(`INSERT INTO portal_private.orders(customer_id,status)
-      VALUES($1,'awaiting_verification') RETURNING id`, [data.customerId]);
+    const order = await tx.one(`INSERT INTO portal_private.orders(customer_id,status,source,external_reference)
+      VALUES($1,'awaiting_verification',$2,$3) RETURNING id`, [data.customerId,data.source,data.reference]);
     const item = await tx.one(`INSERT INTO portal_private.order_items(order_id,service_id)
       VALUES($1,$2) RETURNING id`, [order.id, data.serviceId]);
     await tx.one(`INSERT INTO portal_private.audit_events(actor_id,action,subject_id,metadata)

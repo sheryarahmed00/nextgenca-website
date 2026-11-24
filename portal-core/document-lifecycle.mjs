@@ -7,6 +7,13 @@
 export function createDocumentLifecycle({db}){
   if(typeof db?.transaction!=='function')throw Error('db_required');
   return {
+    async cancelPending({customerId,documentId}){
+      return db.transaction(async tx=>{
+        const row=await tx.maybeOne(`DELETE FROM portal_private.client_documents
+          WHERE id=$1 AND customer_id=$2 AND state='pending' RETURNING id`,[documentId,customerId]);
+        return Boolean(row);
+      });
+    },
     async markReady({customerId,documentId,actualSizeBytes}){
       if(!Number.isSafeInteger(actualSizeBytes)||actualSizeBytes<1||actualSizeBytes>10485760)
         throw Error('invalid_actual_size');

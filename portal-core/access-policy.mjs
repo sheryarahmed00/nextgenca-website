@@ -5,7 +5,7 @@
  */
 export function requireVerifiedUser(context) {
   const user = context?.user;
-  if (!user || typeof user.id !== 'string' || !user.id || user.emailVerified !== true || user.disabled === true) {
+  if (!user || typeof user.id !== 'string' || !user.id || user.emailVerified !== true || user.serverValidated !== true || user.disabled === true) {
     throw new Error('authentication_required');
   }
   return user;

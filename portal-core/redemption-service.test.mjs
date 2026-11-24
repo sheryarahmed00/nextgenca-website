@@ -6,8 +6,8 @@ import { digestServiceCode } from './service-codes.mjs';
 const secret='test-secret-only-12345678901234567890123';
 const order={id:'o1',customer_id:'u1',status:'approved',verified_at:'yes',approved_at:'yes',approved_by:'admin'};
 const item={id:'i1',order_id:'o1',service_id:'vat'};
-const admin={id:'admin',isAdmin:true,mfaVerified:true};
-const user={id:'u1',emailVerified:true};
+const admin={id:'admin',isAdmin:true,mfaVerified:true,serverValidated:true};
+const user={id:'u1',emailVerified:true,serverValidated:true};
 
 function mockDb(state) {
   return { transaction: async fn => {
@@ -24,7 +24,7 @@ function mockDb(state) {
       },
       async maybeOne(sql,params) {
         if (sql.includes('WHERE digest')) return snapshot.row?.digest===params[0]?snapshot.row:null;
-        if (sql.includes('WHERE order_item_id')) return snapshot.row?{id:snapshot.row.id}:null;
+        if (sql.includes('WHERE order_item_id')) return snapshot.row?.status==='issued'?{id:snapshot.row.id}:null;
         throw new Error('unexpected query');
       }
     };
@@ -40,7 +40,7 @@ test('issue then redeem once, rejecting replay and another customer', async()=>{
   assert.equal(state.row.digest,digestServiceCode(issued.code,secret));
   assert.equal(state.row.digest.includes(issued.code),false);
   await assert.rejects(issueServiceCode({db,actor:admin,orderItemId:'i1',customerId:'u1',mode:'manual',secret,expiresAt:new Date('2099-01-01')}),/already_issued/);
-  await assert.rejects(redeemServiceCode({db,user:{id:'u2',emailVerified:true},code:issued.code,secret}),/invalid_or_unavailable_code/);
+  await assert.rejects(redeemServiceCode({db,user:{id:'u2',emailVerified:true,serverValidated:true},code:issued.code,secret}),/invalid_or_unavailable_code/);
   const redeemed=await redeemServiceCode({db,user,code:issued.code,secret});
   assert.equal(redeemed.serviceId,'vat');assert.equal(state.entitlement,true);
   await assert.rejects(redeemServiceCode({db,user,code:issued.code,secret}),/invalid_or_unavailable_code/);

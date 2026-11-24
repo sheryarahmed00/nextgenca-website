@@ -18,3 +18,26 @@ test('unverified sessions cannot access service checks',async()=>{
   const handlers=createPortalHandlers({db,secret:'test-secret-long-enough-1234567890',rateLimit:async()=>true});
   await assert.rejects(handlers.checkService({verifiedSession:{...session,serverValidated:false},serviceId:'vat'}),/verified_identity_required/);
 });
+
+test('My Services returns only rows selected for verified customer',async()=>{
+ const queries=[];
+ const db={
+  transaction:async()=>{throw Error('unexpected_transaction');},
+  maybeOne:async(sql,params)=>{
+   queries.push({sql,params});
+   if(sql.includes('customer_accounts'))return {id:'verified-customer',email_verified:true,disabled:false};
+   return {services:[{serviceId:'vat',title:'VAT Returns',activatedAt:'2026-11-24'}]};
+  }
+ };
+ const handlers=createPortalHandlers({db,secret:'test-secret-long-enough-1234567890',rateLimit:async()=>true});
+ const result=await handlers.listMyServices({verifiedSession:session,body:{customerId:'attacker'}});
+ assert.equal(result.services[0].title,'VAT Returns');
+ assert.deepEqual(queries[1].params,['verified-customer']);
+ assert.match(queries[1].sql,/e\.revoked_at IS NULL/);
+ assert.match(queries[1].sql,/o\.customer_id=\$1/);
+});
+test('My Services rejects unverified sessions',async()=>{
+ const db={transaction:async()=>{},maybeOne:async()=>{throw Error('identity_query_must_not_run');}};
+ const handlers=createPortalHandlers({db,secret:'test-secret-long-enough-1234567890',rateLimit:async()=>true});
+ await assert.rejects(handlers.listMyServices({verifiedSession:{...session,emailVerified:false}}),/verified_identity_required/);
+});

@@ -30,5 +30,5 @@ button{background:#163f64;color:white;padding:11px 15px;border:0;border-radius:8
 <section class="card"><h2>My services</h2><p id="services-status" class="muted">Sign in to load your services.</p><ul id="services-list"></ul>
 <p class="muted">After activation, services such as VAT Returns, Payroll, Company Accounts and Self Assessment will appear here.</p>
 <p class="muted">Only approved, active services are displayed.</p></section>
-<section class="card"><h2>My documents</h2><p id="documents-status" class="muted">Sign in to load your documents.</p><ul id="documents-list"></ul></section>
+<section class="card"><h2>My documents</h2><p id="documents-status" class="muted">Sign in to load your documents.</p><ul id="documents-list"></ul><form id="upload-form"><label for="document-file">Upload PDF, PNG or JPEG (max 10 MB)</label><input type="file" id="document-file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" disabled required><button id="upload-button" type="submit" disabled>Upload document</button></form></section>
 </div><p id="auth-status" role="status" aria-live="polite"></p></main><script type="module" src="./auth.mjs"></script></body></html>

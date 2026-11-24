@@ -16,7 +16,7 @@ export async function issueServiceCode({ db, actor, orderItemId, customerId, mod
     const order = await tx.one('SELECT * FROM portal_private.orders WHERE id = $1 FOR UPDATE', [item.order_id]);
     const result = validateIssuance({ order, item, customerId, mode, actorIsAdmin: actor.isAdmin });
     if (!result.ok) throw new Error(result.reason);
-    await tx.maybeOne("UPDATE portal_private.service_codes SET status = 'revoked' WHERE order_item_id = $1 AND status = 'issued' AND expires_at <= now() RETURNING id", [orderItemId]);
+    await tx.execute("UPDATE portal_private.service_codes SET status = 'revoked' WHERE order_item_id = $1 AND status = 'issued' AND expires_at <= now()", [orderItemId]);
     const existing = await tx.maybeOne("SELECT id FROM portal_private.service_codes WHERE order_item_id = $1 AND status = 'issued'", [orderItemId]);
     if (existing) throw new Error('already_issued');
     const code = generateServiceCode();

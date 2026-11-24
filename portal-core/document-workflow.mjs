@@ -5,10 +5,13 @@
  */
 export function createDocumentWorkflow({reservations,lifecycle,storage}){
   if(!reservations?.reserve||!lifecycle?.markReady||
-     !lifecycle?.getReadyMetadata||!lifecycle?.getPendingMetadata||!lifecycle?.cancelPending||!storage?.createUploadTicket||
+     !lifecycle?.listReady||!lifecycle?.getReadyMetadata||!lifecycle?.getPendingMetadata||!lifecycle?.cancelPending||!storage?.createUploadTicket||
      !storage?.verifyUploadedObject||!storage?.createDownloadUrl)
     throw Error('document_workflow_dependencies_required');
   return {
+    async listDocuments({customerId}){
+      return lifecycle.listReady({customerId});
+    },
     async beginUpload({customerId,mimeType,sizeBytes,originalFilename}){
       const reservation=await reservations.reserve({customerId,mimeType,sizeBytes,originalFilename});
       // Release the reservation if the signed ticket cannot be issued.

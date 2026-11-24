@@ -1,0 +1,7 @@
+{
+  "name":"nextgenca-portal-staging-api",
+  "private":true,
+  "type":"module",
+  "scripts":{"test":"node --test *.test.mjs","start:staging":"node staging-server.mjs"},
+  "dependencies":{"@supabase/supabase-js":"2.57.4","pg":"8.16.3"}
+}

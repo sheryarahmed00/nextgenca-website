@@ -40,6 +40,7 @@ export function createHttpBoundary({handlers,verifyBearerToken,checkRequestOrigi
   return async function dispatch({method,path,authorization,origin,bodyText}){
     const route=routes[method+' '+path];
     if(!route)return {status:404,body:{error:'not_found'}};
+    if(typeof handlers[route.handler]!=='function')return {status:503,body:{error:'service_unavailable'}};
     if(typeof bodyText!=='string'||Buffer.byteLength(bodyText,'utf8')>maxBodyBytes)return {status:413,body:{error:'invalid_body'}};
     if(checkRequestOrigin(origin)!==true)return {status:403,body:{error:'forbidden'}};
     if(typeof authorization!=='string'||!/^Bearer [^\s]+$/.test(authorization))return {status:401,body:{error:'unauthorized'}};

@@ -5,15 +5,22 @@
  */
 export function createDocumentWorkflow({reservations,lifecycle,storage}){
   if(!reservations?.reserve||!lifecycle?.markReady||
-     !lifecycle?.getReadyMetadata||!lifecycle?.getPendingMetadata||!storage?.createUploadTicket||
+     !lifecycle?.getReadyMetadata||!lifecycle?.getPendingMetadata||!lifecycle?.cancelPending||!storage?.createUploadTicket||
      !storage?.verifyUploadedObject||!storage?.createDownloadUrl)
     throw Error('document_workflow_dependencies_required');
   return {
     async beginUpload({customerId,mimeType,sizeBytes,originalFilename}){
       const reservation=await reservations.reserve({customerId,mimeType,sizeBytes,originalFilename});
       // A failed ticket leaves a pending reservation: cleanup must release it.
-      const ticket=await storage.createUploadTicket({objectPath:reservation.objectPath});
-      if(ticket.path!==reservation.objectPath)throw Error('storage_path_mismatch');
+      let ticket;
+      try{
+        ticket=await storage.createUploadTicket({objectPath:reservation.objectPath});
+        if(ticket.path!==reservation.objectPath)throw Error('storage_path_mismatch');
+      }catch(error){
+        try{await lifecycle.cancelPending({customerId,documentId:reservation.documentId});}
+        catch{throw Error('upload_ticket_cleanup_failed');}
+        throw error;
+      }
       return {documentId:reservation.documentId,uploadToken:ticket.token,
         objectPath:reservation.objectPath,remainingBytes:reservation.remainingBytes};
     },

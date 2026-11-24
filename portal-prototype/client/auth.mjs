@@ -22,14 +22,28 @@ function showItems(id,items,render){
  const list=byId(id);list.replaceChildren();
  for(const item of items){
   const li=document.createElement('li');
-  li.textContent=render(item);
+  if(typeof render==='function')render(item,li);
   list.append(li);
  }
 }
 async function loadDashboard(){
  for(const [path,statusId,listId,field,render] of [
-  ['my-services','services-status','services-list','services',x=>x.title],
-  ['documents/list','documents-status','documents-list','documents',x=>x.filename]
+  ['my-services','services-status','services-list','services',(x,li)=>{li.textContent=x.title;}],
+  ['documents/list','documents-status','documents-list','documents',(x,li)=>{
+    const label=document.createElement('span');label.textContent=x.filename+' ';
+    const button=document.createElement('button');button.type='button';button.textContent='Download';
+    button.addEventListener('click',async()=>{
+      button.disabled=true;
+      try{
+        const result=await api('documents/download',{documentId:x.documentId});
+        const url=new URL(result.url);
+        if(url.protocol!=='https:'||url.hostname!=='nzoogwpabqvyojptivom.supabase.co')throw Error('invalid_download_url');
+        window.open(url.href,'_blank','noopener,noreferrer');
+      }catch{message('Download unavailable. Please try again later.');}
+      finally{button.disabled=false;}
+    });
+    li.append(label,button);
+  }]
  ]){
   try{
    const data=await api(path);

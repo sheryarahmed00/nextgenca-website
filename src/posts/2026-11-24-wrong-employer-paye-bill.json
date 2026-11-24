@@ -1,0 +1,45 @@
+{
+ "slug": "wrong-employer-paye-bill-hmrc-payroll-errors",
+ "date": "2026-11-24",
+ "sort": "2026-11-19",
+ "label": "HMRC Agent Update · 19 November 2026",
+ "title": "Employer PAYE bill looks wrong? What to check before disputing it with HMRC",
+ "summary": "Compare your payroll submissions, HMRC account and payment records to find the difference. If the figures still do not agree, here is what to send HMRC.",
+ "tags": [
+  "HMRC",
+  "PAYE",
+  "Payroll",
+  "Employers"
+ ],
+ "body": "<p>If the balance in your employer PAYE account differs from what your payroll software says you owe, start by working out whether the difference is in the charge itself or in the payments credited against it. HMRC’s Agent Update 149 highlighted its GfC22 guidance on payroll reporting errors. The guidance explains how missing, duplicate or incorrect Real Time Information (RTI) submissions can leave an employer with an unexpected debit or credit.</p>\n<h2>Compare the charge with your payroll submissions</h2>\n<p>Start with the tax period where the difference first appears. Pull up the Full Payment Submission (FPS), which reports staff pay and deductions, and any Employer Payment Summary (EPS), which can report reductions such as statutory pay you can reclaim. Check when you sent each report and allow time for your online account to update. Compare what you actually submitted with your payroll figures and check that each file went to the right PAYE scheme.</p>\n<p>Look closely at changes in that period, especially starters, leavers and any move to new payroll software. If an employee’s payroll ID changes and HMRC cannot match it to the old one, it may create another employment record. When an ID has to change, HMRC asks you to flag the change on the FPS and enter the previous ID exactly as it appeared on earlier submissions. If you find a reporting error, use HMRC’s FPS and EPS correction guidance for that type of mistake. For example, to correct pay or deductions reported incorrectly in the current tax year, update the year-to-date figures in your next regular FPS.</p>\n<h2>Check where your payment went</h2>\n<p>If the charge matches payroll but the account shows an unpaid amount, compare the bank payment date, amount and reference with the payment shown in your HMRC account. A payment made with the wrong reference can be credited to a different scheme or tax period. For early or late payments, check HMRC’s payment guidance for the extra digits your payment method requires. If you used the wrong reference and the payment went to another bill, ask HMRC’s employer helpline to move it. Have the amount, payment date, reference used and correct account details to hand.</p>\n<h2>Ask HMRC for help if the difference remains</h2>\n<p>Employers and their agents can use HMRC’s online service for help correcting an employer PAYE bill. Have your PAYE reference, Accounts Office reference if available, business Unique Taxpayer Reference and employee count ready. The service asks for tax-year totals from your payroll software, including Income Tax, employer and employee National Insurance, student loan deductions and Class 1A National Insurance. Submit a separate request for each tax year you are disputing.</p>\n<p>Keep the confirmation email with your reconciliation so you have the case reference if you need to follow up. HMRC says it usually pauses debt recovery on the disputed amount while it investigates. Continue paying the PAYE you agree you owe.</p>",
+ "sources": [
+  {
+   "title": "HMRC Agent Update 149",
+   "url": "https://www.gov.uk/government/publications/agent-update-issue-149/issue-149-of-agent-update"
+  },
+  {
+   "title": "HMRC Guidelines for Compliance GfC22",
+   "url": "https://www.gov.uk/government/publications/help-to-prevent-payroll-errors-and-paye-rti-disputed-charges-gfc22/help-to-prevent-payroll-errors-and-paye-rti-disputed-charges-gfc22"
+  },
+  {
+   "title": "HMRC checks for an unexpected PAYE bill",
+   "url": "https://www.gov.uk/payroll-errors"
+  },
+  {
+   "title": "HMRC guidance on correcting an FPS or EPS",
+   "url": "https://www.gov.uk/payroll-errors/correcting-your-fps-or-eps"
+  },
+  {
+   "title": "HMRC PAYE references for early and late payments",
+   "url": "https://www.gov.uk/pay-paye-tax/reference-numbers-early-late-payments"
+  },
+  {
+   "title": "HMRC service to help correct an employer PAYE bill",
+   "url": "https://www.gov.uk/guidance/get-help-to-correct-an-employer-paye-bill"
+  }
+ ],
+ "related": [
+  "payroll",
+  "hmrc-letters-and-penalties"
+ ]
+}

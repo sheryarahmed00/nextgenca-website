@@ -57,8 +57,11 @@ async function loadDashboard(){
  }
 }
 const message=(text)=>{byId('auth-status').textContent=text;};
+let refreshSequence=0;
 const update=async()=>{
+ const sequence=++refreshSequence;
  const {data:{user}}=await supabase.auth.getUser();
+ if(sequence!==refreshSequence)return;
  byId('session-status').textContent=user?.email_confirmed_at?'Signed in: '+user.email:'Not signed in';
  byId('logout').disabled=!user;
  byId('code').disabled=!(user?.email_confirmed_at&&apiReady);
@@ -129,5 +132,6 @@ byId('upload-form').addEventListener('submit',async event=>{
 byId('logout').addEventListener('click',async()=>{
  await supabase.auth.signOut();message('Signed out.');await update();
 });
-supabase.auth.onAuthStateChange(()=>{void update();});
+// Defer auth SDK calls outside its auth-state callback to avoid lock contention.
+supabase.auth.onAuthStateChange(()=>{setTimeout(()=>{void update();},0);});
 await update();

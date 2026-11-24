@@ -44,7 +44,7 @@ export function createPortalHandlers({ db, secret, rateLimit }) {
     },
     async checkService({ verifiedSession, serviceId }) {
       const user = await customer(verifiedSession);
-      return requireActiveService({ context: { user }, db, serviceId });
+      return requireActiveService({ context: { user, serverValidated: true }, db, serviceId });
     }
   };
 }

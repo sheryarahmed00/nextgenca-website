@@ -25,7 +25,10 @@ function mockDb(state) {
       },
       async maybeOne(sql,params) {
         if (sql.includes('WHERE digest')) return snapshot.row?.digest===params[0]?snapshot.row:null;
-        if (sql.includes('WHERE order_item_id')) return snapshot.row?.status==='issued'?{id:snapshot.row.id}:null;
+        if (sql.includes('WHERE order_item_id')) {
+          if(sql.includes("status = 'redeemed'"))return snapshot.row?.status==='redeemed'?{id:snapshot.row.id}:null;
+          return snapshot.row?.status==='issued'?{id:snapshot.row.id}:null;
+        }
         throw new Error('unexpected query');
       }
     };
@@ -50,4 +53,11 @@ test('admin MFA and verified email are mandatory', async()=>{
   const db=mockDb({});
   await assert.rejects(issueServiceCode({db,actor:{...admin,mfaVerified:false},orderItemId:'i1',customerId:'u1',mode:'manual',secret,expiresAt:new Date('2099-01-01')}),/admin_auth_required/);
   await assert.rejects(redeemServiceCode({db,user:{...user,emailVerified:false},code:'bad',secret}),/verified_login_required/);
+});
+
+test('cannot issue a second code for a redeemed order item',async()=>{
+ const state={},db=mockDb(state);
+ const issued=await issueServiceCode({db,actor:admin,orderItemId:'i1',customerId:'u1',mode:'manual',secret,expiresAt:new Date('2099-01-01')});
+ await redeemServiceCode({db,user,code:issued.code,secret});
+ await assert.rejects(issueServiceCode({db,actor:admin,orderItemId:'i1',customerId:'u1',mode:'manual',secret,expiresAt:new Date('2099-01-01')}),/already_redeemed/);
 });

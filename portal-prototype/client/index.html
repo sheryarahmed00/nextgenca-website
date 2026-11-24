@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>NextGen Client Portal — Development Preview</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#172c45;background:#f2f6fa}*{box-sizing:border-box}body{margin:0}header{background:#102e4c;color:#fff;padding:20px max(18px,calc((100vw - 1000px)/2))}
+header strong{font-size:23px}main{max-width:1000px;margin:26px auto;padding:0 18px}.warning{background:#fff3d5;border:1px solid #e5c97b;padding:14px;border-radius:10px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.card{background:white;border:1px solid #d9e3ed;border-radius:14px;padding:22px}
+h1{font-size:26px}h2{font-size:20px;margin-top:0}p{line-height:1.5}label{display:block;font-weight:600;margin:12px 0 6px;font-size:14px}
+input,button{font:inherit}input{width:100%;padding:11px;border:1px solid #b8c9d9;border-radius:8px}input:disabled{background:#f4f6f8}
+button{background:#163f64;color:white;padding:11px 15px;border:0;border-radius:8px;margin-top:14px}button:disabled{opacity:.55;cursor:not-allowed}
+.muted{color:#607489;font-size:14px}.chip{display:inline-block;background:#edf2f8;border-radius:20px;padding:6px 10px;font-size:13px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<header><strong>NextGen Chartered Accountant</strong><div>Secure Client Portal · Development Preview</div></header>
+<main><h1>Your accounting services, in one place</h1>
+<div class="warning"><strong>Prototype only.</strong> Registration, login, activation and document access are not connected. Do not enter personal information or a real service code.</div>
+<div class="grid">
+<section class="card"><h2>Create account</h2><p class="muted">Anyone can create an account after email verification. Services stay locked until a valid code is redeemed.</p>
+<label for="name">Full name</label><input id="name" placeholder="Your name" disabled>
+<label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" disabled>
+<label for="password">Password</label><input id="password" type="password" placeholder="Secure password" disabled>
+<button disabled>Register & verify email</button></section>
+<section class="card"><h2>Existing client login</h2><p class="muted">Use your verified email account to manage activated services.</p>
+<label for="login-email">Email address</label><input id="login-email" type="email" placeholder="you@example.com" disabled>
+<label for="login-password">Password</label><input id="login-password" type="password" disabled>
+<button disabled>Sign in securely</button><p class="muted">MFA will be supported by the selected authentication provider.</p></section>
+<section class="card"><h2>Activate a service</h2><p class="muted">Have a code from NextGen? Enter it after signing in. Each code can only activate its assigned service for the intended client.</p>
+<label for="code">Single-use activation code</label><input id="code" autocomplete="off" placeholder="Activation code" disabled>
+<button disabled>Activate service</button></section>
+<section class="card"><h2>My services</h2><p><span class="chip">No active services in preview</span></p>
+<p class="muted">After activation, services such as VAT Returns, Payroll, Company Accounts and Self Assessment will appear here.</p>
+<p class="muted">Documents and messages will require additional server-side ownership checks.</p></section>
+</div></main></body></html>

@@ -30,7 +30,7 @@ export function createPortalHttpServer({handlers,verifyBearerToken,allowedOrigin
     if(req.method==='OPTIONS'){
       res.writeHead(permitted?204:403);res.end();return;
     }
-    if(req.method!=='POST'||typeof req.url!=='string'||!/^\/api\/(?:admin|client)\/[a-z-]+$/.test(req.url)){
+    if(req.method!=='POST'||typeof req.url!=='string'||!/^\/api\/(?:admin|client)\/[a-z-]+(?:\/[a-z-]+)?$/.test(req.url)){
       res.writeHead(404);res.end(JSON.stringify({error:'not_found'}));return;
     }
     if(!permitted){

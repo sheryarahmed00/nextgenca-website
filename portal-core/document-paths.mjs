@@ -15,5 +15,7 @@ export function createPrivateDocumentPath({customerId,mimeType,documentId=random
 export function belongsToCustomer({path,customerId}){
   if(typeof path!=='string'||typeof customerId!=='string'||!uuid.test(customerId))return false;
   return path.startsWith(customerId.toLowerCase()+'/') &&
-    new RegExp('^'+customerId.toLowerCase()+'/[0-9a-f-]{36}\\.(pdf|png|jpg)$').test(path);
+    new RegExp('^'+customerId.toLowerCase()+'/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\\.(pdf|png|jpg);
+}
+).test(path);
 }

@@ -236,7 +236,7 @@ s = _re.sub(r'/\*st\*/.*?/\*/st\*/', '', s, flags=_re.S)
 s = s.replace('</style>', ST_CSS + '</style>', 1)
 
 # "Leave a review" box at the top of the reviews section (Google + Trustpilot)
-GOOGLE_REVIEW_URL = ''  # set to the g.page/r/.../review link from Google Business Profile
+GOOGLE_REVIEW_URL = 'https://share.google/XMsWdzg7KG6fE3x4J'  # set to the g.page/r/.../review link from Google Business Profile
 _btns = ''
 if GOOGLE_REVIEW_URL:
     _btns += f'<a class="btn btn-gold" href="{GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Review us on Google</a>'

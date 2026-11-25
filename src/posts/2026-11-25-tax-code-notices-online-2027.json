@@ -1,0 +1,46 @@
+{
+ "slug": "tax-code-notices-go-online-february-2027",
+ "date": "2026-11-25",
+ "sort": "2026-11-24",
+ "label": "HMRC update · 24 November 2026",
+ "title": "Tax code notices go online from February 2027: how to check yours and what to do if it is wrong",
+ "summary": "Around 3.5 million people who already use the HMRC app or Personal Tax Account will get their annual tax code notice online instead of by post. Here is how to find it and check it.",
+ "tags": [
+  "HMRC",
+  "Tax codes",
+  "PAYE",
+  "Employees",
+  "Directors"
+ ],
+ "body": "<p>On 24 November 2026 HMRC announced that, from February 2027, around 3.5 million people will receive their annual tax code notice online instead of by post. The change is part of HMRC's programme to move its post to digital. If you are an employee, a company director paid through payroll or someone receiving a pension, it is worth knowing where your notice will appear and how to check it.</p>\n<h2>Who is affected</h2>\n<ul><li><b>Moving online:</b> people who already use HMRC's Personal Tax Account or the HMRC app but have not yet chosen to go paperless.</li><li><b>Staying on paper:</b> people who do not use HMRC's online services will keep getting their tax code notice by post.</li><li><b>Paper on request:</b> anyone whose tax code has changed can still ask for a paper notice, and braille, large print and audio formats continue for those who need them.</li></ul>\n<p>HMRC says that of the 17.5 million tax code notices issued before 6 April 2026, 34% were digital and 11.5 million were posted.</p>\n<h2>Make sure you see the notice</h2>\n<p>The main risk is missing an online notice altogether. HMRC is asking people to keep their email address up to date so they are told when a tax code update or other message is available online.</p>\n<ul><li><b>In the HMRC app:</b> go to \"your details\", select \"change how HMRC contacts you\" and choose how you want to get letters and messages.</li><li><b>In your HMRC online account:</b> go to \"profile and settings\" and select \"change\" to update your contact preferences. You can choose to get an email when you have a new tax letter, change the email address you use, or get tax letters by post.</li></ul>\n<p>Online users can also see in-year tax code changes straight away and see their PAYE information in one place.</p>\n<h2>What your tax code means</h2>\n<p>A tax code tells your employer or pension provider how much Income Tax to take from your pay or pension. You get a separate code for each job or pension. The number shows the tax-free pay you get from that source in the year. HMRC starts with your Personal Allowance and takes off things such as company benefits and untaxed income.</p>\n<ul><li><b>1257L</b> is the code for most people with one job or pension. It reflects the standard Personal Allowance of £12,570.</li><li><b>A lower number</b> often means a company benefit, such as medical insurance, is being taxed through your code. HMRC's own example is a £1,570 benefit that turns 1257L into 1100L.</li><li><b>BR, D0 or D1</b> tax all income from that source at the basic, higher or additional rate, and are often used for second jobs or pensions.</li><li><b>Codes ending W1, M1 or X</b> are emergency codes. Tax is worked out on that week's or month's pay alone, which can mean paying the wrong amount.</li></ul>\n<h2>If your tax code looks wrong</h2>\n<p>HMRC says a wrong code usually means it has incorrect or missing information. The quickest fix is to sign in to the Check your Income Tax online service and check your employment, pension, estimated taxable income, company benefits and expenses, then update anything that is wrong or missing. HMRC then updates your code and tells you and your employer within 15 working days. If you are paid monthly, the change should show on your next or following payslip. If you are paid weekly, it should show on your third payslip.</p>\n<p>If you have just started a new job, give your P45 to your new employer. HMRC asks you to wait 35 days from the start date before contacting it about the code.</p>\n<h2>Watch out for scams</h2>\n<p>A move to online notices is a natural hook for fraudsters. HMRC warns people to be wary of unexpected calls or messages claiming to be from HMRC and to check genuine contact details on GOV.UK before sharing any personal information.</p>\n<p>If you are a director taking a salary, have company benefits or have more than one source of income, we can check that your tax code reflects what you actually receive and help put it right with HMRC.</p>",
+ "sources": [
+  {
+   "title": "Tax code notices go online for millions (HMRC, 24 November 2026)",
+   "url": "https://www.gov.uk/government/news/tax-code-notices-go-online-for-millions"
+  },
+  {
+   "title": "Go paperless for tax code updates (GOV.UK)",
+   "url": "https://www.gov.uk/guidance/go-paperless-for-tax-code-updates"
+  },
+  {
+   "title": "Tax codes (GOV.UK)",
+   "url": "https://www.gov.uk/tax-codes"
+  },
+  {
+   "title": "What your tax code means (GOV.UK)",
+   "url": "https://www.gov.uk/tax-codes/what-your-tax-code-means"
+  },
+  {
+   "title": "If you think your tax code is wrong (GOV.UK)",
+   "url": "https://www.gov.uk/tax-codes/how-to-update-your-tax-code"
+  },
+  {
+   "title": "Emergency tax codes (GOV.UK)",
+   "url": "https://www.gov.uk/tax-codes/emergency-tax-codes"
+  }
+ ],
+ "related": [
+  "payroll",
+  "hmrc-letters-and-penalties"
+ ]
+}

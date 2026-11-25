@@ -214,6 +214,27 @@ TB_CSS = ('/*tb*/.trustbar{background:#fff;border-bottom:1px solid var(--rule)}.
 s = _re.sub(r'/\*tb\*/.*?/\*/tb\*/', '', s, flags=_re.S)
 s = s.replace('</style>', TB_CSS + '</style>', 1)
 
+# Stats band under the trust bar (figures confirmed by the owner, 25 Nov 2026)
+STATS = """<!--stats-->
+<div class="stats"><div class="wrap">
+  <div class="st"><b>1000+</b><span>Clients served</span></div>
+  <div class="st"><b>300+</b><span>Monthly clients</span></div>
+  <div class="st"><b>10+</b><span>Years of UK experience</span></div>
+  <div class="st"><b>&lt; 1 hr</b><span>Typical reply time</span></div>
+</div></div>
+<!--/stats-->
+"""
+s = _re.sub(r'<!--stats-->.*?<!--/stats-->\n', '', s, flags=_re.S)
+s = s.replace('<!--insights-->', STATS + '<!--insights-->', 1)
+ST_CSS = ('/*st*/.stats{background:var(--navy);color:#fff}.stats .wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding-top:30px;padding-bottom:30px}'
+          '.stats .st{text-align:center;padding:6px 10px;border-left:1px solid rgba(255,255,255,.14)}.stats .st:first-child{border-left:0}'
+          '.stats .st b{display:block;font-family:var(--display);font-size:2.6rem;line-height:1;color:#fff;font-weight:600}'
+          '.stats .st span{display:block;margin-top:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-soft)}'
+          '@media(max-width:700px){.stats .wrap{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}.stats .st:nth-child(3){border-left:0}.stats .st b{font-size:2.1rem}}'
+          '/*/st*/')
+s = _re.sub(r'/\*st\*/.*?/\*/st\*/', '', s, flags=_re.S)
+s = s.replace('</style>', ST_CSS + '</style>', 1)
+
 # Full price list on its own page (/fees); home keeps packages + estimator
 import json as _json
 _fm = _re.search(r'const FEES = (\[.*?\n\]);', s, _re.S)

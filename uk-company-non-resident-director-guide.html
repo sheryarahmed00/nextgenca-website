@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://nextgenca.co.uk/img/mark.jpg">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Article","headline":"Running a UK limited company as a non-resident director","description":"A guide for overseas founders and non-resident directors of UK limited companies: Companies House rules, identity verification, corporation tax, filing deadlines, VAT and paying yourself.","url":"https://nextgenca.co.uk/uk-company-non-resident-director-guide","author":{"@type":"Organization","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"publisher":{"@id":"https://nextgenca.co.uk/#org"},"dateModified":"2026-11-21","inLanguage":"en-GB"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Running a UK limited company as a non-resident director","item":"https://nextgenca.co.uk/uk-company-non-resident-director-guide"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can a non-UK resident be the only director of a UK company?","acceptedAnswer":{"@type":"Answer","text":"Yes. There is no nationality or residence requirement for directors or shareholders."}},{"@type":"Question","name":"Does my company pay UK tax if all customers are abroad?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. A UK-incorporated company is normally UK tax resident and taxed on worldwide profits, subject to any double tax treaty."}},{"@type":"Question","name":"My company never traded. Do I still need to file?","acceptedAnswer":{"@type":"Answer","text":"Yes. Dormant accounts and a confirmation statement are still due every year until the company is closed."}},{"@type":"Question","name":"Can you file overdue accounts for my company?","acceptedAnswer":{"@type":"Answer","text":"Yes. Tell us the company number and we will set out what is outstanding, the likely penalties and a fixed fee to bring it up to date."}}]}]</script>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Article","headline":"Running a UK limited company as a non-resident director","description":"A guide for overseas founders and non-resident directors of UK limited companies: Companies House rules, identity verification, corporation tax, filing deadlines, VAT and paying yourself.","url":"https://nextgenca.co.uk/uk-company-non-resident-director-guide","author":{"@type":"Organization","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/"},"publisher":{"@id":"https://nextgenca.co.uk/#org"},"dateModified":"2026-11-25","inLanguage":"en-GB"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Running a UK limited company as a non-resident director","item":"https://nextgenca.co.uk/uk-company-non-resident-director-guide"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can a non-UK resident be the only director of a UK company?","acceptedAnswer":{"@type":"Answer","text":"Yes. There is no nationality or residence requirement for directors or shareholders."}},{"@type":"Question","name":"Does my company pay UK tax if all customers are abroad?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. A UK-incorporated company is normally UK tax resident and taxed on worldwide profits, subject to any double tax treaty."}},{"@type":"Question","name":"My company never traded. Do I still need to file?","acceptedAnswer":{"@type":"Answer","text":"Yes. Dormant accounts and a confirmation statement are still due every year until the company is closed."}},{"@type":"Question","name":"Can you file overdue accounts for my company?","acceptedAnswer":{"@type":"Answer","text":"Yes. Tell us the company number and we will set out what is outstanding, the likely penalties and a fixed fee to bring it up to date."}}]}]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -64,6 +64,7 @@ p{margin:0}
 .btn-navy:hover{background:var(--navy-deep)}
 
 /* header */
+.home-header .bar{max-width:1320px}
 header.site{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:20px;height:76px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
@@ -77,10 +78,10 @@ nav.main a:hover{border-color:var(--gold);color:var(--navy)}nav.main a,.bar-righ
 .menu{display:none;background:none;border:1px solid var(--rule);border-radius:3px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
 .menu i{display:block;width:20px;height:2px;background:var(--navy)}
 .bar-right{display:flex;align-items:center;gap:12px}
-@media (max-width:1180px){
+@media (max-width:1280px){
   .menu{display:flex}
   nav.main{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--rule);flex-direction:column;gap:0;padding:8px 24px 16px;box-shadow:0 18px 30px -20px rgba(11,27,52,.35)}
-  nav.main.open{display:flex}
+  nav.main.open{display:flex;max-height:calc(100dvh - 76px);overflow-y:auto}
   nav.main a{padding:14px 0;border-bottom:1px solid var(--rule)}
 }
 .topbar{background:var(--navy-deep);color:#c9d3e3;font-size:.78rem;letter-spacing:.04em}
@@ -230,6 +231,10 @@ section{padding:104px 0}
 .tools span:first-child{color:var(--gold)}
 
 .rev-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:40px}
+.trustpilot-review-links{margin:0 0 40px}
+.trustpilot-review-links h3{margin:0 0 16px}
+.trustpilot-review-images{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin-top:18px}
+.trustpilot-review-images img{display:block;width:100%;height:auto;aspect-ratio:1158 / 538;object-fit:contain;background:#fafafa;border:1px solid var(--rule)}
 .score{border:1px solid var(--rule);border-top:3px solid var(--gold);padding:18px 26px;display:grid;justify-items:start;min-width:210px}
 .score b{font-family:var(--display);font-size:3.4rem;font-weight:600;line-height:1;color:var(--navy);font-variant-numeric:lining-nums}
 .score span{font-size:.85rem;color:var(--muted)}

@@ -228,9 +228,9 @@ s = _re.sub(r'<!--stats-->.*?<!--/stats-->\n', '', s, flags=_re.S)
 s = s.replace('<!--insights-->', STATS + '<!--insights-->', 1)
 ST_CSS = ('/*st*/.stats{background:var(--navy);color:#fff}.stats .wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding-top:30px;padding-bottom:30px}'
           '.stats .st{text-align:center;padding:6px 10px;border-left:1px solid rgba(255,255,255,.14)}.stats .st:first-child{border-left:0}'
-          '.stats .st b{display:block;font-family:var(--display);font-size:2.6rem;line-height:1;color:#fff;font-weight:600}'
+          '.stats .st b{display:block;font-family:var(--body);font-size:2.3rem;line-height:1;color:#fff;font-weight:800;letter-spacing:-.01em;font-variant-numeric:lining-nums tabular-nums}'
           '.stats .st span{display:block;margin-top:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-soft)}'
-          '@media(max-width:700px){.stats .wrap{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}.stats .st:nth-child(3){border-left:0}.stats .st b{font-size:2.1rem}}'
+          '@media(max-width:700px){.stats .wrap{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}.stats .st:nth-child(3){border-left:0}.stats .st b{font-size:1.9rem}}'
           '/*/st*/')
 s = _re.sub(r'/\*st\*/.*?/\*/st\*/', '', s, flags=_re.S)
 s = s.replace('</style>', ST_CSS + '</style>', 1)

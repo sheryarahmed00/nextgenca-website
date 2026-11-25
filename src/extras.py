@@ -235,6 +235,22 @@ ST_CSS = ('/*st*/.stats{background:var(--navy);color:#fff}.stats .wrap{display:g
 s = _re.sub(r'/\*st\*/.*?/\*/st\*/', '', s, flags=_re.S)
 s = s.replace('</style>', ST_CSS + '</style>', 1)
 
+# "Leave a review" box at the top of the reviews section (Google + Trustpilot)
+GOOGLE_REVIEW_URL = ''  # set to the g.page/r/.../review link from Google Business Profile
+_btns = ''
+if GOOGLE_REVIEW_URL:
+    _btns += f'<a class="btn btn-gold" href="{GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Review us on Google</a>'
+_btns += '<a class="btn btn-navy" href="https://uk.trustpilot.com/evaluate/nextgenca.co.uk" target="_blank" rel="noopener">Review us on Trustpilot</a>'
+LEAVE = ('<!--leave-->\n<div class="leave-rev"><div><b>Worked with us?</b><span>A short review helps other small business owners find an accountant they can trust. It takes a minute.</span></div>'
+         f'<div class="leave-btns">{_btns}</div></div>\n<!--/leave-->\n')
+s = _re.sub(r'<!--leave-->.*?<!--/leave-->\n', '', s, flags=_re.S)
+s = s.replace('<div class="trustpilot-review-links">', LEAVE + '    <div class="trustpilot-review-links">', 1)
+LV_CSS = ('/*lv*/.leave-rev{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;margin:0 0 36px;padding:22px 24px;border:1px solid var(--rule);border-left:3px solid var(--gold);background:var(--mist)}'
+          '.leave-rev b{display:block;font-family:var(--display);font-size:1.5rem;color:var(--navy);line-height:1.1}.leave-rev span{display:block;color:var(--muted);margin-top:4px;max-width:520px}'
+          '.leave-btns{display:flex;flex-wrap:wrap;gap:10px}@media(max-width:560px){.leave-btns,.leave-btns .btn{width:100%;text-align:center}}/*/lv*/')
+s = _re.sub(r'/\*lv\*/.*?/\*/lv\*/', '', s, flags=_re.S)
+s = s.replace('</style>', LV_CSS + '</style>', 1)
+
 # Full price list on its own page (/fees); home keeps packages + estimator
 import json as _json
 _fm = _re.search(r'const FEES = (\[.*?\n\]);', s, _re.S)

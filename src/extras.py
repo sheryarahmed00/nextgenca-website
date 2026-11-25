@@ -244,7 +244,7 @@ _btns += '<a class="btn btn-navy" href="https://uk.trustpilot.com/evaluate/nextg
 LEAVE = ('<!--leave-->\n<div class="leave-rev"><div><b>Worked with us?</b><span>A short review helps other small business owners find an accountant they can trust. It takes a minute.</span></div>'
          f'<div class="leave-btns">{_btns}</div></div>\n<!--/leave-->\n')
 s = _re.sub(r'<!--leave-->.*?<!--/leave-->\n', '', s, flags=_re.S)
-s = s.replace('<div class="trustpilot-review-links">', LEAVE + '    <div class="trustpilot-review-links">', 1)
+# box removed at owner's request (25 Nov); /review page is the shared review link
 LV_CSS = ('/*lv*/.leave-rev{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;margin:0 0 36px;padding:22px 24px;border:1px solid var(--rule);border-left:3px solid var(--gold);background:var(--mist)}'
           '.leave-rev b{display:block;font-family:var(--display);font-size:1.5rem;color:var(--navy);line-height:1.1}.leave-rev span{display:block;color:var(--muted);margin-top:4px;max-width:520px}'
           '.leave-btns{display:flex;flex-wrap:wrap;gap:10px}@media(max-width:560px){.leave-btns,.leave-btns .btn{width:100%;text-align:center}}/*/lv*/')

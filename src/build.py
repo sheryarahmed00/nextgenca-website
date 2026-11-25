@@ -43,6 +43,7 @@ HEADER='''<header class="site">
       <a href="/#tools">Free tools</a>
       <a href="/insights">Insights</a>
       <a href="/#questions">Questions</a>
+      <a href="/review">Leave a review</a>
     </nav>
     <div class="bar-right">
       <a class="btn btn-navy" href="/#contact">Book a free call</a>
@@ -392,11 +393,12 @@ page('complaints','Complaints Procedure | NextGen Chartered Accountant','How to 
 <p>NextGen Chartered Accountant is an ICAEW member firm (firm number C011010236). If we have not resolved your complaint, you can raise it with the Institute of Chartered Accountants in England and Wales. Details are at <a href="https://www.icaew.com/complaints">icaew.com/complaints</a>.</p>''')
 
 page('review', 'Leave a review | NextGen Chartered Accountant',
-     'Share your experience with NextGen Chartered Accountant on Trustpilot.', '''
+     'Share your experience with NextGen Chartered Accountant on Google or Trustpilot.', '''
 <h1>Leave a review</h1>
-<p class="lead">If you’ve used our services, we’d love to hear about your experience. Please leave an honest review on Trustpilot.</p>
-<div class="cta">
-  <a class="btn btn-navy" href="https://www.trustpilot.com/evaluate/nextgenca.co.uk" rel="noreferrer">Review on Trustpilot</a>
+<p class="lead">If you’ve used our services, we’d love to hear about your experience. Please leave an honest review on Google or Trustpilot.</p>
+<div class="cta" style="display:flex;flex-wrap:wrap;gap:12px">
+  <a class="btn btn-gold" href="https://share.google/XMsWdzg7KG6fE3x4J" target="_blank" rel="noreferrer">Review on Google</a>
+  <a class="btn btn-navy" href="https://www.trustpilot.com/evaluate/nextgenca.co.uk" target="_blank" rel="noreferrer">Review on Trustpilot</a>
 </div>
 <p style="margin-top:20px">Reviews are public. Please leave out tax references, financial details and other confidential information. See our <a href="/privacy">privacy notice</a>.</p>
 ''', noindex=True, include_chat=False)

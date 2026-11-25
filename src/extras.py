@@ -153,7 +153,7 @@ s = s[:_start] + _new + s[_end:]
 
 # nav in the same order as the page
 s = _re.sub(r'(<nav class="main" id="mainNav" aria-label="Main">\n).*?(    </nav>)',
-            r'\1      <a href="#insights">Insights</a>\n      <a href="#services">Services</a>\n      <a href="#sectors">Who we help</a>\n      <a href="#fees">Fees</a>\n      <a href="#reviews">Reviews</a>\n      <a href="#about">About</a>\n      <a href="#international">International</a>\n      <a href="#questions">Questions</a>\n      <a href="/review">Give us a review</a>\n\2',
+            r'\1      <a href="#insights">Insights</a>\n      <a href="#services">Services</a>\n      <a href="#sectors">Who we help</a>\n      <a href="#fees">Fees</a>\n      <a href="#reviews">Reviews</a>\n      <a href="#about">About</a>\n      <a href="#international">International</a>\n      <a href="#questions">Questions</a>\n      <a href="/review">Leave a review</a>\n\2',
             s, count=1, flags=_re.S)
 
 # byline on the deadlines box

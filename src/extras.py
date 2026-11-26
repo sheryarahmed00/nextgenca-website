@@ -163,7 +163,7 @@ s = s.replace('<h2>Deadlines we keep for you</h2>',
 s = s.replace('#insights+.wrap.showcase,.showcase{margin-top:24px}', '.cal-by{margin:0 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.75}#insights~.wrap.showcase{margin-top:0}', 1)
 
 # Social profiles: tell Google which profiles belong to the firm
-_SAME = '"sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://www.tiktok.com/@nextgenca.co.uk","https://www.youtube.com/@nextgencharteredaccountant","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E","https://wa.me/447591246395"]'
+_SAME = '"sameAs":["https://www.linkedin.com/company/nextgen-chartered-accountant","https://www.facebook.com/nextgencharteredaccountant","https://www.instagram.com/nextgencharteredaccountant/","https://www.tiktok.com/@nextgenca.co.uk","https://www.youtube.com/@nextgencharteredaccountant","https://find.icaew.com/firms/luton/nextgen/Z1qgR7E","https://wa.me/447591246395","https://www.google.com/maps?cid=8530750263220794709"],"hasMap":"https://www.google.com/maps?cid=8530750263220794709"'
 s = _re.sub(r'"sameAs":\[[^\]]*\]', _SAME, s, count=1)
 
 # Google Search Console verification

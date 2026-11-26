@@ -344,9 +344,13 @@ page('accountants-in-luton','Chartered Accountants in Luton, Bedfordshire | Next
 <h2>How we work with local clients</h2>
 <p>We are based in Luton and work with clients by phone, video call and secure document sharing, so you do not need to travel to an office. Open Monday to Saturday, 9am to 7pm.</p>
 <h2>Areas we cover</h2>
-<p>Luton, Dunstable, Houghton Regis, Leighton Buzzard, Harpenden, Hitchin, Bedford and the rest of Bedfordshire and Hertfordshire. We also act for clients anywhere in the UK and abroad.</p>
+<p>Luton, Dunstable, Houghton Regis, Leighton Buzzard, Bedford, Harpenden, St Albans, Hitchin, Stevenage, Hemel Hempstead, Watford and London. We also act for clients anywhere in the UK and abroad.</p>
+<h2>Find us on Google</h2>
+<p>See our Google Business Profile, opening hours and reviews: <a href="https://www.google.com/maps?cid=8530750263220794709" rel="noopener" target="_blank">NextGen Chartered Accountant on Google Maps</a>. If we have helped you, you can <a href="/review">leave a review</a>.</p>
+<div style="margin:16px 0 8px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.08)"><iframe title="NextGen Chartered Accountant on Google Maps" src="https://www.google.com/maps?q=Luton,+UK&amp;z=10&amp;output=embed" width="100%" height="320" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
 """+CTA,
- [{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Accountants in Luton","item":"https://nextgenca.co.uk/accountants-in-luton"}]}])
+ [{"@context":"https://schema.org","@type":"AccountingService","@id":"https://nextgenca.co.uk/#org","name":"NextGen Chartered Accountant","url":"https://nextgenca.co.uk/accountants-in-luton","telephone":"+447591246395","priceRange":"££","address":{"@type":"PostalAddress","addressLocality":"Luton","addressRegion":"Bedfordshire","addressCountry":"GB"},"areaServed":[{"@type":"City","name":"Luton"},{"@type":"City","name":"Dunstable"},{"@type":"City","name":"Houghton Regis"},{"@type":"City","name":"Leighton Buzzard"},{"@type":"City","name":"Bedford"},{"@type":"City","name":"Harpenden"},{"@type":"City","name":"St Albans"},{"@type":"City","name":"Hitchin"},{"@type":"City","name":"Stevenage"},{"@type":"City","name":"Hemel Hempstead"},{"@type":"City","name":"Watford"},{"@type":"City","name":"London"}],"hasMap":"https://www.google.com/maps?cid=8530750263220794709","openingHours":"Mo-Sa 09:00-19:00"},
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nextgenca.co.uk/"},{"@type":"ListItem","position":2,"name":"Accountants in Luton","item":"https://nextgenca.co.uk/accountants-in-luton"}]}])
 
 page('privacy','Privacy Notice | NextGen Chartered Accountant','How NextGen Chartered Accountant collects, uses and protects personal information.','''
 <p class="eyebrow">Firm</p>

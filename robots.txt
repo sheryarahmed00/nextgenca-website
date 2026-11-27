@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /letters-admin
-Disallow: /letters/
 
 # Search engines and AI assistants are welcome to read and cite this site
 User-agent: Googlebot

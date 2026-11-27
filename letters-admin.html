@@ -388,14 +388,48 @@ code{font-size:.85rem;overflow-wrap:anywhere;background:var(--mist);padding:2px 
     <div class="two">
       <label>Type of letter
         <select id="fType">
-          <option>Income certificate</option>
-          <option>Accountant's reference letter</option>
-          <option>Accountant's letter for visa application</option>
-          <option>Accountant's letter for mortgage application</option>
-          <option>Accountant's letter for renting</option>
-          <option>Confirmation of self-employment</option>
-          <option>Confirmation of company directorship</option>
-          <option>Other</option>
+          <optgroup label="Income and visa">
+            <option>Income certificate</option>
+            <option>Accountant&#39;s letter for UK spouse or partner visa</option>
+            <option>Accountant&#39;s letter for UK family visa</option>
+            <option>Accountant&#39;s letter for Skilled Worker visa</option>
+            <option>Accountant&#39;s letter for student visa (sponsor&#39;s income)</option>
+            <option>Accountant&#39;s letter for UK visitor visa</option>
+            <option>Accountant&#39;s letter for Schengen visa</option>
+            <option>Accountant&#39;s letter for overseas visa (other country)</option>
+            <option>Sponsor&#39;s income confirmation</option>
+            <option>Confirmation of self-employment</option>
+            <option>Confirmation of company directorship and shareholding</option>
+            <option>Confirmation of dividend income</option>
+            <option>Confirmation of rental income</option>
+            <option>Salary confirmation for employee (payroll client)</option>
+          </optgroup>
+          <optgroup label="Mortgage, renting and finance">
+            <option>Accountant&#39;s certificate for mortgage lender</option>
+            <option>Accountant&#39;s reference letter for mortgage</option>
+            <option>Income confirmation for letting agent or landlord</option>
+            <option>Lender or bank form completed and signed</option>
+            <option>Comfort letter for bank or lender</option>
+            <option>Income confirmation for school fees, bursary or funding</option>
+          </optgroup>
+          <optgroup label="Accounts and tax">
+            <option>Certified copy of accounts</option>
+            <option>Certified copy of tax return or SA302</option>
+            <option>Certificate of turnover</option>
+            <option>Net worth statement</option>
+            <option>Source of funds letter</option>
+            <option>Source of wealth letter</option>
+            <option>Confirmation of tax returns filed and up to date</option>
+            <option>Confirmation of tax paid</option>
+            <option>Confirmation of VAT registration status</option>
+            <option>Grant or funding expenditure certificate</option>
+          </optgroup>
+          <optgroup label="Professional">
+            <option>Confirmation that we act as your accountant or tax agent</option>
+            <option>Accountant&#39;s reference letter</option>
+            <option>Professional clearance letter</option>
+            <option>Other</option>
+          </optgroup>
         </select></label>
       <label>Other type (if "Other")<input id="fTypeOther"></label>
     </div>

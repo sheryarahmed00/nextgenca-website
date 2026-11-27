@@ -444,7 +444,7 @@ code{font-size:.85rem;overflow-wrap:anywhere;background:var(--mist);padding:2px 
     </div>
     <label id="fCustomWrap" hidden>Valid until<input id="fCustom" type="date"></label>
     <div class="two">
-      <label>Signed by<input id="fSigned" value="Ahmed ACA, ICAEW Chartered Accountant"></label>
+      <label>Signed by<input id="fSigned" value="Sheryar Ahmed ACA, ICAEW Chartered Accountant"></label>
       <label>Public note (optional, shown on the verify page)<input id="fNote"></label>
     </div>
     <button class="btn btn-gold" type="submit" id="issueBtn">Issue letter and create QR code</button>
@@ -579,13 +579,14 @@ function render(){
     if(r.broken) return '<tr><td colspan="7">Record '+r.id+' could not be read with this password.</td></tr>';
     const [s,c]=statusOf(r), d=r.d;
     return '<tr><td><b>'+esc(d.ref)+'</b></td><td>'+esc(d.issuedTo)+'</td><td>'+esc(d.type)+'<br><small>'+esc(d.purpose)+'</small></td><td>'+fmt(d.issueDate)+'</td><td>'+(d.validUntil?fmt(d.validUntil):'No expiry')+'</td><td><span class="pill '+c+'">'+s+'</span>'+(d.docHash?'<br><small>PDF added</small>':'')+'</td>'+
-      '<td class="acts"><button type="button" data-a="qr" data-i="'+i+'">QR</button><button type="button" data-a="pdf" data-i="'+i+'">Add signed PDF</button>'+(r.rec.status==='withdrawn'?'':'<button type="button" data-a="wd" data-i="'+i+'">Withdraw</button>')+'</td></tr>';
+      '<td class="acts"><button type="button" data-a="qr" data-i="'+i+'">QR</button><button type="button" data-a="ed" data-i="'+i+'">Edit</button><button type="button" data-a="pdf" data-i="'+i+'">Add signed PDF</button>'+(r.rec.status==='withdrawn'?'':'<button type="button" data-a="wd" data-i="'+i+'">Withdraw</button>')+'</td></tr>';
   }).join('');
 }
 let pdfTarget=null;
 $('regRows').addEventListener('click',async e=>{
   const b=e.target.closest('button'); if(!b)return; const r=REG[+b.dataset.i];
   if(b.dataset.a==='qr'){showQR(r.d.ref,r.id,r.key);$('qrBox').scrollIntoView({behavior:'smooth'});}
+  if(b.dataset.a==='ed'){startEdit(r);}
   if(b.dataset.a==='pdf'){pdfTarget=r;$('pdfPick').value='';$('pdfPick').click();}
   if(b.dataset.a==='wd'){
     if(!await ask('Withdraw '+r.d.ref+' ('+r.d.issuedTo+')? Anyone scanning its QR code will be told it has been withdrawn and must not be relied upon.'))return;
@@ -613,6 +614,17 @@ $('csv').addEventListener('click',()=>{
 });
 
 /* ---------- issue ---------- */
+let EDIT=null;
+function startEdit(r){
+  EDIT=r; const d=r.d, sel=$('fType');
+  $('fTo').value=d.issuedTo||'';$('fAddr').value=d.addressedTo||'';$('fPurpose').value=d.purpose||'';$('fDate').value=d.issueDate||'';$('fSigned').value=d.signedBy||'';$('fNote').value=d.note||'';
+  if([...sel.options].some(o=>o.value===d.type)){sel.value=d.type;$('fTypeOther').value='';}else{sel.value='Other';$('fTypeOther').value=d.type;}
+  $('fValid').value=d.validUntil?'custom':'0';$('fCustom').value=d.validUntil||'';$('fCustomWrap').hidden=!d.validUntil;
+  $('issueBtn').textContent='Save changes to '+d.ref;msg($('issueMsg'),'Editing '+d.ref+'. The QR code and link stay the same.');
+  $('issueForm').scrollIntoView({behavior:'smooth'});
+}
+function endEdit(){EDIT=null;$('issueBtn').textContent='Issue letter and create QR code';}
+
 $('fValid').addEventListener('change',()=>{$('fCustomWrap').hidden=$('fValid').value!=='custom';});
 function addMonths(s,n){const d=new Date(s+'T00:00:00');const day=d.getDate();d.setMonth(d.getMonth()+n);if(d.getDate()!==day)d.setDate(0);return iso(d);}
 $('issueForm').addEventListener('submit',async e=>{
@@ -622,6 +634,14 @@ $('issueForm').addEventListener('submit',async e=>{
   if(v==='custom'&&!validUntil) return msg(m,'Choose the "valid until" date.',true);
   const type=$('fType').value==='Other'?$('fTypeOther').value.trim():$('fType').value;
   if(!type) return msg(m,'Enter the type of letter.',true);
+  if(EDIT){
+    const r=EDIT, nd={...r.d,issuedTo:$('fTo').value.trim(),addressedTo:$('fAddr').value.trim(),type,purpose:$('fPurpose').value.trim(),issueDate,validUntil,signedBy:$('fSigned').value.trim(),note:$('fNote').value.trim()};
+    if(!await ask('Save changes to '+r.d.ref+'?\n\nIssued to: '+nd.issuedTo+'\nType: '+nd.type+'\nPurpose: '+nd.purpose+'\nIssued: '+fmt(issueDate)+'\nValid until: '+(validUntil?fmt(validUntil):'No expiry')+'\nSigned by: '+nd.signedBy))return;
+    btn.disabled=true;msg(m,'Saving…');
+    try{await update(r,{},nd,'Letter register: edit letter');msg(m,'Saved changes to '+r.d.ref+'.');e.target.reset();$('fDate').value=today();$('fSigned').value='Sheryar Ahmed ACA, ICAEW Chartered Accountant';$('fCustomWrap').hidden=true;endEdit();loadReg();}
+    catch(x){msg(m,'Not saved: '+x.message,true);}finally{btn.disabled=false;}
+    return;
+  }
   const yr=issueDate.slice(0,4);
   const n=REG.filter(r=>r.d&&r.d.ref&&r.d.ref.startsWith('NGCA-'+yr+'-')).map(r=>+r.d.ref.split('-')[2]).reduce((a,b)=>Math.max(a,b),0)+1;
   const data={ref:'NGCA-'+yr+'-'+String(n).padStart(4,'0'),issuedTo:$('fTo').value.trim(),addressedTo:$('fAddr').value.trim(),type,purpose:$('fPurpose').value.trim(),issueDate,validUntil,signedBy:$('fSigned').value.trim(),note:$('fNote').value.trim()};
@@ -632,7 +652,7 @@ $('issueForm').addEventListener('submit',async e=>{
     const k=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['encrypt']);
     const rec={v:1,status:'active',...(await aesEnc(k,data)),admin:await aesEnc(AKEY,{key,data})};
     await putFile(id+'.json',rec,null,'Letter register: add letter');
-    msg(m,'Saved as '+data.ref+'.'); e.target.reset(); $('fDate').value=today(); $('fSigned').value='Ahmed ACA, ICAEW Chartered Accountant'; $('fCustomWrap').hidden=true;
+    msg(m,'Saved as '+data.ref+'.'); e.target.reset(); $('fDate').value=today(); $('fSigned').value='Sheryar Ahmed ACA, ICAEW Chartered Accountant'; $('fCustomWrap').hidden=true;
     showQR(data.ref,id,key); $('qrBox').scrollIntoView({behavior:'smooth'}); loadReg();
   }catch(x){msg(m,'Not saved: '+x.message,true);}
   finally{btn.disabled=false;}

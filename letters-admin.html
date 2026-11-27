@@ -331,6 +331,7 @@ code{font-size:.85rem;overflow-wrap:anywhere;background:var(--mist);padding:2px 
 .acts button{font:700 .75rem var(--body);border:1px solid var(--rule);background:var(--mist);color:var(--navy);padding:6px 9px;border-radius:3px;cursor:pointer;margin:0 4px 4px 0}
 .acts button:hover{border-color:var(--gold)}
 [hidden]{display:none!important}
+.askbg{position:fixed;inset:0;background:rgba(11,27,52,.55);display:grid;place-items:center;z-index:50;padding:20px}.askcard{background:#fff;max-width:520px;width:100%;padding:28px;border-top:3px solid var(--gold);white-space:pre-line}.askcard p{margin:0 0 16px}
 </style>
 </head>
 <body>
@@ -475,7 +476,8 @@ code{font-size:.85rem;overflow-wrap:anywhere;background:var(--mist);padding:2px 
 </section>
 <p><button class="btn btn-navy" type="button" id="lock">Lock this page</button></p>
 </div>
-</div></main>
+</div><div id="askBox" class="askbg" hidden><div class="askcard"><p id="askText"></p><p class="cta-row"><button class="btn btn-gold" type="button" id="askYes">Yes, continue</button><button class="btn btn-navy" type="button" id="askNo">Cancel</button></p></div></div>
+</main>
 <footer>
   <div class="wrap">
     <div class="foot">
@@ -512,6 +514,8 @@ const fmt=d=>{if(!d)return '';const t=new Date(d+'T00:00:00');return isNaN(t)?d:
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const today=()=>iso(new Date());
 function newId(){const a='abcdefghijklmnopqrstuvwxyz234567';return Array.from(rnd(12),b=>a[b&31]).join('');}
+function ask(t){return new Promise(res=>{$('askText').textContent=t;$('askBox').hidden=false;const done=v=>{$('askBox').hidden=true;$('askYes').onclick=$('askNo').onclick=null;res(v);};$('askYes').onclick=()=>done(true);$('askNo').onclick=()=>done(false);});}
+function note(t){return ask(t);}
 function msg(el,t,bad){el.hidden=!t;el.textContent=t||'';el.className='amsg'+(bad?' bad':'');}
 
 let TOKEN='', AKEY=null, REG=[];
@@ -584,16 +588,16 @@ $('regRows').addEventListener('click',async e=>{
   if(b.dataset.a==='qr'){showQR(r.d.ref,r.id,r.key);$('qrBox').scrollIntoView({behavior:'smooth'});}
   if(b.dataset.a==='pdf'){pdfTarget=r;$('pdfPick').value='';$('pdfPick').click();}
   if(b.dataset.a==='wd'){
-    if(!confirm('Withdraw '+r.d.ref+' ('+r.d.issuedTo+')? Anyone scanning its QR code will be told it has been withdrawn and must not be relied upon.'))return;
+    if(!await ask('Withdraw '+r.d.ref+' ('+r.d.issuedTo+')? Anyone scanning its QR code will be told it has been withdrawn and must not be relied upon.'))return;
     b.disabled=true;
-    try{await update(r,{status:'withdrawn',withdrawn_on:today()},null,'Letter register: withdraw');await loadReg();}catch(x){alert(x.message);b.disabled=false;}
+    try{await update(r,{status:'withdrawn',withdrawn_on:today()},null,'Letter register: withdraw');await loadReg();}catch(x){note(x.message);b.disabled=false;}
   }
 });
 $('pdfPick').addEventListener('change',async e=>{
   const f=e.target.files[0]; if(!f||!pdfTarget)return; const r=pdfTarget; pdfTarget=null;
   const h=hex(await crypto.subtle.digest('SHA-256',await f.arrayBuffer()));
-  if(!confirm('Link "'+f.name+'" to '+r.d.ref+'? Use the final signed PDF exactly as you will send it. Any later change to the file (even re-saving) will make the check fail.'))return;
-  try{await update(r,{},{docHash:h,docName:f.name},'Letter register: add PDF fingerprint');await loadReg();alert('Done. People who verify '+r.d.ref+' can now check their PDF copy.');}catch(x){alert(x.message);}
+  if(!await ask('Link "'+f.name+'" to '+r.d.ref+'? Use the final signed PDF exactly as you will send it. Any later change to the file (even re-saving) will make the check fail.'))return;
+  try{await update(r,{},{docHash:h,docName:f.name},'Letter register: add PDF fingerprint');await loadReg();note('Done. People who verify '+r.d.ref+' can now check their PDF copy.');}catch(x){note(x.message);}
 });
 async function update(r,recPatch,dataPatch,message){
   const key=await crypto.subtle.importKey('raw',b64d(r.key),'AES-GCM',false,['encrypt']);
@@ -621,7 +625,7 @@ $('issueForm').addEventListener('submit',async e=>{
   const yr=issueDate.slice(0,4);
   const n=REG.filter(r=>r.d&&r.d.ref&&r.d.ref.startsWith('NGCA-'+yr+'-')).map(r=>+r.d.ref.split('-')[2]).reduce((a,b)=>Math.max(a,b),0)+1;
   const data={ref:'NGCA-'+yr+'-'+String(n).padStart(4,'0'),issuedTo:$('fTo').value.trim(),addressedTo:$('fAddr').value.trim(),type,purpose:$('fPurpose').value.trim(),issueDate,validUntil,signedBy:$('fSigned').value.trim(),note:$('fNote').value.trim()};
-  if(!confirm('Issue '+data.ref+'?\n\nIssued to: '+data.issuedTo+'\nType: '+data.type+'\nPurpose: '+data.purpose+'\nIssued: '+fmt(issueDate)+'\nValid until: '+(validUntil?fmt(validUntil):'No expiry')))return;
+  if(!await ask('Issue '+data.ref+'?\n\nIssued to: '+data.issuedTo+'\nType: '+data.type+'\nPurpose: '+data.purpose+'\nIssued: '+fmt(issueDate)+'\nValid until: '+(validUntil?fmt(validUntil):'No expiry')))return;
   btn.disabled=true; msg(m,'Saving…');
   try{
     const id=newId(), raw=rnd(16), key=b64u(raw);

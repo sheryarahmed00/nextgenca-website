@@ -21,7 +21,7 @@ jobs:
           files = subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD", "--", "*.html"], capture_output=True, text=True).stdout.split()
           urls = []
           for f in files:
-              if f.startswith(("google", "404")) or "/" in f and not f.startswith("insights/"):
+              if f.startswith(("google", "404", "letters-admin", "verify")) or "/" in f and not f.startswith("insights/"):
                   continue
               slug = f[:-5]
               urls.append("https://nextgenca.co.uk/" + ("" if slug == "index" else slug))

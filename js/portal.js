@@ -4,11 +4,13 @@
   const gbp = p => "£" + (p / 100).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   let currentEmail = "", turnstileToken = "", turnstileId = null;
 
-  function show(id) { ["stepEmail", "stepCode", "stepSecure", "dash"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
+  function show(id) { ["stepEmail", "stepCode", "stepSecure", "stepQuote", "dash"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
 
   async function start() {
     tabs($("authTabs"));
     if (location.hash === "#signup") document.querySelector('[data-tab="tSignup"]').click();
+    const qt = new URLSearchParams(location.search).get("quote");
+    if (qt && await openQuote(qt)) return;
     try {
       const me = await api("/api/portal/me");
       if (me.role === "admin") { location.replace("/portal-admin"); return; }
@@ -24,6 +26,43 @@
       }
     } catch (e) {}
   }
+
+  // ----- quote link from email -----
+  let quoteToken = null;
+  async function openQuote(token) {
+    try {
+      const { quote: q } = await api("/api/portal/quote/" + encodeURIComponent(token));
+      if (q.status === "sent" || q.status === "viewed") {
+        quoteToken = token;
+        $("qNumber").textContent = "Quote " + q.number;
+        $("qHello").textContent = "Dear " + q.name + ", thank you for choosing NextGen Chartered Accountant.";
+        $("qService").textContent = q.service + (q.period ? " (" + q.period + ")" : "");
+        $("qFee").textContent = q.fee;
+        $("qValid").textContent = date(q.valid_until);
+        if (q.scope) { $("qScope").textContent = q.scope; $("qScopeBox").classList.remove("hide"); }
+        show("stepQuote");
+        return true;
+      }
+      $("email").value = q.email;
+      show("stepEmail");
+      msg($("emailMsg"), q.status === "accepted" || q.status === "invoiced" ? "You have already accepted this quote. Log in below to continue." : "This quote is no longer open (" + q.status + "). Please contact us.", q.status === "accepted" || q.status === "invoiced");
+      return true;
+    } catch (e) {
+      show("stepEmail"); msg($("emailMsg"), e.message); return true;
+    }
+  }
+  $("quoteForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const f = ev.target; msg($("quoteMsg"), "");
+    if (!f.elements.consent.checked) { msg($("quoteMsg"), "Please tick the box to agree to our privacy notice."); return; }
+    busy(f, true);
+    try {
+      const r = await api("/api/portal/quote/" + quoteToken + "/accept", { method: "POST", body: { consent: true } });
+      history.replaceState(null, "", "/portal");
+      toCode(r.email, r.message);
+    } catch (e) { msg($("quoteMsg"), e.message); }
+    busy(f, false);
+  });
 
   function toCode(email, message) {
     currentEmail = email;

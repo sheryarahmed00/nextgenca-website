@@ -12,7 +12,7 @@
     meta.orderStatuses.forEach(s => $("orderFilter").append(el("option", { value: s }, s)));
     $("app").classList.remove("hide");
     tabs(document);
-    loadClients(); loadOrders(); loadAudit(); loadSignups(); loadSettings();
+    loadClients(); loadOrders(); loadAudit(); loadSignups(); loadSettings(); setupQuotes();
   }
 
   $("logoutBtn").addEventListener("click", async () => { try { await api("/api/portal/logout", { method: "POST" }); } catch (e) {} location.replace("/staff-login"); });
@@ -129,7 +129,7 @@
       c.wanted_service ? el("p", {}, "Signed up for: ", el("b", {}, c.wanted_service), c.signup_note ? el("div", { class: "muted" }, "Note: " + c.signup_note) : null) : null,
       kycDocs.length ? el("div", { class: "row", style: "margin:8px 0 14px" }, kycDocs.map(x => el("a", { class: "btn line small", href: "/api/admin/documents/" + x.id + "/download" }, "Open " + x.title))) : null,
       (d.kyc && d.kyc[0]) ? el("p", {}, "Automatic ID check: ", el("b", {}, d.kyc[0].status), d.kyc[0].summary ? el("div", { class: "muted" }, d.kyc[0].summary) : null, el("div", { class: "muted" }, "Full report, photos and selfie: Didit console")) : null,
-      c.stage === "kyc" ? el("p", { class: "muted" }, "Waiting for the client to complete the ID check.") : approveForm(c),
+      c.stage === "kyc" ? el("p", { class: "muted" }, "Waiting for the client to complete the ID check.") : approveForm(c, d.quote),
       ["kyc", "review"].includes(c.stage) ? el("p", { style: "margin-top:10px" }, el("button", { class: "btn danger small", type: "button", onclick: async () => {
         const reason = prompt("Reason sent to the client (optional):", ""); if (reason === null) return;
         await api("/api/admin/clients/" + id + "/reject", { method: "POST", body: { reason } }); openClient(id); loadSignups();
@@ -165,18 +165,20 @@
       el("div", { class: "card" }, el("h2", {}, "Orders"), orderTable(d.orders.map(o => ({ ...o, client_name: c.name, client_email: c.email })))));
   }
 
-  function approveForm(c) {
-    const svc = c.wanted_service || meta.services[0];
-    const ck = el("textarea", { name: "checklist", style: "min-height:90px" }, (meta.checklists[svc] || []).join("\n"));
+  function approveForm(c, q) {
+    const svc = (q && q.service) || c.wanted_service || meta.services[0];
+    let qck = null; try { qck = q ? JSON.parse(q.checklist || "[]") : null; } catch (e) {}
+    const ck = el("textarea", { name: "checklist", style: "min-height:90px" }, ((qck && qck.length) ? qck : (meta.checklists[svc] || [])).join("\n"));
     const sel = el("select", { name: "service" }, meta.services.map(x => el("option", { value: x, selected: x === svc }, x)));
     sel.addEventListener("change", () => { ck.value = (meta.checklists[sel.value] || []).join("\n"); });
     const f = el("form", { novalidate: true },
       el("div", { class: "grid2" },
         el("div", {}, el("label", {}, "Service"), sel),
-        el("div", {}, el("label", {}, "Fee (£) *"), el("input", { name: "fee", inputmode: "decimal", placeholder: "150" })),
-        el("div", {}, el("label", {}, "Period / year"), el("input", { name: "period", placeholder: "e.g. 2025/26" }))),
+        el("div", {}, el("label", {}, "Fee (£) *"), el("input", { name: "fee", inputmode: "decimal", placeholder: "150", value: q ? (q.fee_pence / 100).toFixed(2) : "" })),
+        el("div", {}, el("label", {}, "Period / year"), el("input", { name: "period", placeholder: "e.g. 2025/26", value: q ? q.period || "" : "" }))),
+      q ? el("p", { class: "msg ok" }, "Prefilled from accepted quote " + q.number + ". Sending closes the quote.") : null,
       el("label", {}, "What is included (goes into the letter)"),
-      el("textarea", { name: "scope", style: "min-height:80px", placeholder: "e.g. Preparing and filing your 2025/26 Self Assessment tax return, including one rental property." }),
+      el("textarea", { name: "scope", style: "min-height:80px", placeholder: "e.g. Preparing and filing your 2025/26 Self Assessment tax return, including one rental property." }, q ? q.scope || "" : ""),
       el("label", {}, "Documents the client must upload after paying (one per line)"), ck,
       el("p", { style: "margin-top:12px" }, el("button", { class: "btn gold", type: "submit" }, c.stage === "review" ? "Approve ID and send agreement + invoice" : "Send agreement + invoice")),
       el("div", { class: "m" }));
@@ -213,6 +215,70 @@
     catch (e) { msg(f.querySelector(".m"), e.message); }
     busy(f, false);
   });
+
+  // ----- quotes -----
+  const QSTATUS = { sent: "Sent", viewed: "Viewed", accepted: "Accepted", invoiced: "Closed – invoiced", expired: "Expired", withdrawn: "Withdrawn", replaced: "Replaced", declined: "Declined" };
+  function setupQuotes() {
+    const sel = $("qService");
+    meta.services.forEach(x => sel.append(el("option", { value: x }, x)));
+    const fillCk = () => { $("qChecklist").value = (meta.checklists[sel.value] || []).join("\n"); };
+    sel.addEventListener("change", fillCk); fillCk();
+    $("newQuoteBtn").addEventListener("click", () => $("newQuote").classList.toggle("hide"));
+    $("quoteFilter").addEventListener("change", loadQuotes);
+    $("newQuoteForm").addEventListener("submit", async ev => {
+      ev.preventDefault(); const f = ev.target; const box = f.querySelector(".m"); busy(f, true); msg(box, "");
+      const fd = Object.fromEntries(new FormData(f));
+      fd.checklist = String(fd.checklist || "").split("\n");
+      try {
+        const r = await api("/api/admin/quotes", { method: "POST", body: fd });
+        f.reset(); fillCk(); msg(box, "Quote " + r.number + " created and emailed to the client.", true);
+        loadQuotes(); openQuote(r.id);
+      } catch (e) { msg(box, e.message); }
+      busy(f, false);
+    });
+    loadQuotes();
+  }
+  async function loadQuotes() {
+    const r = await api("/api/admin/quotes?status=" + encodeURIComponent($("quoteFilter").value));
+    const open = r.items.filter(q => ["sent", "viewed", "accepted"].includes(q.status)).length;
+    $("quoteCount").textContent = !$("quoteFilter").value && open ? "(" + open + " open)" : "";
+    $("quotesBox").replaceChildren(table([
+      ["Quote", q => el("span", {}, el("b", {}, q.number), el("div", { class: "muted" }, date(q.created_at)))],
+      ["Client", q => el("span", {}, el("b", {}, q.name), el("div", { class: "muted" }, q.email))],
+      ["Service", q => q.service], ["Fee", q => gbp(q.fee_pence)],
+      ["Status", q => el("span", {}, pill(QSTATUS[q.status] || q.status), q.invoice_number ? el("div", { class: "muted" }, q.invoice_number) : null)],
+      ["", q => el("button", { class: "btn line small", type: "button", onclick: () => openQuote(q.id) }, "Open")],
+    ], r.items, "No quotes yet."));
+  }
+  async function openQuote(id) {
+    const d = await api("/api/admin/quotes/" + id);
+    const q = d.quote;
+    let ck = []; try { ck = JSON.parse(q.checklist || "[]"); } catch (e) {}
+    const actions = el("p", { class: "row", style: "margin-top:12px" });
+    if (["sent", "viewed"].includes(q.status)) actions.append(el("button", { class: "btn line small", type: "button", onclick: async () => {
+      try { await api("/api/admin/quotes/" + id + "/resend", { method: "POST" }); alert("Quote emailed again."); openQuote(id); } catch (e) { alert(e.message); }
+    } }, "Email again"));
+    if (["sent", "viewed", "accepted"].includes(q.status)) actions.append(el("button", { class: "btn danger small", type: "button", onclick: async () => {
+      if (!confirm("Withdraw quote " + q.number + "? The client's link will stop working.")) return;
+      await api("/api/admin/quotes/" + id + "/withdraw", { method: "POST" }); openQuote(id); loadQuotes();
+    } }, "Withdraw"));
+    $("quoteView").replaceChildren(el("div", { class: "card" },
+      el("h2", {}, q.number + " · " + (QSTATUS[q.status] || q.status)),
+      el("div", { class: "bank" },
+        el("div", {}, el("span", {}, "Client"), el("span", {}, q.name + " <" + q.email + ">")),
+        q.company ? el("div", {}, el("span", {}, "Company"), el("span", {}, q.company)) : null,
+        el("div", {}, el("span", {}, "Service"), el("b", {}, q.service + (q.period ? " (" + q.period + ")" : ""))),
+        el("div", {}, el("span", {}, "Fee"), el("b", {}, gbp(q.fee_pence))),
+        el("div", {}, el("span", {}, "Valid until"), el("span", {}, date(q.valid_until))),
+        el("div", {}, el("span", {}, "Created by"), el("span", {}, q.created_by)),
+        d.invoice ? el("div", {}, el("span", {}, "Invoice"), el("span", {}, d.invoice.number + " · " + gbp(d.invoice.amount_pence) + " · " + (d.invoice.status === "paid" ? "Paid " + date(d.invoice.paid_at) + " (" + (d.invoice.paid_method || "") + ")" : d.invoice.status))) : null),
+      q.scope ? el("div", {}, el("h3", { style: "margin-top:14px" }, "What is included"), el("p", { style: "white-space:pre-wrap" }, q.scope)) : null,
+      ck.length ? el("div", {}, el("h3", {}, "Documents to upload after paying"), el("ul", {}, ck.map(x => el("li", {}, x)))) : null,
+      el("h3", { style: "margin-top:14px" }, "History"),
+      table([["When", e => new Date(e.at).toLocaleString("en-GB")], ["What", e => e.event.replace(/_/g, " ")], ["Detail", e => e.detail || ""]], d.events, "No events."),
+      actions));
+    $("quoteView").scrollIntoView({ behavior: "smooth" });
+  }
 
   // ----- orders -----
   function orderTable(items) {

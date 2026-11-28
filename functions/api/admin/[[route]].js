@@ -3,9 +3,9 @@ import {
   json, bad, ensureSchema, sameOrigin, cleanEmail, cleanText, cleanDate, getSession, audit,
   checkUpload, sniffOk, downloadResponse, nowIso, sendEmail, storeUpload,
   getSettings, renderLetter, sha256, nextInvoiceNumber, parsePence, gbp,
-  SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER, files,
+  SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER, files, randomToken, hmac,
 } from "../../_shared/portal.js";
-import { sendAgreementAndInvoice, ensureKycTable } from "../../_shared/autoflow.js";
+import { sendAgreementAndInvoice, ensureKycTable, ensureQuoteTables, quoteEvent, nextQuoteNumber, expireQuotes, acceptedQuoteFor, closeQuote } from "../../_shared/autoflow.js";
 
 
 export async function onRequest(context) {
@@ -28,6 +28,11 @@ export async function onRequest(context) {
         ORDER BY c.id DESC LIMIT 200`).all();
       return json({ items: r.results });
     }
+    if (route === "quotes" && m === "GET") return listQuotes(env, request);
+    if (route === "quotes" && m === "POST") return createQuote(env, request, s);
+    if ((x = route.match(/^quotes\/(\d+)$/)) && m === "GET") return getQuote(env, Number(x[1]));
+    if ((x = route.match(/^quotes\/(\d+)\/withdraw$/)) && m === "POST") return withdrawQuote(env, request, s, Number(x[1]));
+    if ((x = route.match(/^quotes\/(\d+)\/resend$/)) && m === "POST") return resendQuote(env, request, s, Number(x[1]));
     if (route === "settings" && m === "GET") return json(await getSettings(env));
     if (route === "settings" && m === "PUT") return saveSettings(env, request, s);
     if ((x = route.match(/^clients\/(\d+)\/approve$/)) && m === "POST") return approve(env, request, s, Number(x[1]));
@@ -105,7 +110,8 @@ async function getClient(env, id) {
   if (!c.results[0]) return bad("Client not found.", 404);
   await ensureKycTable(env);
   const kyc = await env.DB.prepare("SELECT provider, status, summary, updated_at FROM kyc_checks WHERE client_id = ? ORDER BY id DESC LIMIT 3").bind(id).all();
-  return json({ kyc: kyc.results, client: c.results[0], services: sv.results, documents: d.results, orders: o.results, engagements: en.results, invoices: inv.results, checklist: cl.results });
+  const quote = await acceptedQuoteFor(env, id, c.results[0].email);
+  return json({ quote, kyc: kyc.results, client: c.results[0], services: sv.results, documents: d.results, orders: o.results, engagements: en.results, invoices: inv.results, checklist: cl.results });
 }
 
 async function updateClient(env, request, s, id) {
@@ -272,6 +278,8 @@ async function approve(env, request, s, id) {
   const scope = cleanText(b.scope, 3000);
   const items = (Array.isArray(b.checklist) ? b.checklist : []).map(x => cleanText(x, 150)).filter(Boolean).slice(0, 30);
   const r = await sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist: items, actor: s.email, idChecked: c.stage === "review" });
+  const q = await acceptedQuoteFor(env, c.id, c.email);
+  if (q) await closeQuote(env, q.id, r.invoice, s.email);
   return json({ ok: true, engagement_id: r.engagement_id, invoice: r.invoice });
 }
 
@@ -303,5 +311,99 @@ async function updateInvoice(env, request, s, id) {
     await sendEmail(env, inv.email, `Payment received: ${inv.number}`,
       `Dear ${inv.name},\n\nThank you, we have received your payment of ${gbp(inv.amount_pence)} for invoice ${inv.number}.${n && n.n ? "\n\nNext step: please upload the documents on your checklist so we can start: " : "\n\nWe will now start the work and keep you updated in your portal: "}${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   }
+  return json({ ok: true });
+}
+
+// ---------- quotes ----------
+async function sendQuoteEmail(env, q, token) {
+  const site = env.SITE_URL || "https://nextgenca.co.uk";
+  const until = new Date(q.valid_until).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  await sendEmail(env, q.email, `Your quote from NextGen Chartered Accountant (${q.number})`,
+    `Dear ${q.name},\n\nThank you for speaking with us. Here is your quote:\n\nService: ${q.service}${q.period ? " (" + q.period + ")" : ""}\nFee: ${gbp(q.fee_pence)} (NextGen is not VAT registered, so no VAT is added)\n${q.scope ? "\nWhat is included:\n" + q.scope + "\n" : ""}\nValid until: ${until}\n\nTo accept and get started, open this link:\n${site}/portal?quote=${token}\n\nIt takes a few minutes on your phone: accept the quote, check your ID, sign the engagement letter and pay. Then you can upload your documents securely.\n\nKind regards,\nNextGen Chartered Accountant`);
+}
+
+async function listQuotes(env, request) {
+  await ensureQuoteTables(env); await expireQuotes(env);
+  // one reminder to staff for quotes waiting 7+ days
+  const week = new Date(Date.now() - 7 * 864e5).toISOString();
+  const stale = await env.DB.prepare("SELECT * FROM quotes WHERE status IN ('sent','viewed') AND created_at < ? AND reminded_at IS NULL").bind(week).all();
+  for (const q of stale.results) {
+    await env.DB.prepare("UPDATE quotes SET reminded_at = ? WHERE id = ?").bind(nowIso(), q.id).run();
+    await quoteEvent(env, q.id, "reminder_to_staff");
+    if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Quote not accepted yet: ${q.number}`, `${q.name} <${q.email}> has not accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}) sent on ${q.created_at.slice(0, 10)}. You may want to follow up.`);
+  }
+  const st = new URL(request.url).searchParams.get("status") || "";
+  const groups = { open: "('sent','viewed')", accepted: "('accepted')", closed: "('invoiced')", ended: "('expired','withdrawn','replaced','declined')" };
+  const where = groups[st] ? `WHERE status IN ${groups[st]}` : "";
+  const r = await env.DB.prepare(`SELECT id, number, email, name, company, service, fee_pence, status, valid_until, created_at, viewed_at, accepted_at, invoice_number, closed_at FROM quotes ${where} ORDER BY id DESC LIMIT 300`).all();
+  return json({ items: r.results });
+}
+
+async function createQuote(env, request, s) {
+  await ensureQuoteTables(env);
+  const b = await body(request);
+  const email = cleanEmail(b.email);
+  const name = cleanText(b.name, 120);
+  const service = cleanText(b.service, 120);
+  const pence = parsePence(b.fee);
+  if (!name) return bad("Enter the client's name.");
+  if (!email) return bad("Enter a valid email.");
+  if (!service) return bad("Choose the service.");
+  if (!pence) return bad("Enter the fee, e.g. 150.");
+  const days = Math.min(90, Math.max(1, Number(b.valid_days) || 30));
+  const checklist = (Array.isArray(b.checklist) ? b.checklist : []).map(x => cleanText(x, 150)).filter(Boolean).slice(0, 30);
+  // an open quote for the same email is replaced by the new one
+  const old = await env.DB.prepare("SELECT id, number FROM quotes WHERE email = ? AND status IN ('sent','viewed','accepted')").bind(email).all();
+  const token = randomToken(32);
+  const number = await nextQuoteNumber(env);
+  const now = nowIso();
+  const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ?").bind(email).first();
+  const r = await env.DB.prepare(`INSERT INTO quotes (number, token_hash, email, name, company, phone, service, period, scope, checklist, fee_pence, status, valid_until, created_by, created_at, client_id) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'sent', ?, ?, ?, ?)`)
+    .bind(number, await hmac(env, "q:" + token), email, name, cleanText(b.company, 150) || null, cleanText(b.phone, 40) || null, service,
+      cleanText(b.period, 80) || null, cleanText(b.scope, 3000) || null, JSON.stringify(checklist), pence,
+      new Date(Date.now() + days * 864e5).toISOString(), s.email, now, c ? c.id : null).run();
+  const id = r.meta.last_row_id;
+  for (const o of old.results) {
+    await env.DB.prepare("UPDATE quotes SET status = 'replaced', closed_at = ? WHERE id = ?").bind(now, o.id).run();
+    await quoteEvent(env, o.id, "replaced", `by ${number}`);
+  }
+  await quoteEvent(env, id, "created", `${service} ${gbp(pence)} by ${s.email}`);
+  const q = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(id).first();
+  await sendQuoteEmail(env, q, token);
+  await quoteEvent(env, id, "emailed", email);
+  await audit(env, request, s.email, "quote_created", `${number} ${email} ${service} ${gbp(pence)}`);
+  return json({ ok: true, id, number });
+}
+
+async function getQuote(env, id) {
+  await ensureQuoteTables(env); await expireQuotes(env);
+  const q = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(id).first();
+  if (!q) return bad("Quote not found.", 404);
+  delete q.token_hash;
+  const ev = await env.DB.prepare("SELECT at, event, detail FROM quote_events WHERE quote_id = ? ORDER BY id").bind(id).all();
+  let invoice = null;
+  if (q.invoice_number) invoice = await env.DB.prepare("SELECT number, amount_pence, status, paid_at, paid_method FROM invoices WHERE number = ?").bind(q.invoice_number).first();
+  return json({ quote: q, events: ev.results, invoice });
+}
+
+async function withdrawQuote(env, request, s, id) {
+  const q = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(id).first();
+  if (!q) return bad("Quote not found.", 404);
+  if (!["sent", "viewed", "accepted"].includes(q.status)) return bad("This quote is already closed.");
+  await env.DB.prepare("UPDATE quotes SET status = 'withdrawn', closed_at = ? WHERE id = ?").bind(nowIso(), id).run();
+  await quoteEvent(env, id, "withdrawn", s.email);
+  await audit(env, request, s.email, "quote_withdrawn", q.number);
+  return json({ ok: true });
+}
+
+// Sends the quote email again with a fresh link (the old link stops working).
+async function resendQuote(env, request, s, id) {
+  const q = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(id).first();
+  if (!q) return bad("Quote not found.", 404);
+  if (!["sent", "viewed"].includes(q.status)) return bad("Only quotes that are not yet accepted can be re-sent.");
+  const token = randomToken(32);
+  await env.DB.prepare("UPDATE quotes SET token_hash = ? WHERE id = ?").bind(await hmac(env, "q:" + token), id).run();
+  await sendQuoteEmail(env, q, token);
+  await quoteEvent(env, id, "emailed_again", s.email);
   return json({ ok: true });
 }

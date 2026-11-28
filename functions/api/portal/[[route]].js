@@ -7,7 +7,7 @@ import {
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
 import { stripePost } from "../../_shared/stripe.js";
-import { diditOn, diditStart, diditDecision, diditApply, ensureKycTable } from "../../_shared/autoflow.js";
+import { diditOn, diditStart, diditDecision, diditApply, ensureKycTable, ensureQuoteTables, quoteEvent, expireQuotes, invoiceFromQuote } from "../../_shared/autoflow.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
 
@@ -28,6 +28,9 @@ export async function onRequest(context) {
     if (route === "services-list" && m === "GET") return json({ services: SERVICES });
     if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "" });
     if (route === "signup" && m === "POST") return signup(env, request);
+    let qm;
+    if ((qm = route.match(/^quote\/([a-f0-9]{64})$/)) && m === "GET") return viewQuote(env, request, qm[1]);
+    if ((qm = route.match(/^quote\/([a-f0-9]{64})\/accept$/)) && m === "POST") return acceptQuote(env, request, qm[1]);
 
     const s = await getSession(env, request);
     if (!s) return bad("Please log in.", 401);
@@ -340,4 +343,61 @@ async function kycSync(env, request, s) {
   }
   const c = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
   return json({ stage: c.stage, check: k ? (await env.DB.prepare("SELECT status FROM kyc_checks WHERE id = ?").bind(k.id).first()).status : null });
+}
+
+// ---------- quotes (link from the quote email; no login needed to view) ----------
+async function findQuote(env, token) {
+  await ensureQuoteTables(env); await expireQuotes(env);
+  return env.DB.prepare("SELECT * FROM quotes WHERE token_hash = ?").bind(await hmac(env, "q:" + token)).first();
+}
+function publicQuote(q) {
+  return { number: q.number, name: q.name, email: q.email, service: q.service, period: q.period, scope: q.scope,
+    fee: gbp(q.fee_pence), status: q.status, valid_until: q.valid_until };
+}
+async function viewQuote(env, request, token) {
+  if (!(await rateLimit(env, "qview:" + clientIp(request), 60, 60 * 60 * 1000))) return bad("Too many requests.", 429);
+  const q = await findQuote(env, token);
+  if (!q) return bad("This quote link is not valid. Please ask us for a new one.", 404);
+  if (q.status === "sent") {
+    await env.DB.prepare("UPDATE quotes SET status = 'viewed', viewed_at = ? WHERE id = ? AND status = 'sent'").bind(nowIso(), q.id).run();
+    await quoteEvent(env, q.id, "viewed", clientIp(request));
+    q.status = "viewed";
+  }
+  return json({ quote: publicQuote(q) });
+}
+async function acceptQuote(env, request, token) {
+  if (!(await rateLimit(env, "qaccept:" + clientIp(request), 10, 60 * 60 * 1000))) return bad("Too many attempts. Please try later.", 429);
+  const b = await body(request);
+  if (!b.consent) return bad("Please tick the box to agree to our privacy notice.");
+  const q = await findQuote(env, token);
+  if (!q) return bad("This quote link is not valid. Please ask us for a new one.", 404);
+  if (!["sent", "viewed", "accepted"].includes(q.status)) {
+    const why = { expired: "This quote has expired.", withdrawn: "This quote was withdrawn.", replaced: "A newer quote has been sent to you. Please use the latest email.", invoiced: "This quote has already been accepted. Please log in to your portal." };
+    return bad((why[q.status] || "This quote is no longer open.") + " Contact us if you need help.", 410);
+  }
+  const ip = clientIp(request);
+  let c = await env.DB.prepare("SELECT * FROM clients WHERE email = ?").bind(q.email).first();
+  if (c && (!c.active || c.stage === "rejected")) return bad("Please contact us to continue.", 403);
+  if (!c) {
+    await env.DB.prepare("INSERT INTO clients (email, name, company, phone, active, stage, wanted_service, signup_note, created_at) VALUES (?, ?, ?, ?, 1, 'kyc', ?, ?, ?)")
+      .bind(q.email, q.name, q.company, q.phone, q.service, `Accepted quote ${q.number}`, nowIso()).run();
+    c = await env.DB.prepare("SELECT * FROM clients WHERE email = ?").bind(q.email).first();
+    await audit(env, request, q.email, "signup_from_quote", q.number);
+  }
+  if (q.status !== "accepted") {
+    await env.DB.prepare("UPDATE quotes SET status = 'accepted', accepted_at = ?, accepted_ip = ?, client_id = ? WHERE id = ?").bind(nowIso(), ip, c.id, q.id).run();
+    await quoteEvent(env, q.id, "accepted", `${ip} ${cleanText(request.headers.get("user-agent"), 120)}`);
+    await audit(env, request, q.email, "quote_accepted", q.number);
+    // Existing, already verified client: no ID check needed, issue the agreement + invoice straight away
+    if (c.stage === "active") {
+      const fresh = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(q.id).first();
+      await invoiceFromQuote(env, request, c, fresh, "client-accepted-quote", false);
+    } else if (env.NOTIFY_EMAIL) {
+      await sendEmail(env, env.NOTIFY_EMAIL, `Quote accepted: ${q.number}`, `${q.name} <${q.email}> accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}). The agreement and invoice will be sent automatically once their ID check passes.`);
+    }
+  }
+  // Next: log in. A one-time code goes to the email on the quote.
+  const res = await loginRequest(env, request, q.email);
+  if (res.status !== 200) return res;
+  return json({ ok: true, email: q.email, message: "Thank you. We have emailed a 6-digit code to " + q.email + " to open your portal. If you already set a password, log in with it instead." });
 }

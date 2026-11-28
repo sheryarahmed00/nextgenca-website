@@ -69,6 +69,26 @@
   </section>
 
   <!-- Secure the account: password + authenticator app (once) -->
+  <section class="login hide" id="stepQuote" style="max-width:560px">
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <p class="muted" style="margin:0" id="qNumber"></p>
+      <h1 id="qTitle">Your quote</h1>
+      <p id="qHello"></p>
+      <div class="bank" style="margin:14px 0">
+        <div><span>Service</span><b id="qService"></b></div>
+        <div><span>Fee</span><b id="qFee"></b></div>
+        <div><span>Valid until</span><span id="qValid"></span></div>
+      </div>
+      <div id="qScopeBox" class="hide"><h3>What is included</h3><p id="qScope" style="white-space:pre-wrap"></p></div>
+      <p class="muted" style="font-size:.85rem">NextGen is not VAT registered, so no VAT is added. After you accept: a quick ID check, then you sign the engagement letter and pay, and upload your documents. About 5 minutes on your phone.</p>
+      <form id="quoteForm" novalidate>
+        <label class="check"><input type="checkbox" name="consent" value="1"> I agree to the <a href="/privacy" target="_blank" rel="noopener">privacy notice</a></label>
+        <p style="margin-top:14px"><button class="btn gold wide" type="submit">Accept and get started</button></p>
+        <div id="quoteMsg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
   <section class="login hide" id="stepSecure" style="max-width:560px">
     <div class="card">
       <h1>Secure your account</h1>
@@ -194,6 +214,6 @@
 </main>
 <script src="/js/vendor/qrcode.js?v=1"></script>
 <script src="/js/portal-common.js?v=20261128d"></script>
-<script src="/js/portal.js?v=20261128k"></script>
+<script src="/js/portal.js?v=20261128q"></script>
 </body>
 </html>

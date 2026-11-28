@@ -23,6 +23,7 @@
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="tClients">Clients</button>
       <button role="tab" aria-selected="false" data-tab="tSignups">To do <span id="todoCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tQuotes">Quotes <span id="quoteCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tOrders">Orders <span id="newCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tEnquiries">Enquiries &amp; Calls <span id="enqCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tAudit">Activity log</button>
@@ -76,6 +77,36 @@
       <div id="enqBox"></div>
     </div>
 
+    <div class="tab hide" id="tQuotes">
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h2>Quotes</h2>
+          <span class="row"><select id="quoteFilter" style="width:auto"><option value="">All</option><option value="open">Open (sent / viewed)</option><option value="accepted">Accepted, waiting for ID</option><option value="closed">Closed – invoiced</option><option value="ended">Expired / withdrawn / replaced</option></select>
+          <button class="btn gold small" id="newQuoteBtn" type="button">+ New quote</button></span></div>
+        <div id="newQuote" class="hide" style="margin-top:14px">
+          <form id="newQuoteForm" novalidate>
+            <div class="grid2">
+              <div><label>Client name *</label><input name="name" required maxlength="120"></div>
+              <div><label>Email *</label><input name="email" type="email" required></div>
+              <div><label>Company</label><input name="company" maxlength="150"></div>
+              <div><label>Mobile</label><input name="phone" maxlength="40"></div>
+              <div><label>Service *</label><select name="service" id="qService"></select></div>
+              <div><label>Fee (£) *</label><input name="fee" inputmode="decimal" placeholder="150"></div>
+              <div><label>Period / year</label><input name="period" placeholder="e.g. 2025/26"></div>
+              <div><label>Valid for (days)</label><input name="valid_days" type="number" min="1" max="90" value="30"></div>
+            </div>
+            <label>What is included (shown on the quote and in the engagement letter)</label>
+            <textarea name="scope" style="min-height:90px" placeholder="e.g. Preparing and filing your 2025/26 Self Assessment tax return, including one rental property."></textarea>
+            <label>Documents the client must upload after paying (one per line)</label>
+            <textarea name="checklist" id="qChecklist" style="min-height:90px"></textarea>
+            <p style="margin-top:12px"><button class="btn" type="submit">Create and email quote</button></p>
+            <div class="m" role="status"></div>
+          </form>
+        </div>
+        <div id="quotesBox" style="margin-top:14px"></div>
+      </div>
+      <div id="quoteView"></div>
+    </div>
+
     <div class="tab hide" id="tSignups">
       <div class="card"><h2>To do</h2><p class="muted">New sign-ups waiting for ID, ID to check, and unpaid invoices.</p><div id="signupsBox"></div></div>
     </div>
@@ -108,7 +139,7 @@
   </section>
 </main>
 <script src="/js/portal-common.js?v=20261128d"></script>
-<script src="/js/portal-admin.js?v=20261128d"></script>
+<script src="/js/portal-admin.js?v=20261128q"></script>
 <script src="/js/portal-enquiries.js?v=20261128d"></script>
 <script src="/js/portal-staff.js?v=20261128d"></script>
 </body>

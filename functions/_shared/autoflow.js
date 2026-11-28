@@ -89,6 +89,14 @@ export async function diditApply(env, request, sessionId, status, decision, acto
   if (status === "Approved") {
     await env.DB.prepare("UPDATE clients SET stage = 'review' WHERE id = ? AND stage = 'kyc'").bind(c.id).run();
     await audit(env, request, actor, "kyc_auto_passed", `client#${c.id} didit ${sessionId} ${summary}`);
+    // A fee agreed in an accepted quote means no one needs to set it: send the agreement + invoice now.
+    const q = await acceptedQuoteFor(env, c.id, c.email);
+    if (q) {
+      await quoteEvent(env, q.id, "id_checked", `didit ${status}`);
+      const fresh = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(c.id).first();
+      const r = await invoiceFromQuote(env, request, fresh, q, actor, true);
+      return { ok: true, verified: true, invoice: r.invoice };
+    }
     if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `ID verified: ${c.name} – set the fee`, `${c.name} <${c.email}> passed the automatic ID check for "${c.wanted_service}".${c.signup_note ? "\n\nTheir note: " + c.signup_note : ""}\n\nSet the fee and send the agreement and invoice from To do: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
     return { ok: true, verified: true };
   }
@@ -109,4 +117,52 @@ export async function diditVerify(env, raw, sig, ts, prevSig) {
   const mac = [...new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(raw)))].map(b => b.toString(16).padStart(2, "0")).join("");
   const eq = s => typeof s === "string" && s.length === mac.length && [...s].reduce((r, ch, i) => r | (ch.charCodeAt(0) ^ mac.charCodeAt(i)), 0) === 0;
   return eq(sig) || eq(prevSig);
+}
+
+// ---------- Quotes ----------
+// A quote is created by staff, emailed to the client, accepted online, and closed when its invoice is issued.
+// Status: sent -> viewed -> accepted -> invoiced  (or expired / withdrawn / replaced / declined)
+export async function ensureQuoteTables(env) {
+  await env.DB.batch([
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS quotes (id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT NOT NULL UNIQUE, token_hash TEXT NOT NULL UNIQUE, email TEXT NOT NULL, name TEXT NOT NULL, company TEXT, phone TEXT, service TEXT NOT NULL, period TEXT, scope TEXT, checklist TEXT, fee_pence INTEGER NOT NULL, status TEXT NOT NULL, valid_until TEXT NOT NULL, created_by TEXT NOT NULL, created_at TEXT NOT NULL, viewed_at TEXT, accepted_at TEXT, accepted_ip TEXT, client_id INTEGER, invoice_number TEXT, closed_at TEXT, reminded_at TEXT)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS quote_events (id INTEGER PRIMARY KEY AUTOINCREMENT, quote_id INTEGER NOT NULL, at TEXT NOT NULL, event TEXT NOT NULL, detail TEXT)`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS i_quotes_email ON quotes(email)`),
+  ]);
+}
+export async function quoteEvent(env, quoteId, event, detail = "") {
+  await env.DB.prepare("INSERT INTO quote_events (quote_id, at, event, detail) VALUES (?, ?, ?, ?)").bind(quoteId, nowIso(), event, String(detail).slice(0, 500)).run();
+}
+export async function nextQuoteNumber(env) {
+  const year = new Date().getUTCFullYear();
+  const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM quotes WHERE number LIKE ?").bind(`NGCA-Q-${year}-%`).first();
+  return `NGCA-Q-${year}-${String((r.n || 0) + 1).padStart(4, "0")}`;
+}
+// Marks old open quotes as expired. Cheap; called when quotes are listed or opened.
+export async function expireQuotes(env) {
+  const now = nowIso();
+  const old = await env.DB.prepare("SELECT id FROM quotes WHERE status IN ('sent','viewed') AND valid_until < ?").bind(now).all();
+  for (const q of old.results) {
+    await env.DB.prepare("UPDATE quotes SET status = 'expired', closed_at = ? WHERE id = ?").bind(now, q.id).run();
+    await quoteEvent(env, q.id, "expired");
+  }
+}
+// The accepted, not yet invoiced quote for a client, if any.
+export async function acceptedQuoteFor(env, clientId, email) {
+  await ensureQuoteTables(env);
+  return env.DB.prepare("SELECT * FROM quotes WHERE status = 'accepted' AND (client_id = ? OR email = ?) ORDER BY id DESC LIMIT 1").bind(clientId, email).first();
+}
+export async function closeQuote(env, quoteId, invoiceNumber, actor) {
+  await env.DB.prepare("UPDATE quotes SET status = 'invoiced', invoice_number = ?, closed_at = ? WHERE id = ? AND status = 'accepted'").bind(invoiceNumber, nowIso(), quoteId).run();
+  await quoteEvent(env, quoteId, "invoiced", `${invoiceNumber} by ${actor}`);
+}
+// Turns an accepted quote into the engagement letter + invoice + checklist, then closes the quote.
+export async function invoiceFromQuote(env, request, c, q, actor, idChecked) {
+  let checklist = [];
+  try { checklist = JSON.parse(q.checklist || "[]"); } catch (e) {}
+  const r = await sendAgreementAndInvoice(env, request, c, {
+    service: q.service, period: q.period, scope: q.scope, pence: q.fee_pence, checklist, actor, idChecked,
+  });
+  await closeQuote(env, q.id, r.invoice, actor);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Quote ${q.number} accepted and invoiced`, `${c.name} <${c.email}> accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}).${idChecked ? " The ID check passed." : ""}\n\nThe engagement letter and invoice ${r.invoice} were sent automatically. Nothing to do until they sign and pay.`);
+  return r;
 }

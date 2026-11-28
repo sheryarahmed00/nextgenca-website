@@ -43,9 +43,9 @@
         show("stepQuote");
         return true;
       }
-      $("email").value = q.email;
+      $("email").value = q.email; $("pEmail").value = q.email;
       show("stepEmail");
-      msg($("emailMsg"), q.status === "accepted" || q.status === "invoiced" ? "You have already accepted this quote. Log in below to continue." : "This quote is no longer open (" + q.status + "). Please contact us.", q.status === "accepted" || q.status === "invoiced");
+      msg($("passMsg"), q.status === "accepted" || q.status === "invoiced" ? "You have already accepted this quote. Log in below to continue." : "This quote is no longer open (" + q.status + "). Please contact us.", q.status === "accepted" || q.status === "invoiced");
       return true;
     } catch (e) {
       show("stepEmail"); msg($("emailMsg"), e.message); return true;
@@ -59,7 +59,8 @@
     try {
       const r = await api("/api/portal/quote/" + quoteToken + "/accept", { method: "POST", body: { consent: true } });
       history.replaceState(null, "", "/portal");
-      toCode(r.email, r.message);
+      if (r.next === "password") { $("pEmail").value = r.email; show("stepEmail"); msg($("passMsg"), r.message, true); $("pPass").focus(); }
+      else toCode(r.email, r.message);
     } catch (e) { msg($("quoteMsg"), e.message); }
     busy(f, false);
   });

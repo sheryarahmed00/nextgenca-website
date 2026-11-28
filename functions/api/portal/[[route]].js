@@ -401,7 +401,10 @@ async function acceptQuote(env, request, token) {
       await sendEmail(env, env.NOTIFY_EMAIL, `Quote accepted: ${q.number}`, `${q.name} <${q.email}> accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}). The agreement and invoice will be sent automatically once their ID check passes.`);
     }
   }
-  // Next: log in. A one-time code goes to the email on the quote.
+  // Next: log in. Clients with a password + authenticator use those; others get a one-time code by email.
+  let secured = null;
+  try { secured = await env.DB.prepare("SELECT enabled FROM client_auth WHERE client_id = ? AND enabled = 1").bind(c.id).first(); } catch (e) {}
+  if (secured) return json({ ok: true, email: q.email, next: "password", message: "Thank you, your quote is accepted. Log in with your password and authenticator code to continue." });
   const res = await loginRequest(env, request, q.email);
   if (res.status !== 200) return res;
   return json({ ok: true, email: q.email, message: "Thank you. We have emailed a 6-digit code to " + q.email + " to open your portal. If you already set a password, log in with it instead." });

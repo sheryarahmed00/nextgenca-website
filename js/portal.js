@@ -127,6 +127,15 @@
     const sm = lab.querySelector("small"); if (i.files[0]) sm.textContent = "✓ " + i.files[0].name;
   }));
 
+  $("kycAutoBtn").addEventListener("click", async ev => {
+    ev.target.disabled = true; msg($("kycAutoMsg"), "");
+    try { const r = await api("/api/portal/kyc/start", { method: "POST" }); location.href = r.url; }
+    catch (e) { msg($("kycAutoMsg"), e.message); ev.target.disabled = false; }
+  });
+  $("kycManualLink").addEventListener("click", ev => {
+    ev.preventDefault(); window.__manualKyc = true; $("kycForm").classList.remove("hide"); $("kycForm").scrollIntoView({ behavior: "smooth" });
+  });
+
   $("kycForm").addEventListener("submit", async ev => {
     ev.preventDefault();
     const f = ev.target; msg($("kycMsg"), "");
@@ -235,6 +244,17 @@
     $("steps").classList.toggle("hide", !onboarding);
     [...$("steps").children].forEach((li, i) => { const n = i + 1; li.className = n < now ? "done" : n === now ? "now" : ""; });
     $("kycBox").classList.toggle("hide", c.stage !== "kyc");
+    if (c.stage === "kyc" && data.kycAuto) {
+      $("kycAuto").classList.remove("hide");
+      if (!window.__manualKyc) $("kycForm").classList.add("hide");
+      // Back from Didit: fetch the result (the webhook may still be on its way)
+      if (new URLSearchParams(location.search).get("kyc") && (window.__kycTries = (window.__kycTries || 0) + 1) <= 8) {
+        msg($("kycAutoMsg"), "Checking your result… this takes a few seconds.", true);
+        setTimeout(async () => { try { await api("/api/portal/kyc/sync", { method: "POST" }); } catch (e) {} loadDash(); }, window.__kycTries === 1 ? 500 : 4000);
+      } else if (window.__kycTries > 8) {
+        msg($("kycAutoMsg"), "We have not received the result yet. If you finished the check, it may take a few minutes. You can also try again.");
+      }
+    } else if (c.stage !== "kyc" && new URLSearchParams(location.search).get("kyc")) history.replaceState(null, "", "/portal");
     $("reviewBox").classList.toggle("hide", c.stage !== "review");
     const locked = c.stage === "kyc" || c.stage === "review" || (onboarding && !data.services.length && !data.documents.length && !data.orders.length);
     document.querySelectorAll("#dash .tabs, #dash .tab, #stats").forEach(x => x.classList.toggle("hide-locked", locked));

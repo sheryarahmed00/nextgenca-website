@@ -7,6 +7,7 @@ import {
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
 import { stripePost } from "../../_shared/stripe.js";
+import { diditOn, diditStart, diditDecision, diditApply, ensureKycTable } from "../../_shared/autoflow.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
 
@@ -35,6 +36,8 @@ export async function onRequest(context) {
 
     if (route === "dashboard" && m === "GET") return dashboard(env, s);
     if (route === "kyc" && m === "POST") return kyc(env, request, s);
+    if (route === "kyc/start" && m === "POST") return kycStart(env, request, s);
+    if (route === "kyc/sync" && m === "POST") return kycSync(env, request, s);
     if (route === "agreement/sign" && m === "POST") return signAgreement(env, request, s);
     const pn = route.match(/^invoices\/(\d+)\/paid-notice$/);
     if (pn && m === "POST") return paidNotice(env, request, s, Number(pn[1]));
@@ -152,7 +155,7 @@ async function dashboard(env, s) {
     kycCount: documents.results.filter(d => d.category.startsWith("kyc")).length,
     orders: orders.results, engagements: engagements.results, invoices: inv,
     checklist: checklist.results.filter(c => !c.engagement_id || paidEng.has(c.engagement_id)),
-    bank, serviceList: SERVICES,
+    bank, serviceList: SERVICES, kycAuto: diditOn(env),
   });
 }
 
@@ -314,4 +317,27 @@ async function checkout(env, request, s, id) {
   const session = await stripePost(env, "checkout/sessions", params);
   await audit(env, request, s.email, "stripe_checkout_started", `${inv.number} ${kind} ${session.id}`);
   return json({ url: session.url });
+}
+
+// ---------- automatic ID check (Didit) ----------
+async function kycStart(env, request, s) {
+  if (!diditOn(env)) return bad("Automatic ID check is not available. Please upload photos instead.");
+  if (!(await rateLimit(env, "kycstart:" + s.client_id, 6, 24 * 60 * 60 * 1000))) return bad("Too many attempts today. Please upload photos instead.", 429);
+  const c = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(s.client_id).first();
+  if (c.stage !== "kyc") return bad("Your ID has already been received.");
+  const url = await diditStart(env, c, new URL(request.url).origin);
+  await audit(env, request, s.email, "kyc_auto_started", "didit");
+  return json({ url });
+}
+// Called when the client returns from Didit: asks Didit for the result in case the webhook has not arrived yet.
+async function kycSync(env, request, s) {
+  if (!diditOn(env)) return json({ stage: null });
+  await ensureKycTable(env);
+  const k = await env.DB.prepare("SELECT * FROM kyc_checks WHERE client_id = ? ORDER BY id DESC LIMIT 1").bind(s.client_id).first();
+  if (k) {
+    const d = await diditDecision(env, k.session_id);
+    if (d && d.status) await diditApply(env, request, k.session_id, d.status, d, "didit-sync");
+  }
+  const c = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
+  return json({ stage: c.stage, check: k ? (await env.DB.prepare("SELECT status FROM kyc_checks WHERE id = ?").bind(k.id).first()).status : null });
 }

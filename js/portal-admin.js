@@ -128,7 +128,8 @@
     const onboard = el("div", { class: "card action" }, el("h2", {}, c.stage === "review" ? "Check ID and send agreement" : "Send an agreement and invoice"),
       c.wanted_service ? el("p", {}, "Signed up for: ", el("b", {}, c.wanted_service), c.signup_note ? el("div", { class: "muted" }, "Note: " + c.signup_note) : null) : null,
       kycDocs.length ? el("div", { class: "row", style: "margin:8px 0 14px" }, kycDocs.map(x => el("a", { class: "btn line small", href: "/api/admin/documents/" + x.id + "/download" }, "Open " + x.title))) : null,
-      c.stage === "kyc" ? el("p", { class: "muted" }, "Waiting for the client to upload photo ID and proof of address.") : approveForm(c),
+      (d.kyc && d.kyc[0]) ? el("p", {}, "Automatic ID check: ", el("b", {}, d.kyc[0].status), d.kyc[0].summary ? el("div", { class: "muted" }, d.kyc[0].summary) : null, el("div", { class: "muted" }, "Full report, photos and selfie: Didit console")) : null,
+      c.stage === "kyc" ? el("p", { class: "muted" }, "Waiting for the client to complete the ID check.") : approveForm(c),
       ["kyc", "review"].includes(c.stage) ? el("p", { style: "margin-top:10px" }, el("button", { class: "btn danger small", type: "button", onclick: async () => {
         const reason = prompt("Reason sent to the client (optional):", ""); if (reason === null) return;
         await api("/api/admin/clients/" + id + "/reject", { method: "POST", body: { reason } }); openClient(id); loadSignups();
@@ -196,7 +197,7 @@
     $("signupsBox").replaceChildren(table([
       ["Client", c => el("span", {}, el("b", {}, c.name), el("div", { class: "muted" }, c.email + (c.phone ? " · " + c.phone : "")))],
       ["Wants", c => c.wanted_service || ""],
-      ["Next step", c => c.stage === "review" ? el("b", {}, "Check ID") : c.stage === "kyc" ? "Waiting for client ID" : c.says_paid ? el("b", {}, "Client says paid, check bank") : "Waiting for signature / payment"],
+      ["Next step", c => c.stage === "review" ? el("b", {}, "ID done: check and set fee") : c.stage === "kyc" ? "Waiting for client ID" : c.says_paid ? el("b", {}, "Client says paid, check bank") : "Waiting for signature / payment"],
       ["Since", c => date(c.created_at)],
       ["", c => el("button", { class: "btn small", type: "button", onclick: () => { document.querySelector('[data-tab="tClients"]').click(); openClient(c.id); } }, "Open")],
     ], r.items, "Nothing to do."));

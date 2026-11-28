@@ -120,8 +120,15 @@
 
     <div class="card hide" id="kycBox">
       <h2>Step 2: show us your ID</h2>
-      <p class="muted">UK law requires accountants to check who their clients are. Take a clear photo with your phone, or choose a file.</p>
+      <p class="muted">UK law requires accountants to check who their clients are.</p>
+      <div id="kycAuto" class="hide">
+        <p>It takes about 2 minutes on your phone: a photo of your passport or driving licence and a quick selfie. The check is done securely by our ID partner, Didit, and the result comes straight back here.</p>
+        <p style="margin-top:14px"><button class="btn gold wide" type="button" id="kycAutoBtn">Verify my ID now</button></p>
+        <div id="kycAutoMsg" role="status" aria-live="polite"></div>
+        <p class="muted" style="margin-top:14px;font-size:.85rem"><a href="#" id="kycManualLink">Can't use a camera? Upload photos for us to check instead</a></p>
+      </div>
       <form id="kycForm" novalidate>
+        <p class="muted">Take a clear photo with your phone, or choose a file.</p>
         <label for="kId" class="big-file">📷 <span><b>Passport or driving licence</b><small>Photo page, all four corners visible</small></span>
           <input id="kId" name="id_file" type="file" accept="image/*,application/pdf" required></label>
         <label for="kAddr" class="big-file">🏠 <span><b>Proof of address</b><small>Utility bill, council tax or bank statement from the last 3 months</small></span>
@@ -187,6 +194,6 @@
 </main>
 <script src="/js/vendor/qrcode.js?v=1"></script>
 <script src="/js/portal-common.js?v=20261128d"></script>
-<script src="/js/portal.js?v=20261128s"></script>
+<script src="/js/portal.js?v=20261128k"></script>
 </body>
 </html>

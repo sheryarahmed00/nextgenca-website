@@ -5,6 +5,7 @@ import {
   getSettings, renderLetter, sha256, nextInvoiceNumber, parsePence, gbp,
   SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER, files,
 } from "../../_shared/portal.js";
+import { sendAgreementAndInvoice, ensureKycTable } from "../../_shared/autoflow.js";
 
 
 export async function onRequest(context) {
@@ -102,7 +103,9 @@ async function getClient(env, id) {
     env.DB.prepare("SELECT * FROM checklist WHERE client_id = ? ORDER BY id").bind(id),
   ]);
   if (!c.results[0]) return bad("Client not found.", 404);
-  return json({ client: c.results[0], services: sv.results, documents: d.results, orders: o.results, engagements: en.results, invoices: inv.results, checklist: cl.results });
+  await ensureKycTable(env);
+  const kyc = await env.DB.prepare("SELECT provider, status, summary, updated_at FROM kyc_checks WHERE client_id = ? ORDER BY id DESC LIMIT 3").bind(id).all();
+  return json({ kyc: kyc.results, client: c.results[0], services: sv.results, documents: d.results, orders: o.results, engagements: en.results, invoices: inv.results, checklist: cl.results });
 }
 
 async function updateClient(env, request, s, id) {
@@ -267,24 +270,9 @@ async function approve(env, request, s, id) {
   if (!st.account_number && !st.pay_link && !st.dd_link) return bad("Add your bank details or payment link in Settings first.");
   const period = cleanText(b.period, 80) || null;
   const scope = cleanText(b.scope, 3000);
-  const letter = renderLetter(st.letter_template || DEFAULT_LETTER, {
-    date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
-    name: c.name, company: c.company, service, period, scope, fee: gbp(pence),
-  });
-  const now = nowIso();
-  const e = await env.DB.prepare("INSERT INTO engagements (client_id, service, period, scope, fee_pence, letter_text, letter_hash, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'sent', ?)")
-    .bind(id, service, period, scope || null, pence, letter, await sha256(letter), now).run();
-  const eid = e.meta.last_row_id;
-  const number = await nextInvoiceNumber(env);
-  await env.DB.prepare("INSERT INTO invoices (number, client_id, engagement_id, description, amount_pence, status, created_at) VALUES (?, ?, ?, ?, ?, 'unpaid', ?)")
-    .bind(number, id, eid, service + (period ? " (" + period + ")" : ""), pence, now).run();
   const items = (Array.isArray(b.checklist) ? b.checklist : []).map(x => cleanText(x, 150)).filter(Boolean).slice(0, 30);
-  if (items.length) await env.DB.batch(items.map(label => env.DB.prepare("INSERT INTO checklist (client_id, engagement_id, label, created_at) VALUES (?, ?, ?, ?)").bind(id, eid, label, now)));
-  await env.DB.prepare("UPDATE clients SET stage = 'active', active = 1 WHERE id = ?").bind(id).run();
-  await audit(env, request, s.email, c.stage === "review" ? "kyc_approved_and_agreement_sent" : "agreement_sent", `client#${id} ${service} ${gbp(pence)} ${number}`);
-  await sendEmail(env, c.email, "Your NextGen agreement and invoice are ready",
-    `Dear ${c.name},\n\n${c.stage === "review" ? "Thank you, your ID has been checked. " : ""}Your agreement and invoice for ${service} (${gbp(pence)}) are ready in your client portal.\n\n1. Read and sign the agreement\n2. Pay the invoice (${number})\n3. Upload the documents on your checklist\n\nIt takes about 2 minutes on your phone: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
-  return json({ ok: true, engagement_id: eid, invoice: number });
+  const r = await sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist: items, actor: s.email, idChecked: c.stage === "review" });
+  return json({ ok: true, engagement_id: r.engagement_id, invoice: r.invoice });
 }
 
 async function reject(env, request, s, id) {

@@ -56,7 +56,8 @@ export async function onRequestPost({ request, env }) {
         const e = byEmail[r.email] || {};
         const m = {
           // latest form details win; a mailbox with no form email keeps what is there
-          name: r.name || e.name || null, phone: r.phone || e.phone || null,
+          // keep a name the team already has (unless it is a broken "*name*" one)
+          name: (e.name && !/^\*/.test(e.name)) ? e.name : (r.name || e.name || null), phone: r.phone || e.phone || null,
           service: r.service || e.service || null, query: r.query || e.query || null,
           form_at: minDate(e.form_at, r.form_at),
           call_at: e.call_at ?? null, call_booked_at: e.call_booked_at ?? null, call_with: e.call_with ?? null,

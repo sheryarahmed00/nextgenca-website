@@ -50,6 +50,14 @@ export function diditState(env) {
 }
 export const diditOn = env => !!(dkey(env) && dflow(env));
 
+// Live check that Didit accepts the saved key (asks for a session that does not exist: 404 = key accepted).
+export async function diditPing(env) {
+  const state = diditState(env);
+  if (state !== "ok") return state;
+  const r = await fetch("https://verification.didit.me/v3/session/00000000-0000-4000-8000-000000000000/decision/", { headers: { "x-api-key": dkey(env) } });
+  return r.status === 401 || r.status === 403 ? "key_rejected_" + r.status : "key_accepted_" + r.status;
+}
+
 export async function diditStart(env, c, origin) {
   const state = diditState(env);
   if (state !== "ok") throw new Error("Didit settings: " + state);

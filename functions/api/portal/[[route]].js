@@ -7,7 +7,7 @@ import {
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
 import { stripePost } from "../../_shared/stripe.js";
-import { diditState, diditOn, diditStart, diditDecision, diditApply, ensureKycTable, ensureQuoteTables, quoteEvent, expireQuotes, invoiceFromQuote } from "../../_shared/autoflow.js";
+import { diditPing, diditState, diditOn, diditStart, diditDecision, diditApply, ensureKycTable, ensureQuoteTables, quoteEvent, expireQuotes, invoiceFromQuote } from "../../_shared/autoflow.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
 
@@ -26,6 +26,8 @@ export async function onRequest(context) {
       return json({ ok: true }, 200, { "set-cookie": sessionCookie("", 0) });
     }
     if (route === "services-list" && m === "GET") return json({ services: SERVICES });
+    if (route === "config" && m === "GET" && new URL(request.url).searchParams.get("check") === "1")
+      return json({ idCheck: (await rateLimit(env, "didit-ping", 10, 60 * 60 * 1000)) ? await diditPing(env) : "try_later" });
     if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "", idCheck: diditState(env) });
     if (route === "signup" && m === "POST") return await signup(env, request);
     let qm;

@@ -56,3 +56,26 @@ th{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu
  table.resp thead{display:none}table.resp tr{display:block;border-bottom:1px solid var(--rule);padding:8px 0}
  table.resp td{display:flex;justify-content:space-between;gap:12px;border:0;padding:4px 0}
  table.resp td::before{content:attr(data-label);font-weight:700;color:var(--muted);font-size:.8rem}}
+.btn.wide{width:100%;padding:14px}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:600}
+.check input{width:auto;margin-top:5px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0;margin:0 0 20px;counter-reset:s}
+.steps li{counter-increment:s;font-size:.78rem;font-weight:700;color:var(--muted);text-align:center;padding-top:34px;position:relative}
+.steps li::before{content:counter(s);position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--rule);display:grid;place-items:center;line-height:24px;color:var(--muted)}
+.steps li.done::before{content:"✓";background:var(--ok);border-color:var(--ok);color:#fff}
+.steps li.now{color:var(--navy)}.steps li.now::before{border-color:var(--gold);background:var(--gold);color:#fff}
+.big-file{display:flex;gap:14px;align-items:center;border:2px dashed #c7cfdb;border-radius:8px;padding:16px;margin:12px 0;cursor:pointer;font-size:1.6rem;background:#fbfcfe}
+.big-file span{font-size:.95rem;display:flex;flex-direction:column}.big-file small{color:var(--muted);font-weight:500}
+.big-file input{position:absolute;opacity:0;width:1px;height:1px}
+.big-file.has{border-color:var(--ok);background:#f2faf5}
+.letter{white-space:pre-wrap;font-size:.86rem;line-height:1.55;background:var(--mist);border:1px solid var(--rule);border-radius:6px;padding:14px;max-height:340px;overflow:auto}
+.action{border-left:4px solid var(--gold)}
+.paybox{display:grid;gap:10px;margin-top:14px}
+.bank{background:var(--mist);border-radius:6px;padding:12px 14px;font-size:.92rem}
+.bank div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--rule)}
+.bank div:last-child{border:0}
+.bank button{font:700 .75rem var(--body);border:1px solid #c7cfdb;background:#fff;border-radius:4px;padding:2px 8px;cursor:pointer}
+.amount{font-family:var(--display);font-size:2.4rem;color:var(--navy);line-height:1}
+.todo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.todo.done b{color:var(--ok)}
+.hide-locked{display:none!important}

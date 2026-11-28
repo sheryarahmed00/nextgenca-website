@@ -1,5 +1,7 @@
 (function () {
   const { api, el, msg, date, size, pill, table, busy, tabs } = window.P;
+  const gbp = p => "£" + (p / 100).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const STAGE = { kyc: "Waiting for ID", review: "ID to check", active: "Active", rejected: "Rejected" };
   const $ = id => document.getElementById(id);
   let meta = null, currentId = null;
 
@@ -10,7 +12,7 @@
     meta.orderStatuses.forEach(s => $("orderFilter").append(el("option", { value: s }, s)));
     $("app").classList.remove("hide");
     tabs(document);
-    loadClients(); loadOrders(); loadAudit();
+    loadClients(); loadOrders(); loadAudit(); loadSignups(); loadSettings();
   }
 
   $("logoutBtn").addEventListener("click", async () => { try { await api("/api/portal/logout", { method: "POST" }); } catch (e) {} location.replace("/portal"); });
@@ -22,7 +24,7 @@
     const r = await api("/api/admin/clients?q=" + encodeURIComponent($("search").value));
     $("clientList").replaceChildren(...(r.items.length ? r.items.map(c => el("button", {
       type: "button", "aria-current": c.id === currentId ? "true" : "false", onclick: () => openClient(c.id),
-    }, el("b", {}, c.name + (c.active ? "" : " (off)")), el("small", {}, c.email), el("small", {},
+    }, el("b", {}, c.name + (c.active ? "" : " (off)"), c.stage !== "active" ? " · " + (STAGE[c.stage] || c.stage) : ""), el("small", {}, c.email), el("small", {},
       (c.company ? c.company + " · " : "") + c.n_services + " services · " + c.n_docs + " docs" + (c.n_open ? " · " + c.n_open + " open orders" : ""))))
       : [el("p", { class: "muted", style: "padding:12px" }, "No clients yet.")]));
   }
@@ -114,7 +116,7 @@
 
     const docs = table([
       ["Document", x => el("span", {}, el("b", {}, x.title), el("div", { class: "muted" }, x.filename + " · " + size(x.size)))],
-      ["For", x => svcName(x.service_id)], ["From", x => x.uploaded_by === "firm" ? "NextGen" : "Client"], ["Date", x => date(x.created_at)],
+      ["For", x => x.category && x.category.startsWith("kyc") ? "ID check" : svcName(x.service_id)], ["From", x => x.uploaded_by === "firm" ? "NextGen" : "Client"], ["Date", x => date(x.created_at)],
       ["", x => el("span", { class: "row" }, el("a", { class: "btn small", href: "/api/admin/documents/" + x.id + "/download" }, "Download"),
         el("button", { class: "btn danger small", type: "button", onclick: async () => {
           if (!confirm("Delete " + x.filename + " for good?")) return;
@@ -122,13 +124,94 @@
         } }, "Delete"))],
     ], d.documents, "No documents yet.");
 
+    const kycDocs = d.documents.filter(x => x.category && x.category.startsWith("kyc"));
+    const onboard = el("div", { class: "card action" }, el("h2", {}, c.stage === "review" ? "Check ID and send agreement" : "Send an agreement and invoice"),
+      c.wanted_service ? el("p", {}, "Signed up for: ", el("b", {}, c.wanted_service), c.signup_note ? el("div", { class: "muted" }, "Note: " + c.signup_note) : null) : null,
+      kycDocs.length ? el("div", { class: "row", style: "margin:8px 0 14px" }, kycDocs.map(x => el("a", { class: "btn line small", href: "/api/admin/documents/" + x.id + "/download" }, "Open " + x.title))) : null,
+      c.stage === "kyc" ? el("p", { class: "muted" }, "Waiting for the client to upload photo ID and proof of address.") : approveForm(c),
+      ["kyc", "review"].includes(c.stage) ? el("p", { style: "margin-top:10px" }, el("button", { class: "btn danger small", type: "button", onclick: async () => {
+        const reason = prompt("Reason sent to the client (optional):", ""); if (reason === null) return;
+        await api("/api/admin/clients/" + id + "/reject", { method: "POST", body: { reason } }); openClient(id); loadSignups();
+      } }, "Reject sign-up")) : null);
+
+    const invoices = table([
+      ["Invoice", i => el("span", {}, el("b", {}, i.number), el("div", { class: "muted" }, i.description))],
+      ["Amount", i => gbp(i.amount_pence)],
+      ["Status", i => el("span", {}, pill(i.status === "paid" ? "Paid" : i.status === "cancelled" ? "Cancelled" : "Unpaid"), i.client_says_paid_at && i.status === "unpaid" ? el("div", { class: "muted" }, "Client says paid " + date(i.client_says_paid_at)) : null, i.paid_at ? el("div", { class: "muted" }, date(i.paid_at) + " · " + (i.paid_method || "")) : null)],
+      ["Agreement", i => { const e = d.engagements.find(x => x.id === i.engagement_id); return e ? (e.status === "signed" ? "Signed by " + e.signed_name + " " + date(e.signed_at) : "Not signed yet") : ""; }],
+      ["", i => i.status !== "unpaid" ? "" : el("span", { class: "row" },
+        el("select", { "aria-label": "Paid by", style: "width:auto;padding:5px" }, ["Bank transfer", "Card", "Direct Debit", "Cash"].map(m => el("option", {}, m))),
+        el("button", { class: "btn small", type: "button", onclick: async ev => {
+          const method = ev.target.previousElementSibling.value;
+          if (!confirm("Mark " + i.number + " as paid by " + method + "? The client will be emailed.")) return;
+          await api("/api/admin/invoices/" + i.id, { method: "PUT", body: { status: "paid", method } }); openClient(id); loadSignups();
+        } }, "Mark paid"),
+        el("button", { class: "btn danger small", type: "button", onclick: async () => {
+          if (!confirm("Cancel " + i.number + "?")) return;
+          await api("/api/admin/invoices/" + i.id, { method: "PUT", body: { status: "cancelled" } }); openClient(id); loadSignups();
+        } }, "Cancel"))],
+    ], d.invoices, "No invoices yet.");
+    const checklist = d.checklist.length ? el("div", {}, el("h3", { style: "margin-top:18px" }, "Document checklist"),
+      d.checklist.map(it => el("div", { class: "todo" + (it.done_at ? " done" : "") }, el("b", {}, (it.done_at ? "✓ " : "○ ") + it.label), it.done_at ? el("small", { class: "muted" }, date(it.done_at)) : el("small", { class: "muted" }, "Waiting")))) : null;
+
     $("clientView").replaceChildren(
-      el("div", { class: "card" }, el("h2", {}, c.name), el("p", { class: "muted" }, "Client since " + date(c.created_at)), details),
+      el("div", { class: "card" }, el("h2", {}, c.name), el("p", { class: "muted" }, "Client since " + date(c.created_at) + " · " + (STAGE[c.stage] || c.stage)), details),
+      c.stage === "rejected" ? el("div", { class: "card" }, el("p", {}, "Rejected. " + (c.reject_reason || ""))) : onboard,
+      el("div", { class: "card" }, el("h2", {}, "Agreements and invoices"), invoices, checklist),
       el("div", { class: "card" }, el("h2", {}, "Services"), services, editBox,
         el("h3", { style: "margin-top:22px" }, "Add a service"), serviceForm(c, null)),
       el("div", { class: "card" }, el("h2", {}, "Documents"), docs, el("h3", { style: "margin-top:22px" }, "Upload a document for this client"), up),
       el("div", { class: "card" }, el("h2", {}, "Orders"), orderTable(d.orders.map(o => ({ ...o, client_name: c.name, client_email: c.email })))));
   }
+
+  function approveForm(c) {
+    const svc = c.wanted_service || meta.services[0];
+    const ck = el("textarea", { name: "checklist", style: "min-height:90px" }, (meta.checklists[svc] || []).join("\n"));
+    const sel = el("select", { name: "service" }, meta.services.map(x => el("option", { value: x, selected: x === svc }, x)));
+    sel.addEventListener("change", () => { ck.value = (meta.checklists[sel.value] || []).join("\n"); });
+    const f = el("form", { novalidate: true },
+      el("div", { class: "grid2" },
+        el("div", {}, el("label", {}, "Service"), sel),
+        el("div", {}, el("label", {}, "Fee (£) *"), el("input", { name: "fee", inputmode: "decimal", placeholder: "150" })),
+        el("div", {}, el("label", {}, "Period / year"), el("input", { name: "period", placeholder: "e.g. 2025/26" }))),
+      el("label", {}, "What is included (goes into the letter)"),
+      el("textarea", { name: "scope", style: "min-height:80px", placeholder: "e.g. Preparing and filing your 2025/26 Self Assessment tax return, including one rental property." }),
+      el("label", {}, "Documents the client must upload after paying (one per line)"), ck,
+      el("p", { style: "margin-top:12px" }, el("button", { class: "btn gold", type: "submit" }, c.stage === "review" ? "Approve ID and send agreement + invoice" : "Send agreement + invoice")),
+      el("div", { class: "m" }));
+    f.addEventListener("submit", async ev => {
+      ev.preventDefault(); busy(f, true);
+      const fd = new FormData(f);
+      try {
+        const r = await api("/api/admin/clients/" + c.id + "/approve", { method: "POST", body: { service: fd.get("service"), fee: fd.get("fee"), period: fd.get("period"), scope: fd.get("scope"), checklist: String(fd.get("checklist") || "").split("\n") } });
+        alert("Sent. Invoice " + r.invoice + " created and the client has been emailed."); openClient(c.id); loadSignups();
+      } catch (e) { msg(f.querySelector(".m"), e.message); busy(f, false); }
+    });
+    return f;
+  }
+  async function loadSignups() {
+    const r = await api("/api/admin/signups");
+    const n = r.items.filter(c => c.stage === "review" || c.says_paid).length;
+    $("todoCount").textContent = n ? "(" + n + ")" : "";
+    $("signupsBox").replaceChildren(table([
+      ["Client", c => el("span", {}, el("b", {}, c.name), el("div", { class: "muted" }, c.email + (c.phone ? " · " + c.phone : "")))],
+      ["Wants", c => c.wanted_service || ""],
+      ["Next step", c => c.stage === "review" ? el("b", {}, "Check ID") : c.stage === "kyc" ? "Waiting for client ID" : c.says_paid ? el("b", {}, "Client says paid, check bank") : "Waiting for signature / payment"],
+      ["Since", c => date(c.created_at)],
+      ["", c => el("button", { class: "btn small", type: "button", onclick: () => { document.querySelector('[data-tab="tClients"]').click(); openClient(c.id); } }, "Open")],
+    ], r.items, "Nothing to do."));
+  }
+  async function loadSettings() {
+    const st = await api("/api/admin/settings");
+    const f = $("settingsForm");
+    for (const k of ["account_name", "bank_name", "sort_code", "account_number", "pay_link", "dd_link", "letter_template"]) f.elements[k].value = st[k] || "";
+  }
+  $("settingsForm").addEventListener("submit", async ev => {
+    ev.preventDefault(); const f = ev.target; busy(f, true);
+    try { await api("/api/admin/settings", { method: "PUT", body: Object.fromEntries(new FormData(f)) }); msg(f.querySelector(".m"), "Saved.", true); loadSettings(); }
+    catch (e) { msg(f.querySelector(".m"), e.message); }
+    busy(f, false);
+  });
 
   // ----- orders -----
   function orderTable(items) {

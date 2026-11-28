@@ -21,8 +21,10 @@
   <section id="app" class="hide">
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="tClients">Clients</button>
+      <button role="tab" aria-selected="false" data-tab="tSignups">To do <span id="todoCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tOrders">Orders <span id="newCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tAudit">Activity log</button>
+      <button role="tab" aria-selected="false" data-tab="tSettings">Settings</button>
     </div>
 
     <div class="tab" id="tClients">
@@ -59,6 +61,32 @@
         <div class="row" style="justify-content:space-between"><h2>Orders</h2>
           <select id="orderFilter" style="width:auto"><option value="">All</option></select></div>
         <div id="ordersBox"></div>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tSignups">
+      <div class="card"><h2>To do</h2><p class="muted">New sign-ups waiting for ID, ID to check, and unpaid invoices.</p><div id="signupsBox"></div></div>
+    </div>
+
+    <div class="tab hide" id="tSettings">
+      <div class="card">
+        <h2>Payment details</h2>
+        <p class="muted">Shown to clients on unpaid invoices only. Stored in the private database, not on the public website code.</p>
+        <form id="settingsForm" novalidate>
+          <div class="grid2">
+            <div><label>Account name</label><input name="account_name" maxlength="120"></div>
+            <div><label>Bank</label><input name="bank_name" maxlength="80"></div>
+            <div><label>Sort code</label><input name="sort_code" maxlength="8" placeholder="12-34-56"></div>
+            <div><label>Account number</label><input name="account_number" maxlength="8" inputmode="numeric"></div>
+          </div>
+          <label>Card / Apple Pay payment link (optional)</label><input name="pay_link" placeholder="https://...">
+          <label>Direct Debit link (optional, e.g. GoCardless or Stripe)</label><input name="dd_link" placeholder="https://...">
+          <h3 style="margin-top:22px">Engagement letter template</h3>
+          <p class="muted">Placeholders: {date} {name} {company_line} {service} {period_line} {scope} {fee}. Leave empty to restore the standard letter.</p>
+          <textarea name="letter_template" style="min-height:360px;font-size:.85rem"></textarea>
+          <p style="margin-top:12px"><button class="btn" type="submit">Save settings</button></p>
+          <div class="m" role="status"></div>
+        </form>
       </div>
     </div>
 

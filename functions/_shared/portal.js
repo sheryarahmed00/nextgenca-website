@@ -38,6 +38,49 @@ const ALLOWED_EXT = {
   xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   xls: "application/vnd.ms-excel", doc: "application/msword",
+  heic: "image/heic", heif: "image/heif", webp: "image/webp",
+};
+export const STAGES = ["kyc", "review", "agreement", "payment", "active", "rejected"];
+export const DEFAULT_LETTER = `ENGAGEMENT LETTER
+
+Date: {date}
+Client: {name}{company_line}
+
+Thank you for choosing NextGen Chartered Accountant (a trading name of S. Ahmed ACA), an ICAEW member firm. This letter sets out the work we will do for you and the terms we work on.
+
+1. The service
+{service}{period_line}
+{scope}
+
+2. Our fee
+{fee} (fixed fee). NextGen is not VAT registered, so no VAT is added. The fee is payable before work starts. Work outside the scope above will be agreed with you in writing first.
+
+3. Your responsibilities
+You will give us complete and accurate records and information on time, and tell us about any changes that affect the work. You remain responsible for the accuracy of any return we file for you, and you will approve each return before we submit it.
+
+4. Our responsibilities
+We will carry out the work with reasonable skill and care, in line with the ICAEW Code of Ethics and UK law. We will tell you about filing deadlines we are aware of.
+
+5. Anti-money laundering
+UK law requires us to verify your identity before we act for you. We may need to report suspicions of money laundering to the National Crime Agency, and we are not allowed to tell you if we do.
+
+6. Your data
+We keep your information confidential and process it under UK GDPR, as set out in our privacy notice at https://nextgenca.co.uk/privacy. We keep records for at least 5 years after our work ends.
+
+7. Complaints
+If you are unhappy with our service, please tell us first (https://nextgenca.co.uk/complaints). You may also complain to the ICAEW.
+
+8. Ending the engagement
+Either of us can end this engagement in writing. Fees for work already done remain payable.
+
+By signing below you confirm that you have read and agree to these terms.`;
+export const DEFAULT_CHECKLIST = {
+  "Self Assessment tax return": ["P60 or payslips", "Bank interest statements", "Details of any other income", "Pension contributions"],
+  "Landlord tax return": ["Rent received statements", "Mortgage interest statement", "Letting agent statements", "Repair and running cost receipts"],
+  "Limited company accounts and corporation tax": ["Business bank statements for the year", "Sales and purchase invoices", "Previous year accounts (if any)", "Loans and director loan details"],
+  "VAT returns": ["Sales invoices for the quarter", "Purchase receipts for the quarter", "Bank statements for the quarter"],
+  "Payroll": ["Employee list with start dates", "P45s for new starters", "Hours or salary for each employee"],
+  "Bookkeeping": ["Bank statements", "Sales invoices", "Purchase receipts"],
 };
 
 // ---------- responses ----------
@@ -107,9 +150,13 @@ export async function ensureSchema(env) {
   if (schemaReady) return;
   if (!env.DB) throw new Error("D1 binding DB missing");
   await env.DB.batch([
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS clients (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, company TEXT, phone TEXT, active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS clients (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, company TEXT, phone TEXT, active INTEGER NOT NULL DEFAULT 1, stage TEXT NOT NULL DEFAULT 'active', wanted_service TEXT, signup_note TEXT, reject_reason TEXT, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS engagements (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, service TEXT NOT NULL, period TEXT, scope TEXT, fee_pence INTEGER NOT NULL, letter_text TEXT NOT NULL, letter_hash TEXT NOT NULL, status TEXT NOT NULL, signed_name TEXT, signed_at TEXT, signed_ip TEXT, signed_ua TEXT, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS invoices (id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT NOT NULL UNIQUE, client_id INTEGER NOT NULL, engagement_id INTEGER, description TEXT NOT NULL, amount_pence INTEGER NOT NULL, status TEXT NOT NULL, client_says_paid_at TEXT, paid_at TEXT, paid_method TEXT, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS checklist (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, engagement_id INTEGER, label TEXT NOT NULL, document_id INTEGER, done_at TEXT, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS settings (k TEXT PRIMARY KEY, v TEXT NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS services (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, service TEXT NOT NULL, period TEXT, notes TEXT, status TEXT NOT NULL, start_date TEXT, completed_date TEXT, fee TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`),
-    env.DB.prepare(`CREATE TABLE IF NOT EXISTS documents (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, service_id INTEGER, title TEXT NOT NULL, filename TEXT NOT NULL, r2_key TEXT NOT NULL UNIQUE, size INTEGER NOT NULL, content_type TEXT NOT NULL, uploaded_by TEXT NOT NULL, created_at TEXT NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS documents (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, service_id INTEGER, title TEXT NOT NULL, category TEXT NOT NULL DEFAULT 'general', filename TEXT NOT NULL, r2_key TEXT NOT NULL UNIQUE, size INTEGER NOT NULL, content_type TEXT NOT NULL, uploaded_by TEXT NOT NULL, created_at TEXT NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, service TEXT NOT NULL, details TEXT, status TEXT NOT NULL, firm_note TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS otps (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, code_hash TEXT NOT NULL, expires_at INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, used INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, email TEXT NOT NULL, role TEXT NOT NULL, client_id INTEGER, created_at INTEGER NOT NULL, last_seen INTEGER NOT NULL, ip TEXT, ua TEXT)`),
@@ -212,7 +259,7 @@ export function checkUpload(file) {
   if (file.size > MAX_UPLOAD_BYTES) return { error: "Files must be 20 MB or smaller." };
   const name = cleanText(file.name, 150).replace(/[\\/:*?"<>|]+/g, "_") || "document";
   const ext = (name.split(".").pop() || "").toLowerCase();
-  if (!ALLOWED_EXT[ext]) return { error: "Allowed files: PDF, JPG, PNG, Excel, Word, CSV, TXT." };
+  if (!ALLOWED_EXT[ext]) return { error: "Allowed files: photos (JPG, PNG, HEIC), PDF, Excel, Word, CSV, TXT." };
   return { name, ext, type: ALLOWED_EXT[ext] };
 }
 // Confirms the file really is what its extension claims (stops renamed executables / HTML)
@@ -225,6 +272,11 @@ export async function sniffOk(file, ext) {
     case "jpg": case "jpeg": return starts(0xff, 0xd8, 0xff);
     case "xlsx": case "docx": return starts(0x50, 0x4b, 0x03, 0x04);
     case "xls": case "doc": return starts(0xd0, 0xcf, 0x11, 0xe0);
+    case "webp": return starts(0x52, 0x49, 0x46, 0x46);
+    case "heic": case "heif": { // ISO media: bytes 4-7 = "ftyp"
+      const h = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+      return h[4] === 0x66 && h[5] === 0x74 && h[6] === 0x79 && h[7] === 0x70;
+    }
     case "csv": case "txt": {
       const head = new TextDecoder().decode(await file.slice(0, 512).arrayBuffer()).toLowerCase();
       return !head.includes("\u0000") && !/<\s*(script|html|svg|iframe)/.test(head);
@@ -246,3 +298,39 @@ export function downloadResponse(obj, filename, contentType) {
   });
 }
 export const nowIso = () => new Date().toISOString();
+
+// ---------- money / settings / letters ----------
+export const gbp = p => "£" + (p / 100).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export function parsePence(v) {
+  const n = Number(String(v ?? "").replace(/[£,\s]/g, ""));
+  return Number.isFinite(n) && n > 0 && n < 1000000 ? Math.round(n * 100) : null;
+}
+export async function getSettings(env) {
+  const r = await env.DB.prepare("SELECT k, v FROM settings").all();
+  const o = { bank_name: "", account_name: "", sort_code: "", account_number: "", pay_link: "", dd_link: "", letter_template: DEFAULT_LETTER };
+  for (const row of r.results) o[row.k] = row.v;
+  return o;
+}
+export function renderLetter(tpl, f) {
+  const map = {
+    date: f.date, name: f.name, company_line: f.company ? "\nCompany: " + f.company : "",
+    service: f.service, period_line: f.period ? " (" + f.period + ")" : "",
+    scope: f.scope || "", fee: f.fee,
+  };
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => (k in map ? map[k] : m));
+}
+export async function sha256(text) {
+  return hex(await crypto.subtle.digest("SHA-256", enc.encode(text)));
+}
+export async function nextInvoiceNumber(env) {
+  const year = new Date().getUTCFullYear();
+  const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM invoices WHERE number LIKE ?").bind(`NGCA-INV-${year}-%`).first();
+  return `NGCA-INV-${year}-${String((r.n || 0) + 1).padStart(4, "0")}`;
+}
+export async function storeUpload(env, request, { clientId, file, chk, title, category, serviceId, by }) {
+  const key = `clients/${clientId}/${randomToken(16)}.${chk.ext}`;
+  await env.DOCS.put(key, file.stream(), { httpMetadata: { contentType: chk.type } });
+  const r = await env.DB.prepare("INSERT INTO documents (client_id, service_id, title, category, filename, r2_key, size, content_type, uploaded_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(clientId, serviceId || null, title, category || "general", chk.name, key, file.size, chk.type, by, nowIso()).run();
+  return r.meta.last_row_id;
+}

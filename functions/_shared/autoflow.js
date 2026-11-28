@@ -37,11 +37,22 @@ export async function ensureKycTable(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS kyc_checks (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, provider TEXT NOT NULL, session_id TEXT NOT NULL UNIQUE, status TEXT NOT NULL, summary TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`).run();
 }
 // Values pasted into Cloudflare can carry a stray space or line break; trim them.
-const dkey = env => String(env.DIDIT_API_KEY || "").trim();
-const dflow = env => String(env.DIDIT_WORKFLOW_ID || "").trim();
+const strip = v => String(v || "").replace(/[\s\u0000-\u001f\u007f\u200b-\u200d\ufeff]/g, "");
+const dkey = env => strip(env.DIDIT_API_KEY);
+const dflow = env => strip(env.DIDIT_WORKFLOW_ID);
+// Says, without revealing anything secret, whether the saved Didit settings look usable.
+export function diditState(env) {
+  const k = dkey(env), w = dflow(env);
+  if (!k || !w) return "off";
+  if (/[^\x21-\x7e]/.test(k)) return `key_has_invalid_characters(len=${k.length},bad=${(k.match(/[^\x21-\x7e]/g) || []).length})`;
+  if (!/^[0-9a-f-]{36}$/i.test(w)) return `workflow_id_not_a_uuid(len=${w.length})`;
+  return "ok";
+}
 export const diditOn = env => !!(dkey(env) && dflow(env));
 
 export async function diditStart(env, c, origin) {
+  const state = diditState(env);
+  if (state !== "ok") throw new Error("Didit settings: " + state);
   await ensureKycTable(env);
   const r = await fetch("https://verification.didit.me/v3/session/", {
     method: "POST",

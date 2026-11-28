@@ -10,7 +10,7 @@ import {
 } from "./portal.js";
 
 // Creates the engagement letter, the invoice and the document checklist, then emails the client.
-export async function sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist, actor, idChecked }) {
+export async function sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist, actor, idChecked, prepaid }) {
   const st = await getSettings(env);
   const letter = renderLetter(st.letter_template || DEFAULT_LETTER, {
     date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
@@ -23,12 +23,14 @@ export async function sendAgreementAndInvoice(env, request, c, { service, period
   const number = await nextInvoiceNumber(env);
   await env.DB.prepare("INSERT INTO invoices (number, client_id, engagement_id, description, amount_pence, status, created_at) VALUES (?, ?, ?, ?, ?, 'unpaid', ?)")
     .bind(number, c.id, eid, service + (period ? " (" + period + ")" : ""), pence, now).run();
+  // Fee already received before the quote was sent: the invoice is issued as paid, so the client only signs.
+  if (prepaid) await env.DB.prepare("UPDATE invoices SET status = 'paid', paid_at = ?, paid_method = 'paid before quote' WHERE number = ?").bind(now, number).run();
   const items = (checklist || []).map(x => String(x).trim().slice(0, 150)).filter(Boolean).slice(0, 30);
   if (items.length) await env.DB.batch(items.map(label => env.DB.prepare("INSERT INTO checklist (client_id, engagement_id, label, created_at) VALUES (?, ?, ?, ?)").bind(c.id, eid, label, now)));
   await env.DB.prepare("UPDATE clients SET stage = 'active', active = 1 WHERE id = ?").bind(c.id).run();
-  await audit(env, request, actor, idChecked ? "kyc_approved_and_agreement_sent" : "agreement_sent", `client#${c.id} ${service} ${gbp(pence)} ${number}`);
-  await sendEmail(env, c.email, "Your NextGen agreement and invoice are ready",
-    `Dear ${c.name},\n\n${idChecked ? "Thank you, your ID has been checked. " : ""}Your agreement and invoice for ${service} (${gbp(pence)}) are ready in your client portal.\n\n1. Read and sign the agreement\n2. Pay the invoice (${number})\n3. Upload the documents on your checklist\n\nIt takes about 2 minutes on your phone: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
+  await audit(env, request, actor, idChecked ? "kyc_approved_and_agreement_sent" : "agreement_sent", `client#${c.id} ${service} ${gbp(pence)} ${number}${prepaid ? " (already paid)" : ""}`);
+  await sendEmail(env, c.email, prepaid ? "Your NextGen agreement is ready to sign" : "Your NextGen agreement and invoice are ready",
+    `Dear ${c.name},\n\n${idChecked ? "Thank you, your ID has been checked. " : ""}Your agreement${prepaid ? "" : " and invoice"} for ${service} (${gbp(pence)}) ${prepaid ? "is" : "are"} ready in your client portal.${prepaid ? " We have already received your payment, thank you (receipt: invoice " + number + ", paid)." : ""}\n\n1. Read and sign the agreement\n${prepaid ? "" : "2. Pay the invoice (" + number + ")\n"}${prepaid ? "2" : "3"}. Upload the documents on your checklist\n\nIt takes about 2 minutes on your phone: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   return { engagement_id: eid, invoice: number };
 }
 
@@ -150,6 +152,7 @@ export async function ensureQuoteTables(env) {
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS quote_events (id INTEGER PRIMARY KEY AUTOINCREMENT, quote_id INTEGER NOT NULL, at TEXT NOT NULL, event TEXT NOT NULL, detail TEXT)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS i_quotes_email ON quotes(email)`),
   ]);
+  try { await env.DB.prepare("ALTER TABLE quotes ADD COLUMN prepaid INTEGER NOT NULL DEFAULT 0").run(); } catch (e) { /* column already there */ }
 }
 export async function quoteEvent(env, quoteId, event, detail = "") {
   await env.DB.prepare("INSERT INTO quote_events (quote_id, at, event, detail) VALUES (?, ?, ?, ?)").bind(quoteId, nowIso(), event, String(detail).slice(0, 500)).run();
@@ -182,9 +185,9 @@ export async function invoiceFromQuote(env, request, c, q, actor, idChecked) {
   let checklist = [];
   try { checklist = JSON.parse(q.checklist || "[]"); } catch (e) {}
   const r = await sendAgreementAndInvoice(env, request, c, {
-    service: q.service, period: q.period, scope: q.scope, pence: q.fee_pence, checklist, actor, idChecked,
+    service: q.service, period: q.period, scope: q.scope, pence: q.fee_pence, checklist, actor, idChecked, prepaid: !!q.prepaid,
   });
   await closeQuote(env, q.id, r.invoice, actor);
-  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Quote ${q.number} accepted and invoiced`, `${c.name} <${c.email}> accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}).${idChecked ? " The ID check passed." : ""}\n\nThe engagement letter and invoice ${r.invoice} were sent automatically. Nothing to do until they sign and pay.`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Quote ${q.number} accepted and invoiced`, `${c.name} <${c.email}> accepted quote ${q.number} (${q.service}, ${gbp(q.fee_pence)}).${idChecked ? " The ID check passed." : ""}\n\nThe engagement letter and invoice ${r.invoice} were sent automatically. ${q.prepaid ? "The quote was marked as already paid, so the invoice is recorded as paid; the client only needs to sign." : "Nothing to do until they sign and pay."}`);
   return r;
 }

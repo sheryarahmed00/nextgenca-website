@@ -37,7 +37,7 @@
         $("qNumber").textContent = "Quote " + q.number;
         $("qHello").textContent = "Dear " + q.name + ", thank you for choosing NextGen Chartered Accountant.";
         $("qService").textContent = q.service + (q.period ? " (" + q.period + ")" : "");
-        $("qFee").textContent = q.fee;
+        $("qFee").textContent = q.fee + (q.paid ? " (already paid, thank you)" : "");
         $("qValid").textContent = date(q.valid_until);
         if (q.scope) { $("qScope").textContent = q.scope; $("qScopeBox").classList.remove("hide"); }
         show("stepQuote");

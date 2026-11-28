@@ -277,8 +277,8 @@ async function approve(env, request, s, id) {
   const period = cleanText(b.period, 80) || null;
   const scope = cleanText(b.scope, 3000);
   const items = (Array.isArray(b.checklist) ? b.checklist : []).map(x => cleanText(x, 150)).filter(Boolean).slice(0, 30);
-  const r = await sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist: items, actor: s.email, idChecked: c.stage === "review" });
   const q = await acceptedQuoteFor(env, c.id, c.email);
+  const r = await sendAgreementAndInvoice(env, request, c, { service, period, scope, pence, checklist: items, actor: s.email, idChecked: c.stage === "review", prepaid: !!(q && q.prepaid) });
   if (q) await closeQuote(env, q.id, r.invoice, s.email);
   return json({ ok: true, engagement_id: r.engagement_id, invoice: r.invoice });
 }
@@ -319,7 +319,7 @@ async function sendQuoteEmail(env, q, token) {
   const site = env.SITE_URL || "https://nextgenca.co.uk";
   const until = new Date(q.valid_until).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   await sendEmail(env, q.email, `Your quote from NextGen Chartered Accountant (${q.number})`,
-    `Dear ${q.name},\n\nThank you for speaking with us. Here is your quote:\n\nService: ${q.service}${q.period ? " (" + q.period + ")" : ""}\nFee: ${gbp(q.fee_pence)} (NextGen is not VAT registered, so no VAT is added)\n${q.scope ? "\nWhat is included:\n" + q.scope + "\n" : ""}\nValid until: ${until}\n\nTo accept and get started, open this link:\n${site}/portal?quote=${token}\n\nIt takes a few minutes on your phone: accept the quote, check your ID, sign the engagement letter and pay. Then you can upload your documents securely.\n\nKind regards,\nNextGen Chartered Accountant`);
+    `Dear ${q.name},\n\nThank you for speaking with us. Here is your quote:\n\nService: ${q.service}${q.period ? " (" + q.period + ")" : ""}\nFee: ${gbp(q.fee_pence)} (NextGen is not VAT registered, so no VAT is added)${q.prepaid ? "\nPayment: already received, thank you" : ""}\n${q.scope ? "\nWhat is included:\n" + q.scope + "\n" : ""}\nValid until: ${until}\n\nTo accept and get started, open this link:\n${site}/portal?quote=${token}\n\nIt takes a few minutes on your phone: accept the quote, check your ID${q.prepaid ? " and sign the engagement letter" : ", sign the engagement letter and pay"}. Then you can upload your documents securely.\n\nKind regards,\nNextGen Chartered Accountant`);
 }
 
 async function listQuotes(env, request) {
@@ -350,6 +350,7 @@ async function createQuote(env, request, s) {
   if (!email) return bad("Enter a valid email.");
   if (!service) return bad("Choose the service.");
   if (!pence) return bad("Enter the fee, e.g. 150.");
+  const prepaid = b.paid === true || b.paid === "on" || b.paid === "1" ? 1 : 0;
   const days = Math.min(90, Math.max(1, Number(b.valid_days) || 30));
   const checklist = (Array.isArray(b.checklist) ? b.checklist : []).map(x => cleanText(x, 150)).filter(Boolean).slice(0, 30);
   // an open quote for the same email is replaced by the new one
@@ -358,16 +359,16 @@ async function createQuote(env, request, s) {
   const number = await nextQuoteNumber(env);
   const now = nowIso();
   const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ?").bind(email).first();
-  const r = await env.DB.prepare(`INSERT INTO quotes (number, token_hash, email, name, company, phone, service, period, scope, checklist, fee_pence, status, valid_until, created_by, created_at, client_id) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'sent', ?, ?, ?, ?)`)
+  const r = await env.DB.prepare(`INSERT INTO quotes (number, token_hash, email, name, company, phone, service, period, scope, checklist, fee_pence, status, valid_until, created_by, created_at, client_id, prepaid) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'sent', ?, ?, ?, ?, ?)`)
     .bind(number, await hmac(env, "q:" + token), email, name, cleanText(b.company, 150) || null, cleanText(b.phone, 40) || null, service,
       cleanText(b.period, 80) || null, cleanText(b.scope, 3000) || null, JSON.stringify(checklist), pence,
-      new Date(Date.now() + days * 864e5).toISOString(), s.email, now, c ? c.id : null).run();
+      new Date(Date.now() + days * 864e5).toISOString(), s.email, now, c ? c.id : null, prepaid).run();
   const id = r.meta.last_row_id;
   for (const o of old.results) {
     await env.DB.prepare("UPDATE quotes SET status = 'replaced', closed_at = ? WHERE id = ?").bind(now, o.id).run();
     await quoteEvent(env, o.id, "replaced", `by ${number}`);
   }
-  await quoteEvent(env, id, "created", `${service} ${gbp(pence)} by ${s.email}`);
+  await quoteEvent(env, id, "created", `${service} ${gbp(pence)}${prepaid ? " (already paid)" : ""} by ${s.email}`);
   const q = await env.DB.prepare("SELECT * FROM quotes WHERE id = ?").bind(id).first();
   await sendQuoteEmail(env, q, token);
   await quoteEvent(env, id, "emailed", email);

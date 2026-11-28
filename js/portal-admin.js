@@ -228,7 +228,7 @@
     $("newQuoteForm").addEventListener("submit", async ev => {
       ev.preventDefault(); const f = ev.target; const box = f.querySelector(".m"); busy(f, true); msg(box, "");
       const fd = Object.fromEntries(new FormData(f));
-      fd.checklist = String(fd.checklist || "").split("\n");
+      fd.checklist = String(fd.checklist || "").split("\n"); fd.paid = fd.paid === "1";
       try {
         const r = await api("/api/admin/quotes", { method: "POST", body: fd });
         f.reset(); fillCk(); msg(box, "Quote " + r.number + " created and emailed to the client.", true);
@@ -245,7 +245,7 @@
     $("quotesBox").replaceChildren(table([
       ["Quote", q => el("span", {}, el("b", {}, q.number), el("div", { class: "muted" }, date(q.created_at)))],
       ["Client", q => el("span", {}, el("b", {}, q.name), el("div", { class: "muted" }, q.email))],
-      ["Service", q => q.service], ["Fee", q => gbp(q.fee_pence)],
+      ["Service", q => q.service], ["Fee", q => el("span", {}, gbp(q.fee_pence), q.prepaid ? el("div", { class: "muted" }, "Already paid") : null)],
       ["Status", q => el("span", {}, pill(QSTATUS[q.status] || q.status), q.invoice_number ? el("div", { class: "muted" }, q.invoice_number) : null)],
       ["", q => el("button", { class: "btn line small", type: "button", onclick: () => openQuote(q.id) }, "Open")],
     ], r.items, "No quotes yet."));
@@ -269,6 +269,7 @@
         q.company ? el("div", {}, el("span", {}, "Company"), el("span", {}, q.company)) : null,
         el("div", {}, el("span", {}, "Service"), el("b", {}, q.service + (q.period ? " (" + q.period + ")" : ""))),
         el("div", {}, el("span", {}, "Fee"), el("b", {}, gbp(q.fee_pence))),
+        el("div", {}, el("span", {}, "Payment"), el("span", {}, q.prepaid ? "Already paid (no payment step for the client)" : "To pay in the portal after signing")),
         el("div", {}, el("span", {}, "Valid until"), el("span", {}, date(q.valid_until))),
         el("div", {}, el("span", {}, "Created by"), el("span", {}, q.created_by)),
         d.invoice ? el("div", {}, el("span", {}, "Invoice"), el("span", {}, d.invoice.number + " · " + gbp(d.invoice.amount_pence) + " · " + (d.invoice.status === "paid" ? "Paid " + date(d.invoice.paid_at) + " (" + (d.invoice.paid_method || "") + ")" : d.invoice.status))) : null),

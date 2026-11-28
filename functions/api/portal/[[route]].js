@@ -364,7 +364,7 @@ async function findQuote(env, token) {
 }
 function publicQuote(q) {
   return { number: q.number, name: q.name, email: q.email, service: q.service, period: q.period, scope: q.scope,
-    fee: gbp(q.fee_pence), status: q.status, valid_until: q.valid_until };
+    fee: gbp(q.fee_pence), status: q.status, valid_until: q.valid_until, paid: !!q.prepaid };
 }
 async function viewQuote(env, request, token) {
   if (!(await rateLimit(env, "qview:" + clientIp(request), 60, 60 * 60 * 1000))) return bad("Too many requests.", 429);

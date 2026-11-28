@@ -191,9 +191,9 @@ async function kyc(env, request, s) {
   if (c.stage !== "kyc") return bad("Your ID has already been received.");
   if (!(await rateLimit(env, "kyc:" + s.client_id, 10, 24 * 60 * 60 * 1000))) return bad("Too many uploads today.", 429);
   const form = await request.formData();
-  const files = [["id_file", "kyc_id", "Photo ID"], ["address_file", "kyc_address", "Proof of address"]];
+  const kycFiles = [["id_file", "kyc_id", "Photo ID"], ["address_file", "kyc_address", "Proof of address"]];
   const checked = [];
-  for (const [field, cat, title] of files) {
+  for (const [field, cat, title] of kycFiles) {
     const f = form.get(field);
     const chk = checkUpload(f);
     if (chk.error) return bad(title + ": " + chk.error);

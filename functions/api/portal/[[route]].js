@@ -27,7 +27,7 @@ export async function onRequest(context) {
     }
     if (route === "services-list" && m === "GET") return json({ services: SERVICES });
     if (route === "config" && m === "GET" && new URL(request.url).searchParams.get("check") === "1")
-      return json({ idCheck: (await rateLimit(env, "didit-ping", 10, 60 * 60 * 1000)) ? await diditPing(env) : "try_later", payCheck: await stripePing(env) });
+      return json({ idCheck: (await rateLimit(env, "didit-ping", 10, 60 * 60 * 1000)) ? await diditPing(env) : "try_later", payCheck: await stripePing(env), payTry: await payTry(env, request) });
     if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "", idCheck: diditState(env) });
     if (route === "signup" && m === "POST") return await signup(env, request);
     let qm;
@@ -441,4 +441,17 @@ async function paymentProof(env, request, s, id) {
   if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Proof of payment: ${inv.number} (${gbp(inv.amount_pence)})`,
     `${s.email} uploaded proof of payment for ${inv.number} (${gbp(inv.amount_pence)}) and has moved on to uploading documents.\n\nCheck your bank and mark the invoice paid: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   return json({ ok: true });
+}
+
+// TEMPORARY self-test: tries to open (not pay) a Stripe payment page with the same settings a client uses, and reports only the outcome.
+async function payTry(env, request) {
+  const origin = new URL(request.url).origin;
+  try {
+    const x = await stripePost(env, "checkout/sessions", { mode: "payment", customer_email: "selftest@nextgenca.co.uk", client_reference_id: "selftest", payment_method_types: ["card"],
+      line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: 100, product_data: { name: "Portal self-test (not a real invoice)" } } }],
+      metadata: { selftest: "1" }, payment_intent_data: { description: "Portal self-test" }, success_url: `${origin}/portal`, cancel_url: `${origin}/portal`,
+      expires_at: Math.floor(Date.now() / 1000) + 60 * 60, payment_method_options: { card: { request_three_d_secure: "automatic" } } });
+    try { await stripePost(env, `checkout/sessions/${x.id}/expire`, {}); } catch (e) {}
+    return "session_created_ok";
+  } catch (e) { return String(e && e.message || e).replace(/[sr]k_[A-Za-z0-9_*.]+/g, "[key]").slice(0, 300); }
 }

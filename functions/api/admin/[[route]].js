@@ -28,32 +28,32 @@ export async function onRequest(context) {
         ORDER BY c.id DESC LIMIT 200`).all();
       return json({ items: r.results });
     }
-    if (route === "quotes" && m === "GET") return listQuotes(env, request);
-    if (route === "quotes" && m === "POST") return createQuote(env, request, s);
-    if ((x = route.match(/^quotes\/(\d+)$/)) && m === "GET") return getQuote(env, Number(x[1]));
-    if ((x = route.match(/^quotes\/(\d+)\/withdraw$/)) && m === "POST") return withdrawQuote(env, request, s, Number(x[1]));
-    if ((x = route.match(/^quotes\/(\d+)\/resend$/)) && m === "POST") return resendQuote(env, request, s, Number(x[1]));
+    if (route === "quotes" && m === "GET") return await listQuotes(env, request);
+    if (route === "quotes" && m === "POST") return await createQuote(env, request, s);
+    if ((x = route.match(/^quotes\/(\d+)$/)) && m === "GET") return await getQuote(env, Number(x[1]));
+    if ((x = route.match(/^quotes\/(\d+)\/withdraw$/)) && m === "POST") return await withdrawQuote(env, request, s, Number(x[1]));
+    if ((x = route.match(/^quotes\/(\d+)\/resend$/)) && m === "POST") return await resendQuote(env, request, s, Number(x[1]));
     if (route === "settings" && m === "GET") return json(await getSettings(env));
-    if (route === "settings" && m === "PUT") return saveSettings(env, request, s);
-    if ((x = route.match(/^clients\/(\d+)\/approve$/)) && m === "POST") return approve(env, request, s, Number(x[1]));
-    if ((x = route.match(/^clients\/(\d+)\/reject$/)) && m === "POST") return reject(env, request, s, Number(x[1]));
-    if ((x = route.match(/^invoices\/(\d+)$/)) && m === "PUT") return updateInvoice(env, request, s, Number(x[1]));
-    if (route === "clients" && m === "GET") return listClients(env, request);
-    if (route === "clients" && m === "POST") return createClient(env, request, s);
+    if (route === "settings" && m === "PUT") return await saveSettings(env, request, s);
+    if ((x = route.match(/^clients\/(\d+)\/approve$/)) && m === "POST") return await approve(env, request, s, Number(x[1]));
+    if ((x = route.match(/^clients\/(\d+)\/reject$/)) && m === "POST") return await reject(env, request, s, Number(x[1]));
+    if ((x = route.match(/^invoices\/(\d+)$/)) && m === "PUT") return await updateInvoice(env, request, s, Number(x[1]));
+    if (route === "clients" && m === "GET") return await listClients(env, request);
+    if (route === "clients" && m === "POST") return await createClient(env, request, s);
     if ((x = route.match(/^clients\/(\d+)$/))) {
-      if (m === "GET") return getClient(env, Number(x[1]));
-      if (m === "PUT") return updateClient(env, request, s, Number(x[1]));
+      if (m === "GET") return await getClient(env, Number(x[1]));
+      if (m === "PUT") return await updateClient(env, request, s, Number(x[1]));
     }
-    if ((x = route.match(/^clients\/(\d+)\/services$/)) && m === "POST") return saveService(env, request, s, Number(x[1]), null);
+    if ((x = route.match(/^clients\/(\d+)\/services$/)) && m === "POST") return await saveService(env, request, s, Number(x[1]), null);
     if ((x = route.match(/^services\/(\d+)$/))) {
-      if (m === "PUT") return saveService(env, request, s, null, Number(x[1]));
-      if (m === "DELETE") return deleteService(env, request, s, Number(x[1]));
+      if (m === "PUT") return await saveService(env, request, s, null, Number(x[1]));
+      if (m === "DELETE") return await deleteService(env, request, s, Number(x[1]));
     }
-    if ((x = route.match(/^clients\/(\d+)\/documents$/)) && m === "POST") return uploadDoc(env, request, s, Number(x[1]));
-    if ((x = route.match(/^documents\/(\d+)$/)) && m === "DELETE") return deleteDoc(env, request, s, Number(x[1]));
-    if ((x = route.match(/^documents\/(\d+)\/download$/)) && m === "GET") return downloadDoc(env, request, s, Number(x[1]));
-    if (route === "orders" && m === "GET") return listOrders(env, request);
-    if ((x = route.match(/^orders\/(\d+)$/)) && m === "PUT") return updateOrder(env, request, s, Number(x[1]));
+    if ((x = route.match(/^clients\/(\d+)\/documents$/)) && m === "POST") return await uploadDoc(env, request, s, Number(x[1]));
+    if ((x = route.match(/^documents\/(\d+)$/)) && m === "DELETE") return await deleteDoc(env, request, s, Number(x[1]));
+    if ((x = route.match(/^documents\/(\d+)\/download$/)) && m === "GET") return await downloadDoc(env, request, s, Number(x[1]));
+    if (route === "orders" && m === "GET") return await listOrders(env, request);
+    if ((x = route.match(/^orders\/(\d+)$/)) && m === "PUT") return await updateOrder(env, request, s, Number(x[1]));
     if (route === "audit" && m === "GET") {
       const r = await env.DB.prepare("SELECT * FROM audit ORDER BY id DESC LIMIT 200").all();
       return json({ items: r.results });

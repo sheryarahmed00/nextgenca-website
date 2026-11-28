@@ -54,7 +54,7 @@ export async function diditStart(env, c, origin) {
     }),
   });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j.url || !j.session_id) { console.log("didit create failed", r.status, JSON.stringify(j)); throw new Error("ID check could not start"); }
+  if (!r.ok || !j.url || !j.session_id) { console.log("didit create failed", r.status, JSON.stringify(j)); throw new Error(`Didit ${r.status}: ${JSON.stringify(j).slice(0, 300)}`); }
   const now = nowIso();
   await env.DB.prepare("INSERT INTO kyc_checks (client_id, provider, session_id, status, created_at, updated_at) VALUES (?, 'didit', ?, ?, ?, ?) ON CONFLICT(session_id) DO UPDATE SET updated_at = excluded.updated_at")
     .bind(c.id, j.session_id, j.status || "Not Started", now, now).run();

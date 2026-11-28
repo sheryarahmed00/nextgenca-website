@@ -19,41 +19,41 @@ export async function onRequest(context) {
     const route = (params.route || []).join("/");
     const m = request.method;
 
-    if (route === "login/request" && m === "POST") return loginRequest(env, request);
-    if (route === "login/verify" && m === "POST") return loginVerify(env, request);
+    if (route === "login/request" && m === "POST") return await loginRequest(env, request);
+    if (route === "login/verify" && m === "POST") return await loginVerify(env, request);
     if (route === "logout" && m === "POST") {
       await destroySession(env, request);
       return json({ ok: true }, 200, { "set-cookie": sessionCookie("", 0) });
     }
     if (route === "services-list" && m === "GET") return json({ services: SERVICES });
     if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "" });
-    if (route === "signup" && m === "POST") return signup(env, request);
+    if (route === "signup" && m === "POST") return await signup(env, request);
     let qm;
-    if ((qm = route.match(/^quote\/([a-f0-9]{64})$/)) && m === "GET") return viewQuote(env, request, qm[1]);
-    if ((qm = route.match(/^quote\/([a-f0-9]{64})\/accept$/)) && m === "POST") return acceptQuote(env, request, qm[1]);
+    if ((qm = route.match(/^quote\/([a-f0-9]{64})$/)) && m === "GET") return await viewQuote(env, request, qm[1]);
+    if ((qm = route.match(/^quote\/([a-f0-9]{64})\/accept$/)) && m === "POST") return await acceptQuote(env, request, qm[1]);
 
     const s = await getSession(env, request);
     if (!s) return bad("Please log in.", 401);
     if (route === "me" && m === "GET") return json({ email: s.email, role: s.role });
     if (s.role !== "client") return bad("This page is for clients. Use the admin page.", 403);
 
-    if (route === "dashboard" && m === "GET") return dashboard(env, s);
-    if (route === "kyc" && m === "POST") return kyc(env, request, s);
-    if (route === "kyc/start" && m === "POST") return kycStart(env, request, s);
-    if (route === "kyc/sync" && m === "POST") return kycSync(env, request, s);
-    if (route === "agreement/sign" && m === "POST") return signAgreement(env, request, s);
+    if (route === "dashboard" && m === "GET") return await dashboard(env, s);
+    if (route === "kyc" && m === "POST") return await kyc(env, request, s);
+    if (route === "kyc/start" && m === "POST") return await kycStart(env, request, s);
+    if (route === "kyc/sync" && m === "POST") return await kycSync(env, request, s);
+    if (route === "agreement/sign" && m === "POST") return await signAgreement(env, request, s);
     const pn = route.match(/^invoices\/(\d+)\/paid-notice$/);
-    if (pn && m === "POST") return paidNotice(env, request, s, Number(pn[1]));
+    if (pn && m === "POST") return await paidNotice(env, request, s, Number(pn[1]));
     const pp = route.match(/^invoices\/(\d+)\/proof$/);
-    if (pp && m === "POST") return paymentProof(env, request, s, Number(pp[1]));
+    if (pp && m === "POST") return await paymentProof(env, request, s, Number(pp[1]));
     const co = route.match(/^invoices\/(\d+)\/checkout$/);
-    if (co && m === "POST") return checkout(env, request, s, Number(co[1]));
+    if (co && m === "POST") return await checkout(env, request, s, Number(co[1]));
     const st = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
     if (!st || st.stage !== "active") return bad("Please finish the steps above first.", 403);
-    if (route === "orders" && m === "POST") return placeOrder(env, request, s);
-    if (route === "upload" && m === "POST") return upload(env, request, s);
+    if (route === "orders" && m === "POST") return await placeOrder(env, request, s);
+    if (route === "upload" && m === "POST") return await upload(env, request, s);
     const dl = route.match(/^documents\/(\d+)\/download$/);
-    if (dl && m === "GET") return download(env, request, s, Number(dl[1]));
+    if (dl && m === "GET") return await download(env, request, s, Number(dl[1]));
     return bad("Not found.", 404);
   } catch (e) {
     console.log("portal error", e && e.stack || e);
@@ -333,7 +333,12 @@ async function kycStart(env, request, s) {
   if (!(await rateLimit(env, "kycstart:" + s.client_id, 6, 24 * 60 * 60 * 1000))) return bad("Too many attempts today. Please upload photos instead.", 429);
   const c = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(s.client_id).first();
   if (c.stage !== "kyc") return bad("Your ID has already been received.");
-  const url = await diditStart(env, c, new URL(request.url).origin);
+  let url;
+  try { url = await diditStart(env, c, new URL(request.url).origin); }
+  catch (e) {
+    await audit(env, request, s.email, "kyc_auto_failed", String(e && e.message || e).slice(0, 400));
+    return bad("The automatic ID check could not start just now. Please try again in a few minutes, or use 'Upload photos' below.", 502);
+  }
   await audit(env, request, s.email, "kyc_auto_started", "didit");
   return json({ url });
 }

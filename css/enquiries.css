@@ -1,0 +1,44 @@
+/* Enquiries & Calls tab (portal admin) */
+.enq-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.enq-sum button{background:#fff;border:1px solid var(--rule);border-radius:6px;padding:12px 14px;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
+.enq-sum button[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
+.enq-sum b{display:block;font-size:1.6rem;line-height:1.1;color:var(--navy)}
+.enq-sum span{font-size:.82rem;color:var(--muted)}
+.enq-sum .warn b{color:var(--warn)}.enq-sum .ok b{color:var(--ok)}
+.enq-list{background:#fff;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.enq-row{border-bottom:1px solid var(--rule)}
+.enq-row:last-child{border-bottom:0}
+.enq-head{display:grid;grid-template-columns:1.4fr 1.2fr 1.6fr auto;gap:14px;align-items:center;padding:14px 16px;cursor:pointer;width:100%;background:none;border:0;text-align:left;font:inherit;color:inherit}
+.enq-head:hover{background:#fafbfd}
+.enq-who b{display:block;font-size:1rem}
+.enq-who small{color:var(--muted);font-size:.8rem;word-break:break-all}
+.enq-svc{font-size:.88rem;color:var(--ink)}
+.enq-next{font-size:.88rem;font-weight:600}
+.enq-next.warn{color:var(--warn)}.enq-next.ok{color:var(--ok)}.enq-next.calm{color:var(--muted);font-weight:500}
+.enq-steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.enq-steps span{font-size:.74rem;padding:2px 8px;border-radius:99px;background:var(--mist);color:var(--muted);white-space:nowrap}
+.enq-steps span.done{background:#e8f5ee;color:var(--ok)}
+.enq-arrow{font-size:1.1rem;color:var(--muted);transition:transform .15s}
+.enq-row.open .enq-arrow{transform:rotate(90deg)}
+.enq-body{display:none;padding:4px 16px 18px;background:#fafbfd;border-top:1px dashed var(--rule)}
+.enq-row.open .enq-body{display:block}
+.enq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+.enq-box{background:#fff;border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+.enq-box h4{margin:0 0 6px;font:700 .78rem var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.enq-box p{margin:4px 0;font-size:.9rem}
+.enq-quote{white-space:pre-wrap;font-size:.88rem;color:var(--ink);background:var(--mist);border-radius:4px;padding:8px 10px;margin-top:6px;max-height:180px;overflow:auto}
+.enq-save{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-top:14px}
+.enq-save select{width:auto}
+.enq-save textarea{flex:1;min-width:220px;min-height:60px}
+.pill.Call-booked{background:#eef3fb;color:var(--navy)}
+.pill.Quote-sent,.pill.Engagement-sent{background:#f3eefb;color:#5b3c99}
+.pill.Paid,.pill.Work-done{background:#e8f5ee;color:var(--ok)}
+.pill.Lost{background:#f2f2f2;color:#666}
+@media (max-width:760px){
+  .enq-sum{grid-template-columns:1fr 1fr}
+  .enq-head{grid-template-columns:1fr auto;gap:6px}
+  .enq-svc,.enq-next{grid-column:1/2}
+  .enq-head .pill{grid-row:1}
+  .enq-arrow{display:none}
+  .enq-grid{grid-template-columns:1fr}
+}

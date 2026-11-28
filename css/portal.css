@@ -89,3 +89,9 @@ th{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu
 .force-pass{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.72);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;overflow:auto}
 .force-pass .card{max-width:440px;width:100%}
 body.locked{overflow:hidden}
+
+.paytiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.paytile{display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;background:#fff;border:1.5px solid #c7cfdb;border-radius:8px;cursor:pointer;font:inherit;color:var(--navy);text-decoration:none;min-height:64px}
+.paytile:hover,.paytile:focus-visible{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,62,.18);outline:none}
+.paytile[disabled]{opacity:.55;cursor:wait}
+.paytile img{flex:none}.paytile span{display:grid;gap:2px}.paytile b{font-size:.98rem}.paytile small{color:#5b6780;font-size:.8rem}

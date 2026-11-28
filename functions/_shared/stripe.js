@@ -21,7 +21,7 @@ function formEncode(obj, prefix = "", out = []) {
 
 export async function stripePost(env, path, params, idempotencyKey) {
   if (!env.STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY missing");
-  const headers = { authorization: `Bearer ${String(env.STRIPE_SECRET_KEY).trim()}`, "content-type": "application/x-www-form-urlencoded" };
+  const headers = { authorization: `Bearer ${String(env.STRIPE_SECRET_KEY).replace(/\s/g, "")}`, "content-type": "application/x-www-form-urlencoded" };
   if (idempotencyKey) headers["idempotency-key"] = idempotencyKey;
   const r = await fetch("https://api.stripe.com/v1/" + path, { method: "POST", headers, body: formEncode(params).join("&") });
   const j = await r.json();
@@ -54,4 +54,17 @@ export async function markInvoicePaid(env, request, invoiceId, method, actor, re
   await sendEmail(env, inv.email, `Payment received: ${inv.number}`,
     `Dear ${inv.name},\n\nThank you, we have received your payment of ${gbp(inv.amount_pence)} for invoice ${inv.number}.${n && n.n ? "\n\nNext step: please upload the documents on your checklist so we can start: " : "\n\nWe will now start the work and keep you updated in your portal: "}${site}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   return { ok: true, inv };
+}
+
+// Live check that Stripe accepts the saved key, without revealing it. 401 = key rejected; 200 or 403 (restricted key) = key recognised.
+export async function stripePing(env) {
+  const k = String(env.STRIPE_SECRET_KEY || "").replace(/\s/g, "");
+  if (!k) return "off";
+  if (/[^\x21-\x7e]/.test(k)) return "key_has_invalid_characters";
+  const kind = k.startsWith("rk_live_") ? "restricted_live" : k.startsWith("sk_live_") ? "secret_live" : k.includes("_test_") ? "test_key" : "unknown_prefix";
+  try {
+    const r = await fetch("https://api.stripe.com/v1/checkout/sessions?limit=1", { headers: { authorization: "Bearer " + k } });
+    const j = await r.json().catch(() => ({}));
+    return `${kind}_status_${r.status}${j.error ? "_" + (j.error.code || j.error.type || "") : ""}`;
+  } catch (e) { return kind + "_fetch_failed_" + String(e && e.message || e).slice(0, 80); }
 }

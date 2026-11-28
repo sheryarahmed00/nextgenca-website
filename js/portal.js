@@ -234,18 +234,28 @@
   function payCard(inv, bank) {
     const box = el("div", { role: "status" });
     const opts = [];
-    const stripeBtn = (kind, label, cls) => el("button", { class: cls, type: "button", onclick: async ev => {
-      ev.target.disabled = true; msg(box, "");
+    // One tile per way to pay. Apple Pay shows on Apple devices, Google Pay elsewhere; both open the same secure Stripe page.
+    const tile = (icon, title, sub, attrs) => el(attrs.href ? "a" : "button", Object.assign({ class: "paytile", type: attrs.href ? null : "button" }, attrs),
+      el("img", { src: "/img/pay/" + icon + ".svg", alt: "", width: 30, height: 30 }), el("span", {}, el("b", {}, title), el("small", {}, sub)));
+    const go = kind => async ev => {
+      const t = ev.currentTarget; t.disabled = true; msg(payMsg, "Opening the secure payment page…", true);
       try { const r = await api("/api/portal/invoices/" + inv.id + "/checkout", { method: "POST", body: { kind } }); location.href = r.url; }
-      catch (err) { msg(box, err.message); ev.target.disabled = false; }
-    } }, label);
-    if (bank.stripe_card) opts.push(stripeBtn("card", "Pay now: Apple Pay, Google Pay or card", "btn gold wide"));
-    else if (bank.pay_link) opts.push(el("a", { class: "btn gold wide", href: bank.pay_link, target: "_blank", rel: "noopener" }, "Pay now (Apple Pay, Google Pay or card)"));
-    if (bank.stripe_dd) opts.push(stripeBtn("dd", "Pay by Direct Debit", "btn wide"));
-    else if (bank.dd_link) opts.push(el("a", { class: "btn wide", href: bank.dd_link, target: "_blank", rel: "noopener" }, "Pay by Direct Debit"));
+      catch (err) { msg(payMsg, err.message); t.disabled = false; }
+    };
+    const payMsg = el("div", { role: "status" });
+    const tiles = [];
+    const apple = !!window.ApplePaySession;
+    if (bank.stripe_card) {
+      tiles.push(apple ? tile("phone", "Apple Pay", "Pay with your iPhone or Mac", { onclick: go("card") }) : tile("phone", "Google Pay", "Pay with your phone or Chrome", { onclick: go("card") }));
+      tiles.push(tile("card", "Debit or credit card", "Visa, Mastercard, Amex", { onclick: go("card") }));
+    } else if (bank.pay_link) tiles.push(tile("card", "Card, Apple Pay or Google Pay", "Opens our payment page", { href: bank.pay_link, target: "_blank", rel: "noopener" }));
+    if (bank.stripe_dd) tiles.push(tile("dd", "Direct Debit", "Pay from your bank account", { onclick: go("dd") }));
+    else if (bank.dd_link) tiles.push(tile("dd", "Direct Debit", "Pay from your bank account", { href: bank.dd_link, target: "_blank", rel: "noopener" }));
+    if (bank.account_number) tiles.push(tile("bank", "Bank transfer", "Use the details below", { onclick: () => { const d = document.getElementById("bankDetails" + inv.id); if (d) d.scrollIntoView({ behavior: "smooth", block: "center" }); } }));
+    if (tiles.length) opts.push(el("div", { class: "paytiles" }, tiles), payMsg);
     if (bank.account_number) {
       opts.push(el("p", { class: "muted", style: "margin:8px 0 0" }, "Or pay by bank transfer:"));
-      opts.push(el("div", { class: "bank" },
+      opts.push(el("div", { class: "bank", id: "bankDetails" + inv.id },
         bank.account_name ? copyRow("Name", bank.account_name) : null,
         copyRow("Sort code", bank.sort_code), copyRow("Account", bank.account_number),
         copyRow("Reference", inv.number), bank.bank_name ? el("div", {}, el("span", {}, "Bank"), el("span", {}, bank.bank_name)) : null));

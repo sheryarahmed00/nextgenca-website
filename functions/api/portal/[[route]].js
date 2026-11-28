@@ -6,7 +6,7 @@ import {
   checkUpload, sniffOk, downloadResponse, nowIso, getSettings, storeUpload, gbp,
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
-import { stripePost } from "../../_shared/stripe.js";
+import { stripePost, stripePing } from "../../_shared/stripe.js";
 import { diditPing, diditState, diditOn, diditStart, diditDecision, diditApply, ensureKycTable, ensureQuoteTables, quoteEvent, expireQuotes, invoiceFromQuote } from "../../_shared/autoflow.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
@@ -27,7 +27,7 @@ export async function onRequest(context) {
     }
     if (route === "services-list" && m === "GET") return json({ services: SERVICES });
     if (route === "config" && m === "GET" && new URL(request.url).searchParams.get("check") === "1")
-      return json({ idCheck: (await rateLimit(env, "didit-ping", 10, 60 * 60 * 1000)) ? await diditPing(env) : "try_later" });
+      return json({ idCheck: (await rateLimit(env, "didit-ping", 10, 60 * 60 * 1000)) ? await diditPing(env) : "try_later", payCheck: await stripePing(env) });
     if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "", idCheck: diditState(env) });
     if (route === "signup" && m === "POST") return await signup(env, request);
     let qm;
@@ -324,7 +324,12 @@ async function checkout(env, request, s, id) {
     expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
   };
   if (kind === "card") params.payment_method_options = { card: { request_three_d_secure: "automatic" } };
-  const session = await stripePost(env, "checkout/sessions", params);
+  let session;
+  try { session = await stripePost(env, "checkout/sessions", params); }
+  catch (e) {
+    await audit(env, request, s.email, "stripe_checkout_failed", `${inv.number} ${kind} ${String(e && e.message || e).replace(/[sr]k_[A-Za-z0-9_*.]+/g, "[key]").slice(0, 300)}`);
+    return bad("The payment page could not open just now. Please try again in a few minutes, or pay by bank transfer below.", 400);
+  }
   await audit(env, request, s.email, "stripe_checkout_started", `${inv.number} ${kind} ${session.id}`);
   return json({ url: session.url });
 }

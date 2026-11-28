@@ -23,6 +23,7 @@
       <button role="tab" aria-selected="true" data-tab="tClients">Clients</button>
       <button role="tab" aria-selected="false" data-tab="tSignups">To do <span id="todoCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tOrders">Orders <span id="newCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tEnquiries">Enquiries &amp; Calls <span id="enqCount"></span></button>
       <button role="tab" aria-selected="false" data-tab="tAudit">Activity log</button>
       <button role="tab" aria-selected="false" data-tab="tSettings">Settings</button>
     </div>
@@ -64,6 +65,17 @@
       </div>
     </div>
 
+    <div class="tab hide" id="tEnquiries">
+      <div class="card" style="padding:14px">
+        <div class="row" style="gap:10px;flex-wrap:wrap">
+          <input id="enqSearch" type="search" placeholder="Search name, email, service" aria-label="Search enquiries" style="flex:1;min-width:200px">
+          <select id="enqFilter" style="width:auto" aria-label="Filter by status"><option value="">All statuses</option></select>
+        </div>
+        <p class="muted" id="enqSync" style="margin:8px 0 0"></p>
+      </div>
+      <div id="enqBox"></div>
+    </div>
+
     <div class="tab hide" id="tSignups">
       <div class="card"><h2>To do</h2><p class="muted">New sign-ups waiting for ID, ID to check, and unpaid invoices.</p><div id="signupsBox"></div></div>
     </div>
@@ -97,5 +109,6 @@
 </main>
 <script src="/js/portal-common.js"></script>
 <script src="/js/portal-admin.js"></script>
+<script src="/js/portal-enquiries.js"></script>
 </body>
 </html>

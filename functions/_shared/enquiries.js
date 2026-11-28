@@ -20,6 +20,7 @@ export async function ensureEnquirySchema(env) {
       status TEXT NOT NULL DEFAULT 'New', notes TEXT,
       created_at TEXT NOT NULL, synced_at TEXT, updated_at TEXT)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS i_enq_status ON enquiries(status)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS sync_senders (email TEXT PRIMARY KEY, aud TEXT NOT NULL, created_at TEXT NOT NULL)`),
   ]);
   ready = true;
 }

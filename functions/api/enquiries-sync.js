@@ -1,25 +1,46 @@
 // POST /api/enquiries-sync
 // Called every 15 minutes by the Google Apps Script running in Sheryar's and Fiza's
-// Google accounts. Auth: "Authorization: Bearer <SYNC_KEY>" (Cloudflare secret).
+// Google accounts. Auth: "Authorization: Bearer <Google ID token>" from
+// ScriptApp.getIdentityToken(). The token proves which Google account sent it; only
+// sheryar@ and fiza@/info@nextgenca.co.uk are accepted, and each account is pinned to
+// the Apps Script project that first synced from it. (A SYNC_KEY secret also works.)
 // Body: { mailbox: "Sheryar" | "Fiza", rows: [ { email, name, phone, service, query,
 //         form_at, call_at, call_booked_at, last_at, last_from, said, count, link } ] }
-import { json, bad, ensureSchema, safeEqual, nowIso } from "../_shared/portal.js";
+import { json, bad, ensureSchema, safeEqual, nowIso, isAdminEmail } from "../_shared/portal.js";
+import { verifyGoogleIdToken } from "../_shared/google-id.js";
+
+const SENDERS = { "sheryar@nextgenca.co.uk": "Sheryar", "fiza@nextgenca.co.uk": "Fiza", "info@nextgenca.co.uk": "Fiza" };
 import { ensureEnquirySchema, enqEmail, enqText, enqDate, enqLink, MAILBOXES } from "../_shared/enquiries.js";
 
 export async function onRequestPost({ request, env }) {
   try {
-    const key = String(env.SYNC_KEY || "");
     const got = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-    if (key.length < 32 || !safeEqual(got, key)) return bad("Not allowed.", 403);
-
     let b;
     try { b = await request.json(); } catch { return bad("Bad JSON."); }
-    const box = MAILBOXES[b && b.mailbox];
-    if (!box) return bad("Unknown mailbox.");
-    const rows = Array.isArray(b.rows) ? b.rows.slice(0, 500) : [];
 
     await ensureSchema(env);
     await ensureEnquirySchema(env);
+
+    let mailbox = null;
+    const key = String(env.SYNC_KEY || "");
+    if (key.length >= 32 && safeEqual(got, key)) {
+      mailbox = b && b.mailbox;
+    } else if (got.split(".").length === 3) {
+      const claims = await verifyGoogleIdToken(got);
+      const email = claims && String(claims.email).toLowerCase();
+      if (!claims || !SENDERS[email] || !isAdminEmail(env, email)) return bad("Not allowed.", 403);
+      // pin each account to the first Apps Script project (token audience) that synced from it
+      const pin = await env.DB.prepare("SELECT aud FROM sync_senders WHERE email = ?").bind(email).first();
+      if (pin && pin.aud !== String(claims.aud)) return bad("Not allowed.", 403);
+      if (!pin) await env.DB.prepare("INSERT INTO sync_senders (email, aud, created_at) VALUES (?, ?, ?)").bind(email, String(claims.aud), nowIso()).run();
+      mailbox = SENDERS[email];
+    } else {
+      return bad("Not allowed.", 403);
+    }
+    const box = MAILBOXES[mailbox];
+    if (!box) return bad("Unknown mailbox.");
+    b.mailbox = mailbox;
+    const rows = Array.isArray(b.rows) ? b.rows.slice(0, 500) : [];
 
     const now = nowIso();
     let saved = 0;

@@ -54,3 +54,11 @@
 .enq-subj{font-size:.8rem;font-weight:700;color:var(--navy);margin-bottom:4px}
 .enq-text{white-space:pre-wrap;font-size:.92rem;line-height:1.55;word-break:break-word}
 @media (max-width:760px){.enq-bubble{max-width:100%}}
+.enq-stages{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.enq-stages button{font:700 .88rem var(--body);background:#fff;border:1px solid var(--rule);border-radius:99px;padding:8px 14px;cursor:pointer;color:var(--muted)}
+.enq-stages button[aria-selected="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.enq-n{display:inline-block;min-width:22px;padding:0 6px;border-radius:99px;background:var(--mist);color:var(--navy);font-size:.78rem;text-align:center}
+.enq-stages button[aria-selected="true"] .enq-n{background:var(--gold);color:#fff}
+.enq-wait{margin:0 0 10px;color:var(--warn);font-weight:700;font-size:.9rem}
+.enq-wait:empty{display:none}
+.pill.Not-a-lead{background:#f2f2f2;color:#888}

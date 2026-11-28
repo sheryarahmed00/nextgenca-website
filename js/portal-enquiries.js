@@ -3,7 +3,7 @@
   const { api, el, msg, pill } = window.P;
   const $ = id => document.getElementById(id);
   if (!$("tEnquiries")) return;
-  let loaded = false, statuses = [], items = [], view = "all";
+  let loaded = false, statuses = [], items = [], view = "active";
 
   const now = () => Date.now();
   const t = v => (v ? new Date(v).getTime() : 0);
@@ -34,18 +34,34 @@
       : { at: e.fiza_last_at, from: e.fiza_last_from, who: "Fiza" };
   }
   const callUpcoming = e => e.call_at && t(e.call_at) > now();
-  const closed = e => ["Paid", "Work done", "Lost"].includes(e.status);
+  const won = e => ["Paid", "Work done"].includes(e.status);
+  const lost = e => e.status === "Lost";
+  const notLead = e => e.status === "Not a lead";
+  const closed = e => won(e) || lost(e) || notLead(e);
   const waiting = e => { const m = lastMail(e); return !closed(e) && m && m.from === "Client"; };
+  // we wrote last, more than 3 days ago, no call coming up
+  const noReply = e => { const m = lastMail(e); return !closed(e) && !callUpcoming(e) && m && m.from !== "Client" && now() - t(m.at) > 3 * 864e5; };
+  const active = e => !closed(e) && !noReply(e);
+  const STAGES = [
+    ["active", "Active", active],
+    ["noreply", "No reply", noReply],
+    ["won", "Closed – won", won],
+    ["lost", "Closed – lost", lost],
+    ["notlead", "Not a lead", notLead],
+    ["all", "All", () => true],
+  ];
 
   // One plain sentence: what to do next
   function nextStep(e) {
+    if (e.status === "Not a lead") return ["calm", "Not a lead"];
     if (e.status === "Lost") return ["calm", "Closed – lost"];
-    if (e.status === "Work done") return ["calm", "Done"];
+    if (e.status === "Work done") return ["ok", "Closed – work done"];
     if (callUpcoming(e)) return ["ok", "Call " + dayTime(e.call_at) + (e.call_with ? " with " + e.call_with : "")];
     const m = lastMail(e);
     if (waiting(e)) return ["warn", "Client is waiting for a reply (" + ago(m.at) + ")"];
     if (e.status === "Paid") return ["ok", "Paid – start the work"];
     if (e.status === "Quote sent" || e.status === "Engagement sent") return ["calm", e.status + " – waiting for client"];
+    if (noReply(e)) return ["warn", "No reply from client since " + day(m.at) + " – follow up?"];
     if (m) return ["calm", "We replied " + ago(m.at)];
     if (e.form_at) return ["warn", "New enquiry – not answered yet"];
     return ["calm", "No action needed"];
@@ -183,16 +199,13 @@
 
   function filtered() {
     const q = $("enqSearch").value.trim().toLowerCase();
+    const stage = STAGES.find(x => x[0] === view) || STAGES[0];
     return items.filter(e => {
       if (q && ![e.name, e.email, e.service, e.phone].join(" ").toLowerCase().includes(q)) return false;
-      if (view === "new") return e.status === "New";
-      if (view === "calls") return callUpcoming(e);
-      if (view === "waiting") return waiting(e);
-      if (view === "open") return !closed(e);
-      return true;
+      return stage[2](e);
     }).sort((a, b) => {
       // waiting clients first, then upcoming calls (soonest first), then newest activity
-      const rank = e => waiting(e) ? 0 : callUpcoming(e) ? 1 : closed(e) ? 3 : 2;
+      const rank = e => waiting(e) ? 0 : callUpcoming(e) ? 1 : 2;
       if (rank(a) !== rank(b)) return rank(a) - rank(b);
       if (rank(a) === 1) return t(a.call_at) - t(b.call_at);
       const latest = e => Math.max(t(e.form_at), t(e.call_booked_at), t(e.sheryar_last_at), t(e.fiza_last_at));
@@ -201,16 +214,14 @@
   }
 
   function summary() {
-    const n = { open: items.filter(e => !closed(e)).length, new: items.filter(e => e.status === "New").length,
-      calls: items.filter(callUpcoming).length, waiting: items.filter(waiting).length };
-    const btn = (key, cls, label) => el("button", { type: "button", class: cls, "aria-pressed": view === key ? "true" : "false",
-      onclick: () => { view = view === key ? "all" : key; render(); } }, el("b", {}, String(n[key])), el("span", {}, label));
-    $("enqSum").replaceChildren(
-      btn("waiting", "warn", "Waiting for our reply"),
-      btn("calls", "ok", "Calls coming up"),
-      btn("new", "", "New enquiries"),
-      btn("open", "", "All open"));
-    $("enqCount").textContent = n.waiting ? "(" + n.waiting + ")" : "";
+    $("enqSum").replaceChildren(...STAGES.map(([key, label, fn]) => {
+      const n = items.filter(fn).length;
+      return el("button", { type: "button", role: "tab", "aria-selected": view === key ? "true" : "false",
+        onclick: () => { view = key; render(); } }, label + " ", el("span", { class: "enq-n" }, String(n)));
+    }));
+    const w = items.filter(waiting).length;
+    $("enqCount").textContent = w ? "(" + w + ")" : "";
+    $("enqWait").textContent = w ? w + (w === 1 ? " client is" : " clients are") + " waiting for our reply – shown at the top of Active." : "";
   }
 
   function render() {
@@ -218,7 +229,7 @@
     const list = filtered();
     $("enqBox").replaceChildren(list.length
       ? el("div", { class: "enq-list" }, list.map(row))
-      : el("div", { class: "card" }, el("p", { class: "muted" }, view === "all" ? "No enquiries yet." : "Nothing here right now. Tap the box again to see everyone.")));
+      : el("div", { class: "card" }, el("p", { class: "muted" }, "Nothing in this tab right now.")));
   }
 
   async function load() {

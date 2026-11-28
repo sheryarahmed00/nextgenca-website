@@ -3,7 +3,7 @@
 // Fiza's Google accounts (POST /api/enquiries-sync). Status and notes are typed
 // by the team in the admin page and are never overwritten by the sync.
 
-export const ENQ_STATUSES = ["New", "Call booked", "Quote sent", "Engagement sent", "Paid", "Work done", "Lost"];
+export const ENQ_STATUSES = ["New", "Call booked", "Quote sent", "Engagement sent", "Paid", "Work done", "Lost", "Not a lead"];
 export const MAILBOXES = { Sheryar: "sheryar", Fiza: "fiza" };
 
 let ready = false;

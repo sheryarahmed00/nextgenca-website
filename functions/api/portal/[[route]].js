@@ -62,6 +62,12 @@ async function loginRequest(env, request, knownEmail) {
   if (!(await rateLimit(env, "em-req:" + email, 3, 15 * 60 * 1000))) return bad("Too many codes requested. Please wait 15 minutes.", 429);
 
   let allowed = isAdminEmail(env, email);
+  // Staff who have set a username and password log in at /staff-login, so no email code is sent
+  if (allowed) {
+    let hasPassword = null;
+    try { hasPassword = await env.DB.prepare("SELECT username FROM staff_logins WHERE email = ?").bind(email).first(); } catch (e) {}
+    if (hasPassword) return bad("Staff log in with username and password at nextgenca.co.uk/staff-login (no email code needed).", 400);
+  }
   if (!allowed) {
     const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ? AND active = 1").bind(email).first();
     allowed = !!c;

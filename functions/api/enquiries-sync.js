@@ -55,8 +55,9 @@ export async function onRequestPost({ request, env }) {
       const stmts = chunk.map(r => {
         const e = byEmail[r.email] || {};
         const m = {
-          name: e.name || r.name || null, phone: e.phone || r.phone || null,
-          service: e.service || r.service || null, query: e.query || r.query || null,
+          // latest form details win; a mailbox with no form email keeps what is there
+          name: r.name || e.name || null, phone: r.phone || e.phone || null,
+          service: r.service || e.service || null, query: r.query || e.query || null,
           form_at: minDate(e.form_at, r.form_at),
           call_at: e.call_at ?? null, call_booked_at: e.call_booked_at ?? null, call_with: e.call_with ?? null,
         };

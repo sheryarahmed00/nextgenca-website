@@ -18,6 +18,8 @@ async function ensureStaff(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS staff_logins (
     username TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, pass_hash TEXT NOT NULL, salt TEXT NOT NULL,
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`).run();
+  // must_change = 1 -> next login is forced to pick a new password. Existing rows get 1 once, when the column is added.
+  try { await env.DB.prepare("ALTER TABLE staff_logins ADD COLUMN must_change INTEGER NOT NULL DEFAULT 1").run(); } catch (e) {}
   ready = true;
 }
 
@@ -65,8 +67,8 @@ export async function onRequest({ request, env, params }) {
     if (s.role !== "admin") return bad("Not allowed.", 403);
 
     if (route === "me" && m === "GET") {
-      const row = await env.DB.prepare("SELECT username FROM staff_logins WHERE email = ?").bind(s.email).first();
-      return json({ email: s.email, username: row ? row.username : null });
+      const row = await env.DB.prepare("SELECT username, must_change FROM staff_logins WHERE email = ?").bind(s.email).first();
+      return json({ email: s.email, username: row ? row.username : null, mustChange: !row || !!row.must_change });
     }
 
     if (route === "password" && m === "POST") {
@@ -77,12 +79,14 @@ export async function onRequest({ request, env, params }) {
       if (password.toLowerCase().includes(username)) return bad("Password must not contain the username.");
       const taken = await env.DB.prepare("SELECT email FROM staff_logins WHERE username = ?").bind(username).first();
       if (taken && taken.email !== s.email) return bad("That username is taken.");
+      const old = await env.DB.prepare("SELECT pass_hash, salt FROM staff_logins WHERE email = ?").bind(s.email).first();
+      if (old && safeEqual(await hashPassword(password, old.salt), old.pass_hash)) return bad("Please choose a new password, not the old one.");
       const salt = randomToken(16);
       const hash = await hashPassword(password, salt);
       const now = nowIso();
       await env.DB.batch([
         env.DB.prepare("DELETE FROM staff_logins WHERE email = ?").bind(s.email),
-        env.DB.prepare("INSERT INTO staff_logins (username, email, pass_hash, salt, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)")
+        env.DB.prepare("INSERT INTO staff_logins (username, email, pass_hash, salt, created_at, updated_at, must_change) VALUES (?, ?, ?, ?, ?, ?, 0)")
           .bind(username, s.email, hash, salt, now, now),
         // sign out every other session of this person
         env.DB.prepare("DELETE FROM sessions WHERE email = ? AND token_hash != ?").bind(s.email, s.token_hash),

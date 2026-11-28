@@ -86,7 +86,7 @@ async function createClient(env, request, s) {
   await audit(env, request, s.email, "client_created", `#${r.meta.last_row_id} ${email}`);
   if (b.invite) {
     await sendEmail(env, email, "Your NextGen client portal is ready",
-      `Dear ${name},\n\nYour NextGen Chartered Accountant client portal is ready. You can see the work we have done for you, download your documents, upload records and order new services.\n\nLog in here: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\nEnter this email address (${email}) and we will email you a one-time login code. There is no password to remember.\n\nKind regards,\nNextGen Chartered Accountant`);
+      `Dear ${name},\n\nYour NextGen Chartered Accountant client portal is ready. You can see the work we have done for you, download your documents, upload records and order new services.\n\nLog in here: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\nThe first time, enter this email address (${email}) and we will email you a one-time login code. You will then choose a password and link a free authenticator app (Google or Microsoft Authenticator) on your phone. After that you log in with your email, password and the 6-digit code from the app.\n\nKind regards,\nNextGen Chartered Accountant`);
   }
   return json({ ok: true, id: r.meta.last_row_id });
 }

@@ -7,7 +7,7 @@ import {
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
 
-const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen, a 6-digit code is on its way. It expires in 10 minutes." };
+const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -71,6 +71,12 @@ async function loginRequest(env, request, knownEmail) {
   if (!allowed) {
     const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ? AND active = 1").bind(email).first();
     allowed = !!c;
+  }
+  if (allowed && !isAdminEmail(env, email)) {
+    // clients who set a password + authenticator log in with those; no email code is sent
+    let secured = null;
+    try { secured = await env.DB.prepare("SELECT a.enabled FROM client_auth a JOIN clients c ON c.id = a.client_id WHERE c.email = ? AND a.enabled = 1").bind(email).first(); } catch (e) {}
+    if (secured) { await audit(env, request, email, "login_code_skipped_has_password"); return json(GENERIC_SENT); }
   }
   if (!allowed) {
     await audit(env, request, email, "login_code_unknown_email");

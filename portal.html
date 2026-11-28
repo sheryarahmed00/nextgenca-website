@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/portal.css">
+<link rel="stylesheet" href="/css/portal.css?v=20261128d">
 </head>
 <body>
 <header class="top"><div class="in">
@@ -28,8 +28,19 @@
       </div>
       <div class="tab" id="tLogin">
         <h1>Client login</h1>
-        <p class="muted">Enter your email. We will email you a 6-digit code. No password needed.</p>
-        <form id="emailForm" novalidate>
+        <form id="passForm" novalidate>
+          <label for="pEmail">Email address</label>
+          <input id="pEmail" name="email" type="email" autocomplete="username" required>
+          <label for="pPass">Password</label>
+          <input id="pPass" name="password" type="password" autocomplete="current-password" required maxlength="200">
+          <label for="pCode">6-digit code from your authenticator app</label>
+          <input id="pCode" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+          <p style="margin-top:16px"><button class="btn gold wide" type="submit">Log in</button></p>
+          <div id="passMsg" role="status" aria-live="polite"></div>
+        </form>
+        <p class="muted" style="margin-top:14px">First time here, or no password yet? <button type="button" class="linkbtn" id="showEmailLogin">Get a one-time code by email</button></p>
+        <form id="emailForm" class="hide" novalidate>
+          <p class="muted">Enter your email. We will email you a 6-digit code to log in, then you will set your password and authenticator app.</p>
           <label for="email">Email address</label>
           <input id="email" name="email" type="email" autocomplete="email" required>
           <p style="margin-top:16px"><button class="btn gold wide" type="submit">Email me a login code</button></p>
@@ -54,6 +65,34 @@
       </div>
       <p class="secure">🔒 <span>Your documents are stored privately and can only be opened after logging in. We never send your documents as email attachments.</span></p>
       <p class="muted" style="text-align:center;margin-top:10px">NextGen staff? <a href="/staff-login">Log in with username and password</a></p>
+    </div>
+  </section>
+
+  <!-- Secure the account: password + authenticator app (once) -->
+  <section class="login hide" id="stepSecure" style="max-width:560px">
+    <div class="card">
+      <h1>Secure your account</h1>
+      <p class="muted">One time only. From now on you will log in with your email, your password and a code from an authenticator app on your phone.</p>
+      <ol class="secure-steps">
+        <li><b>Install an authenticator app</b> on your phone: Google Authenticator or Microsoft Authenticator (free).</li>
+        <li><b>Add NextGen to the app:</b> scan this QR code with the app.
+          <div id="qrBox" class="qr-box"></div>
+          <p class="muted">On this phone? <a id="otpLink" href="#">Open in authenticator app</a>. Or type this key in the app ("Enter a setup key"):</p>
+          <p class="setup-key" id="setupKey"></p>
+        </li>
+        <li><b>Choose your password</b> and type the 6-digit code the app shows.
+          <form id="secureForm" novalidate>
+            <label for="nPass">New password (at least 10 characters, letters and a number)</label>
+            <input id="nPass" type="password" autocomplete="new-password" required maxlength="200">
+            <label for="nPass2">Type the password again</label>
+            <input id="nPass2" type="password" autocomplete="new-password" required maxlength="200">
+            <label for="nCode">6-digit code from the app</label>
+            <input id="nCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+            <p style="margin-top:16px"><button class="btn gold wide" type="submit">Finish and open my portal</button></p>
+            <div id="secureMsg" role="status" aria-live="polite"></div>
+          </form>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -146,7 +185,8 @@
     </div>
   </section>
 </main>
-<script src="/js/portal-common.js?v=20261128c"></script>
-<script src="/js/portal.js"></script>
+<script src="/js/vendor/qrcode.js?v=1"></script>
+<script src="/js/portal-common.js?v=20261128d"></script>
+<script src="/js/portal.js?v=20261128d"></script>
 </body>
 </html>

@@ -79,3 +79,13 @@ th{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu
 .todo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rule);flex-wrap:wrap}
 .todo.done b{color:var(--ok)}
 .hide-locked{display:none!important}
+
+.linkbtn{background:none;border:0;padding:0;color:var(--gold,#b8892b);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.secure-steps{padding-left:20px;margin:14px 0 0}
+.secure-steps>li{margin:0 0 18px}
+.qr-box{width:200px;height:200px;margin:12px 0;background:#fff;padding:6px;border:1px solid #ddd;border-radius:8px}
+.qr-box svg{width:100%;height:100%}
+.setup-key{font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:1px;word-break:break-all;background:#f5f2ea;padding:8px 10px;border-radius:6px}
+.force-pass{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.72);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;overflow:auto}
+.force-pass .card{max-width:440px;width:100%}
+body.locked{overflow:hidden}

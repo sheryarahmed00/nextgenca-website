@@ -4,7 +4,7 @@
   const gbp = p => "£" + (p / 100).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   let currentEmail = "", turnstileToken = "", turnstileId = null;
 
-  function show(id) { ["stepEmail", "stepCode", "dash"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
+  function show(id) { ["stepEmail", "stepCode", "stepSecure", "dash"].forEach(x => $(x).classList.toggle("hide", x !== id)); }
 
   async function start() {
     tabs($("authTabs"));
@@ -12,7 +12,7 @@
     try {
       const me = await api("/api/portal/me");
       if (me.role === "admin") { location.replace("/portal-admin"); return; }
-      currentEmail = me.email; loadDash();
+      currentEmail = me.email; await afterLogin();
     } catch (e) { show("stepEmail"); }
     try {
       const sl = await api("/api/portal/services-list");
@@ -59,13 +59,59 @@
 
   $("backBtn").addEventListener("click", () => show("stepEmail"));
 
+  // ---- password + authenticator login ----
+  $("showEmailLogin").addEventListener("click", () => {
+    $("emailForm").classList.remove("hide"); $("email").value = $("pEmail").value; $("email").focus();
+  });
+
+  $("passForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const f = ev.target; busy(f, true); msg($("passMsg"), "");
+    try {
+      const email = $("pEmail").value.trim();
+      await api("/api/portal-auth/login", { method: "POST", body: { email, password: $("pPass").value, code: $("pCode").value } });
+      currentEmail = email; $("pPass").value = ""; $("pCode").value = "";
+      await loadDash();
+    } catch (e) { msg($("passMsg"), e.message); $("pCode").value = ""; }
+    busy(f, false);
+  });
+
+  // After an email-code login: clients without a password + authenticator must set them up first.
+  async function afterLogin() {
+    let st;
+    try { st = await api("/api/portal-auth/status"); } catch (e) { return loadDash(); }
+    if (st.enabled) return loadDash();
+    show("stepSecure");
+    $("who").classList.remove("hide"); $("whoEmail").textContent = currentEmail;
+    try {
+      const r = await api("/api/portal-auth/setup/start", { method: "POST", body: {} });
+      $("setupKey").textContent = r.secret;
+      $("otpLink").href = r.uri;
+      const qr = window.qrcode(0, "M"); qr.addData(r.uri); qr.make();
+      $("qrBox").innerHTML = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true });
+    } catch (e) { msg($("secureMsg"), e.message); }
+  }
+
+  $("secureForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const f = ev.target; msg($("secureMsg"), "");
+    if ($("nPass").value !== $("nPass2").value) { msg($("secureMsg"), "The two passwords do not match."); return; }
+    busy(f, true);
+    try {
+      await api("/api/portal-auth/setup/finish", { method: "POST", body: { password: $("nPass").value, code: $("nCode").value } });
+      $("nPass").value = $("nPass2").value = $("nCode").value = "";
+      await loadDash();
+    } catch (e) { msg($("secureMsg"), e.message); }
+    busy(f, false);
+  });
+
   $("codeForm").addEventListener("submit", async ev => {
     ev.preventDefault();
     const f = ev.target; busy(f, true); msg($("codeMsg"), "");
     try {
       const r = await api("/api/portal/login/verify", { method: "POST", body: { email: currentEmail, code: $("code").value } });
       if (r.role === "admin") { location.replace("/portal-admin"); return; }
-      await loadDash();
+      await afterLogin();
     } catch (e) { msg($("codeMsg"), e.message); }
     busy(f, false);
   });

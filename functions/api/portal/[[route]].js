@@ -6,6 +6,7 @@ import {
   checkUpload, sniffOk, downloadResponse, nowIso, getSettings, storeUpload, gbp,
   SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
+import { stripePost } from "../../_shared/stripe.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen and has no password set yet, a 6-digit code is on its way (it expires in 10 minutes). If you have already set a password, log in with your password and authenticator code instead." };
 
@@ -37,6 +38,8 @@ export async function onRequest(context) {
     if (route === "agreement/sign" && m === "POST") return signAgreement(env, request, s);
     const pn = route.match(/^invoices\/(\d+)\/paid-notice$/);
     if (pn && m === "POST") return paidNotice(env, request, s, Number(pn[1]));
+    const co = route.match(/^invoices\/(\d+)\/checkout$/);
+    if (co && m === "POST") return checkout(env, request, s, Number(co[1]));
     const st = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
     if (!st || st.stage !== "active") return bad("Please finish the steps above first.", 403);
     if (route === "orders" && m === "POST") return placeOrder(env, request, s);
@@ -142,7 +145,7 @@ async function dashboard(env, s) {
   let bank = null;
   if (inv.some(i => i.status === "unpaid")) {
     const st = await getSettings(env);
-    bank = { bank_name: st.bank_name, account_name: st.account_name, sort_code: st.sort_code, account_number: st.account_number, pay_link: st.pay_link, dd_link: st.dd_link };
+    bank = { bank_name: st.bank_name, account_name: st.account_name, sort_code: st.sort_code, account_number: st.account_number, pay_link: st.pay_link, dd_link: st.dd_link, stripe_card: !!env.STRIPE_SECRET_KEY, stripe_dd: !!env.STRIPE_SECRET_KEY && env.STRIPE_BACS === "1" };
   }
   return json({
     client: client.results[0], services: services.results, documents: documents.results.filter(d => !d.category.startsWith("kyc")),
@@ -282,4 +285,33 @@ async function download(env, request, s, id) {
   if (!obj) return bad("File missing. Please contact us.", 404);
   await audit(env, request, s.email, "client_download", `#${id} ${d.filename}`);
   return downloadResponse(obj, d.filename, d.content_type);
+}
+
+// Starts a Stripe Checkout payment for one invoice. Amount comes from our database, never from the browser.
+async function checkout(env, request, s, id) {
+  if (!env.STRIPE_SECRET_KEY) return bad("Card payments are not switched on yet. Please pay by bank transfer.");
+  if (!(await rateLimit(env, "checkout:" + s.client_id, 20, 60 * 60 * 1000))) return bad("Too many attempts. Please try again later.", 429);
+  const inv = await env.DB.prepare("SELECT * FROM invoices WHERE id = ? AND client_id = ?").bind(id, s.client_id).first();
+  if (!inv || inv.status !== "unpaid") return bad("This invoice is not open for payment.", 404);
+  const e = inv.engagement_id ? await env.DB.prepare("SELECT status FROM engagements WHERE id = ?").bind(inv.engagement_id).first() : null;
+  if (e && e.status !== "signed") return bad("Please sign the agreement first.");
+  const kind = (await body(request)).kind === "dd" ? "dd" : "card";
+  if (kind === "dd" && env.STRIPE_BACS !== "1") return bad("Direct Debit is not available yet.");
+  const origin = new URL(request.url).origin;
+  const params = {
+    mode: "payment",
+    customer_email: s.email,
+    client_reference_id: String(inv.id),
+    payment_method_types: kind === "dd" ? ["bacs_debit"] : ["card"],
+    line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: inv.amount_pence, product_data: { name: `${inv.number}: ${inv.description}`.slice(0, 250) } } }],
+    metadata: { invoice_id: String(inv.id), invoice_number: inv.number },
+    payment_intent_data: { description: `NextGen invoice ${inv.number}`, metadata: { invoice_id: String(inv.id), invoice_number: inv.number } },
+    success_url: `${origin}/portal?paid=${inv.id}`,
+    cancel_url: `${origin}/portal`,
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+  };
+  if (kind === "card") params.payment_method_options = { card: { request_three_d_secure: "automatic" } };
+  const session = await stripePost(env, "checkout/sessions", params);
+  await audit(env, request, s.email, "stripe_checkout_started", `${inv.number} ${kind} ${session.id}`);
+  return json({ url: session.url });
 }

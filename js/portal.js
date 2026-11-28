@@ -163,8 +163,15 @@
   function payCard(inv, bank) {
     const box = el("div", { role: "status" });
     const opts = [];
-    if (bank.pay_link) opts.push(el("a", { class: "btn gold wide", href: bank.pay_link, target: "_blank", rel: "noopener" }, "Pay now (Apple Pay, Google Pay or card)"));
-    if (bank.dd_link) opts.push(el("a", { class: "btn wide", href: bank.dd_link, target: "_blank", rel: "noopener" }, "Pay by Direct Debit"));
+    const stripeBtn = (kind, label, cls) => el("button", { class: cls, type: "button", onclick: async ev => {
+      ev.target.disabled = true; msg(box, "");
+      try { const r = await api("/api/portal/invoices/" + inv.id + "/checkout", { method: "POST", body: { kind } }); location.href = r.url; }
+      catch (err) { msg(box, err.message); ev.target.disabled = false; }
+    } }, label);
+    if (bank.stripe_card) opts.push(stripeBtn("card", "Pay now: Apple Pay, Google Pay or card", "btn gold wide"));
+    else if (bank.pay_link) opts.push(el("a", { class: "btn gold wide", href: bank.pay_link, target: "_blank", rel: "noopener" }, "Pay now (Apple Pay, Google Pay or card)"));
+    if (bank.stripe_dd) opts.push(stripeBtn("dd", "Pay by Direct Debit", "btn wide"));
+    else if (bank.dd_link) opts.push(el("a", { class: "btn wide", href: bank.dd_link, target: "_blank", rel: "noopener" }, "Pay by Direct Debit"));
     if (bank.account_number) {
       opts.push(el("p", { class: "muted", style: "margin:8px 0 0" }, "Or pay by bank transfer:"));
       opts.push(el("div", { class: "bank" },
@@ -173,6 +180,7 @@
         copyRow("Reference", inv.number), bank.bank_name ? el("div", {}, el("span", {}, "Bank"), el("span", {}, bank.bank_name)) : null));
     }
     const said = inv.client_says_paid_at;
+    if (said) opts.length = 0;
     const btn = el("button", { class: "btn line wide", type: "button", disabled: !!said, onclick: async ev => {
       ev.target.disabled = true;
       try { await api("/api/portal/invoices/" + inv.id + "/paid-notice", { method: "POST" }); await loadDash(); }
@@ -183,7 +191,7 @@
       el("p", { class: "muted" }, inv.number + " · " + inv.description),
       el("div", { class: "amount" }, gbp(inv.amount_pence)),
       el("div", { class: "paybox" }, opts, btn, box),
-      el("p", { class: "muted", style: "margin-top:10px;font-size:.8rem" }, "Use the invoice number as your payment reference. Card, Direct Debit and bank payments are handled by your bank or the payment provider. We never see your card details."));
+      el("p", { class: "muted", style: "margin-top:10px;font-size:.8rem" }, bank.stripe_card ? "Card, Apple Pay, Google Pay and Direct Debit payments are handled securely by Stripe and confirmed here automatically. We never see your card details. For a bank transfer, use the invoice number as the reference." : "Use the invoice number as your payment reference. Card, Direct Debit and bank payments are handled by your bank or the payment provider. We never see your card details."));
   }
   function checklistCard(items) {
     const rows = items.map(it => {
@@ -235,6 +243,15 @@
     if (openEng) cards.push(agreementCard(openEng, unpaid.find(i => i.engagement_id === openEng.id)));
     signedUnpaid.forEach(i => cards.push(payCard(i, data.bank || {})));
     if (todo.length) cards.push(checklistCard(data.checklist));
+    // Back from Stripe: wait for the confirmation to arrive (webhook) and refresh
+    const paidParam = Number(new URLSearchParams(location.search).get("paid"));
+    if (paidParam) {
+      const pi = data.invoices.find(i => i.id === paidParam);
+      if (pi && pi.status === "unpaid" && (window.__paidTries = (window.__paidTries || 0) + 1) <= 10) {
+        cards.unshift(el("div", { class: "card action" }, el("h2", {}, "Thank you, confirming your payment…"), el("p", { class: "muted" }, "This usually takes a few seconds. Direct Debit payments take 3 to 5 working days and you can carry on meanwhile.")));
+        setTimeout(loadDash, 3000);
+      } else history.replaceState(null, "", "/portal");
+    }
     $("actionBox").replaceChildren(...cards);
 
     const done = data.services.filter(s => s.status === "Completed" || s.status === "Submitted").length;

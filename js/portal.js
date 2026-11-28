@@ -104,6 +104,28 @@
     $("emailForm").classList.remove("hide"); $("email").value = $("pEmail").value; $("email").focus();
   });
 
+  // ---- forgot password / lost phone ----
+  let forgotStage = "request";
+  $("showForgot").addEventListener("click", () => {
+    $("forgotForm").classList.toggle("hide"); $("fEmail").value = $("pEmail").value; $("fEmail").focus();
+  });
+  $("forgotForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const f = ev.target; busy(f, true); msg($("forgotMsg"), "");
+    const email = $("fEmail").value.trim();
+    try {
+      if (forgotStage === "request") {
+        const r = await api("/api/portal-auth/forgot/request", { method: "POST", body: { email } });
+        msg($("forgotMsg"), r.message, true);
+        forgotStage = "verify"; $("fCodeBox").classList.remove("hide"); $("fBtn").textContent = "Reset my login"; $("fCode").focus();
+      } else {
+        await api("/api/portal-auth/forgot/verify", { method: "POST", body: { email, code: $("fCode").value } });
+        currentEmail = email; await afterLogin();
+      }
+    } catch (e) { msg($("forgotMsg"), e.message); }
+    busy(f, false);
+  });
+
   $("passForm").addEventListener("submit", async ev => {
     ev.preventDefault();
     const f = ev.target; busy(f, true); msg($("passMsg"), "");

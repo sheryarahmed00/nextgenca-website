@@ -38,6 +38,18 @@
           <p style="margin-top:16px"><button class="btn gold wide" type="submit">Log in</button></p>
           <div id="passMsg" role="status" aria-live="polite"></div>
         </form>
+        <p class="muted" style="margin-top:10px"><button type="button" class="linkbtn" id="showForgot">Forgot your password or lost your phone?</button></p>
+        <form id="forgotForm" class="hide" novalidate style="margin-top:8px">
+          <p class="muted">We will email you a reset code. Then you choose a new password and link your authenticator app again.</p>
+          <label for="fEmail">Email address</label>
+          <input id="fEmail" type="email" autocomplete="email" required>
+          <div id="fCodeBox" class="hide">
+            <label for="fCode">6-digit reset code from your email</label>
+            <input id="fCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+          </div>
+          <p style="margin-top:12px"><button class="btn line wide" type="submit" id="fBtn">Email me a reset code</button></p>
+          <div id="forgotMsg" role="status" aria-live="polite"></div>
+        </form>
         <p class="muted" style="margin-top:14px">First time here, or no password yet? <button type="button" class="linkbtn" id="showEmailLogin">Get a one-time code by email</button></p>
         <form id="emailForm" class="hide" novalidate>
           <p class="muted">Enter your email. We will email you a 6-digit code to log in, then you will set your password and authenticator app.</p>
@@ -214,6 +226,6 @@
 </main>
 <script src="/js/vendor/qrcode.js?v=1"></script>
 <script src="/js/portal-common.js?v=20261128d"></script>
-<script src="/js/portal.js?v=20261128r"></script>
+<script src="/js/portal.js?v=20261128f"></script>
 </body>
 </html>

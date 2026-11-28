@@ -4,11 +4,14 @@
 //   POST /api/portal-auth/setup/start                                  (client session) -> { secret, uri }
 //   POST /api/portal-auth/setup/finish   { password, code }           (client session)
 //   POST /api/portal-auth/reset          { email }                    (admin session) -> client must set up again
+//   POST /api/portal-auth/forgot/request { email }                    -> emails a one-time reset code
+//   POST /api/portal-auth/forgot/verify  { email, code }              -> clears password + authenticator, logs in to set them again
 // First login is always by email code (proves the email). The client then sets a password and
 // links an authenticator app; after that, email codes are no longer sent for that client.
 import {
   json, bad, ensureSchema, sameOrigin, getSession, createSession, sessionCookie, audit,
   rateLimit, clientIp, cleanEmail, randomToken, safeEqual, nowIso, SESSION_MAX_MS,
+  randomCode, hmac, sendEmail, OTP_TTL_MS, OTP_MAX_ATTEMPTS,
 } from "../../_shared/portal.js";
 import { base32Encode, checkTotp, sealSecret, openSecret, hashPassword, passwordProblem } from "../../_shared/totp.js";
 
@@ -54,6 +57,53 @@ export async function onRequest({ request, env, params }) {
       const token = await createSession(env, request, email, "client", row.cid);
       await audit(env, request, email, "login_ok", "client (password + authenticator)");
       return json({ ok: true, role: "client" }, 200, { "set-cookie": sessionCookie(token, Math.floor(SESSION_MAX_MS / 1000)) });
+    }
+
+    // ----- forgot password / lost phone: prove the email again, then set up a new password + authenticator -----
+    if (route === "forgot/request" && m === "POST") {
+      const email = cleanEmail(b.email);
+      if (!email) return bad("Please enter a valid email address.");
+      if (!(await rateLimit(env, "fp-ip:" + clientIp(request), 6, 60 * 60 * 1000)) || !(await rateLimit(env, "fp-em:" + email, 3, 60 * 60 * 1000))) {
+        return bad("Too many attempts. Please try again in an hour.", 429);
+      }
+      const generic = { ok: true, message: "If this email has a NextGen portal login, a 6-digit reset code is on its way. It expires in 10 minutes." };
+      const c = await env.DB.prepare("SELECT c.id, c.name FROM clients c JOIN client_auth a ON a.client_id = c.id WHERE c.email = ? AND c.active = 1 AND a.enabled = 1").bind(email).first();
+      if (!c) { await audit(env, request, email, "reset_code_unknown"); return json(generic); }
+      const code = randomCode();
+      const key = "reset:" + email;
+      const now = Date.now();
+      await env.DB.batch([
+        env.DB.prepare("UPDATE otps SET used = 1 WHERE email = ? AND used = 0").bind(key),
+        env.DB.prepare("INSERT INTO otps (email, code_hash, expires_at, created_at) VALUES (?, ?, ?, ?)").bind(key, await hmac(env, `r:${email}:${code}`), now + OTP_TTL_MS, now),
+      ]);
+      await sendEmail(env, email, `Reset your NextGen portal login: ${code}`,
+        `Dear ${c.name},\n\nSomeone asked to reset the login for your NextGen client portal. Your reset code is:\n\n${code}\n\nIt expires in 10 minutes. After entering it you will choose a new password and link your authenticator app again.\n\nIf you did not ask for this, ignore this email and your login stays as it is. If it keeps happening, please tell us.\n\nNextGen Chartered Accountant`);
+      await audit(env, request, email, "reset_code_sent");
+      return json(generic);
+    }
+    if (route === "forgot/verify" && m === "POST") {
+      const email = cleanEmail(b.email);
+      const code = String(b.code || "").replace(/\D/g, "");
+      if (!email || code.length !== 6) return bad("Enter the 6-digit code from your email.");
+      if (!(await rateLimit(env, "fpv-ip:" + clientIp(request), 15, 15 * 60 * 1000))) return bad("Too many attempts. Please wait 15 minutes.", 429);
+      const key = "reset:" + email;
+      const otp = await env.DB.prepare("SELECT * FROM otps WHERE email = ? AND used = 0 ORDER BY id DESC LIMIT 1").bind(key).first();
+      if (!otp || otp.expires_at < Date.now()) return bad("This code has expired. Please ask for a new one.", 401);
+      if (otp.attempts >= OTP_MAX_ATTEMPTS) { await env.DB.prepare("UPDATE otps SET used = 1 WHERE id = ?").bind(otp.id).run(); return bad("Too many wrong codes. Please ask for a new one.", 401); }
+      await env.DB.prepare("UPDATE otps SET attempts = attempts + 1 WHERE id = ?").bind(otp.id).run();
+      if (!safeEqual(await hmac(env, `r:${email}:${code}`), otp.code_hash)) { await audit(env, request, email, "reset_code_wrong"); return bad("That code is not right.", 401); }
+      await env.DB.prepare("UPDATE otps SET used = 1 WHERE id = ?").bind(otp.id).run();
+      const c = await env.DB.prepare("SELECT id, name FROM clients WHERE email = ? AND active = 1").bind(email).first();
+      if (!c) return bad("This account is not active.", 403);
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM client_auth WHERE client_id = ?").bind(c.id),
+        env.DB.prepare("DELETE FROM sessions WHERE client_id = ?").bind(c.id),
+      ]);
+      const token = await createSession(env, request, email, "client", c.id);
+      await audit(env, request, email, "client_login_reset_by_client");
+      await sendEmail(env, email, "Your NextGen portal login was reset", `Dear ${c.name},\n\nYour client portal password and authenticator app were just reset, and you have been asked to set new ones. If this was not you, contact us straight away.\n\nNextGen Chartered Accountant`);
+      if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client reset their portal login: ${email}`, `${c.name} <${email}> reset their password and authenticator using an email code (IP ${clientIp(request)}).`);
+      return json({ ok: true }, 200, { "set-cookie": sessionCookie(token, Math.floor(SESSION_MAX_MS / 1000)) });
     }
 
     const s = await getSession(env, request);

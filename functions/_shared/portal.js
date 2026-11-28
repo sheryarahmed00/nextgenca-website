@@ -245,7 +245,7 @@ export async function sendEmail(env, to, subject, text) {
   if (!env.RESEND_API_KEY) throw new Error("RESEND_API_KEY missing");
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+    headers: { authorization: `Bearer ${String(env.RESEND_API_KEY).trim()}`, "content-type": "application/json" },
     body: JSON.stringify({ from: env.MAIL_FROM || "NextGen Client Portal <portal@nextgenca.co.uk>", to: [to], subject, text }),
   });
   if (!r.ok) console.log("email failed", r.status, await r.text());

@@ -21,7 +21,7 @@ function formEncode(obj, prefix = "", out = []) {
 
 export async function stripePost(env, path, params, idempotencyKey) {
   if (!env.STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY missing");
-  const headers = { authorization: `Bearer ${env.STRIPE_SECRET_KEY}`, "content-type": "application/x-www-form-urlencoded" };
+  const headers = { authorization: `Bearer ${String(env.STRIPE_SECRET_KEY).trim()}`, "content-type": "application/x-www-form-urlencoded" };
   if (idempotencyKey) headers["idempotency-key"] = idempotencyKey;
   const r = await fetch("https://api.stripe.com/v1/" + path, { method: "POST", headers, body: formEncode(params).join("&") });
   const j = await r.json();
@@ -36,7 +36,7 @@ export async function verifyStripe(env, payload, header) {
   const sigs = header.split(",").map(p => p.split("=")).filter(p => p[0] === "v1").map(p => p[1]);
   const t = Number(parts.t);
   if (!t || !sigs.length || Math.abs(Date.now() / 1000 - t) > 300) return false;
-  const key = await crypto.subtle.importKey("raw", enc.encode(env.STRIPE_WEBHOOK_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const key = await crypto.subtle.importKey("raw", enc.encode(String(env.STRIPE_WEBHOOK_SECRET).trim()), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const mac = [...new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(`${t}.${payload}`)))].map(b => b.toString(16).padStart(2, "0")).join("");
   return sigs.some(s => s.length === mac.length && [...s].reduce((r, c, i) => r | (c.charCodeAt(0) ^ mac.charCodeAt(i)), 0) === 0);
 }

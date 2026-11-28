@@ -36,15 +36,18 @@ export async function sendAgreementAndInvoice(env, request, c, { service, period
 export async function ensureKycTable(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS kyc_checks (id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL, provider TEXT NOT NULL, session_id TEXT NOT NULL UNIQUE, status TEXT NOT NULL, summary TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`).run();
 }
-export const diditOn = env => !!(env.DIDIT_API_KEY && env.DIDIT_WORKFLOW_ID);
+// Values pasted into Cloudflare can carry a stray space or line break; trim them.
+const dkey = env => String(env.DIDIT_API_KEY || "").trim();
+const dflow = env => String(env.DIDIT_WORKFLOW_ID || "").trim();
+export const diditOn = env => !!(dkey(env) && dflow(env));
 
 export async function diditStart(env, c, origin) {
   await ensureKycTable(env);
   const r = await fetch("https://verification.didit.me/v3/session/", {
     method: "POST",
-    headers: { "x-api-key": env.DIDIT_API_KEY, "content-type": "application/json" },
+    headers: { "x-api-key": dkey(env), "content-type": "application/json" },
     body: JSON.stringify({
-      workflow_id: env.DIDIT_WORKFLOW_ID,
+      workflow_id: dflow(env),
       vendor_data: `client-${c.id}`,
       callback: `${origin}/portal?kyc=done`,
       callback_method: "both",
@@ -62,7 +65,7 @@ export async function diditStart(env, c, origin) {
 }
 
 export async function diditDecision(env, sessionId) {
-  const r = await fetch(`https://verification.didit.me/v3/session/${encodeURIComponent(sessionId)}/decision/`, { headers: { "x-api-key": env.DIDIT_API_KEY } });
+  const r = await fetch(`https://verification.didit.me/v3/session/${encodeURIComponent(sessionId)}/decision/`, { headers: { "x-api-key": dkey(env) } });
   if (!r.ok) { console.log("didit decision failed", r.status); return null; }
   return r.json();
 }
@@ -113,7 +116,7 @@ export async function diditApply(env, request, sessionId, status, decision, acto
 export async function diditVerify(env, raw, sig, ts, prevSig) {
   if (!env.DIDIT_WEBHOOK_SECRET || !sig || !ts) return false;
   if (Math.abs(Date.now() / 1000 - Number(ts)) > 300) return false;
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(env.DIDIT_WEBHOOK_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(String(env.DIDIT_WEBHOOK_SECRET).trim()), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const mac = [...new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(raw)))].map(b => b.toString(16).padStart(2, "0")).join("");
   const eq = s => typeof s === "string" && s.length === mac.length && [...s].reduce((r, ch, i) => r | (ch.charCodeAt(0) ^ mac.charCodeAt(i)), 0) === 0;
   return eq(sig) || eq(prevSig);

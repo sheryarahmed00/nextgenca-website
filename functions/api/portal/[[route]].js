@@ -315,7 +315,8 @@ async function checkout(env, request, s, id) {
     mode: "payment",
     customer_email: s.email,
     client_reference_id: String(inv.id),
-    payment_method_types: kind === "dd" ? ["bacs_debit"] : ["card"],
+    // Stripe replaced payment_method_types with allowed_payment_method_types on Checkout Sessions.
+    allowed_payment_method_types: kind === "dd" ? ["bacs_debit"] : ["card"],
     line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: inv.amount_pence, product_data: { name: `${inv.number}: ${inv.description}`.slice(0, 250) } } }],
     metadata: { invoice_id: String(inv.id), invoice_number: inv.number },
     payment_intent_data: { description: `NextGen invoice ${inv.number}`, metadata: { invoice_id: String(inv.id), invoice_number: inv.number } },
@@ -447,7 +448,7 @@ async function paymentProof(env, request, s, id) {
 async function payTry(env, request) {
   const origin = new URL(request.url).origin;
   try {
-    const x = await stripePost(env, "checkout/sessions", { mode: "payment", customer_email: "selftest@nextgenca.co.uk", client_reference_id: "selftest", payment_method_types: ["card"],
+    const x = await stripePost(env, "checkout/sessions", { mode: "payment", customer_email: "selftest@nextgenca.co.uk", client_reference_id: "selftest", allowed_payment_method_types: ["card"],
       line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: 100, product_data: { name: "Portal self-test (not a real invoice)" } } }],
       metadata: { selftest: "1" }, payment_intent_data: { description: "Portal self-test" }, success_url: `${origin}/portal`, cancel_url: `${origin}/portal`,
       expires_at: Math.floor(Date.now() / 1000) + 60 * 60, payment_method_options: { card: { request_three_d_secure: "automatic" } } });

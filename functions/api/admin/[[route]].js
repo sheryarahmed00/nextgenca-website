@@ -6,7 +6,6 @@ import {
   SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER, files,
 } from "../../_shared/portal.js";
 
-const PORTAL_URL = "https://nextgenca.co.uk/portal";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -87,7 +86,7 @@ async function createClient(env, request, s) {
   await audit(env, request, s.email, "client_created", `#${r.meta.last_row_id} ${email}`);
   if (b.invite) {
     await sendEmail(env, email, "Your NextGen client portal is ready",
-      `Dear ${name},\n\nYour NextGen Chartered Accountant client portal is ready. You can see the work we have done for you, download your documents, upload records and order new services.\n\nLog in here: ${PORTAL_URL}\nEnter this email address (${email}) and we will email you a one-time login code. There is no password to remember.\n\nKind regards,\nNextGen Chartered Accountant`);
+      `Dear ${name},\n\nYour NextGen Chartered Accountant client portal is ready. You can see the work we have done for you, download your documents, upload records and order new services.\n\nLog in here: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\nEnter this email address (${email}) and we will email you a one-time login code. There is no password to remember.\n\nKind regards,\nNextGen Chartered Accountant`);
   }
   return json({ ok: true, id: r.meta.last_row_id });
 }
@@ -187,7 +186,7 @@ async function uploadDoc(env, request, s, clientId) {
   await audit(env, request, s.email, "firm_upload", `#${docId} client#${clientId} ${chk.name}`);
   if (form.get("notify") === "1" && c.active) {
     await sendEmail(env, c.email, "A new document is ready in your NextGen portal",
-      `Dear ${c.name},\n\nA new document "${title}" has been added to your NextGen client portal.\n\nLog in to download it: ${PORTAL_URL}\n\nFor your security we never attach your documents to emails.\n\nKind regards,\nNextGen Chartered Accountant`);
+      `Dear ${c.name},\n\nA new document "${title}" has been added to your NextGen client portal.\n\nLog in to download it: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nFor your security we never attach your documents to emails.\n\nKind regards,\nNextGen Chartered Accountant`);
   }
   return json({ ok: true, id: r.meta.last_row_id });
 }
@@ -230,7 +229,7 @@ async function updateOrder(env, request, s, id) {
   await audit(env, request, s.email, "order_updated", `#${id} ${o.status} -> ${status}`);
   if (b.notify && o.active && status !== o.status) {
     await sendEmail(env, o.client_email, `Your NextGen order #${id} is now: ${status}`,
-      `Dear ${o.client_name},\n\nYour order #${id} (${o.service}) is now: ${status}.${note ? "\n\nNote from NextGen: " + note : ""}\n\nSee the details in your portal: ${PORTAL_URL}\n\nKind regards,\nNextGen Chartered Accountant`);
+      `Dear ${o.client_name},\n\nYour order #${id} (${o.service}) is now: ${status}.${note ? "\n\nNote from NextGen: " + note : ""}\n\nSee the details in your portal: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   }
   return json({ ok: true });
 }
@@ -284,7 +283,7 @@ async function approve(env, request, s, id) {
   await env.DB.prepare("UPDATE clients SET stage = 'active', active = 1 WHERE id = ?").bind(id).run();
   await audit(env, request, s.email, c.stage === "review" ? "kyc_approved_and_agreement_sent" : "agreement_sent", `client#${id} ${service} ${gbp(pence)} ${number}`);
   await sendEmail(env, c.email, "Your NextGen agreement and invoice are ready",
-    `Dear ${c.name},\n\n${c.stage === "review" ? "Thank you, your ID has been checked. " : ""}Your agreement and invoice for ${service} (${gbp(pence)}) are ready in your client portal.\n\n1. Read and sign the agreement\n2. Pay the invoice (${number})\n3. Upload the documents on your checklist\n\nIt takes about 2 minutes on your phone: https://nextgenca.co.uk/portal\n\nKind regards,\nNextGen Chartered Accountant`);
+    `Dear ${c.name},\n\n${c.stage === "review" ? "Thank you, your ID has been checked. " : ""}Your agreement and invoice for ${service} (${gbp(pence)}) are ready in your client portal.\n\n1. Read and sign the agreement\n2. Pay the invoice (${number})\n3. Upload the documents on your checklist\n\nIt takes about 2 minutes on your phone: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   return json({ ok: true, engagement_id: eid, invoice: number });
 }
 
@@ -314,7 +313,7 @@ async function updateInvoice(env, request, s, id) {
   if (status === "paid" && inv.status !== "paid") {
     const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM checklist WHERE engagement_id = ?").bind(inv.engagement_id).first();
     await sendEmail(env, inv.email, `Payment received: ${inv.number}`,
-      `Dear ${inv.name},\n\nThank you, we have received your payment of ${gbp(inv.amount_pence)} for invoice ${inv.number}.${n && n.n ? "\n\nNext step: please upload the documents on your checklist so we can start: https://nextgenca.co.uk/portal" : "\n\nWe will now start the work and keep you updated in your portal: https://nextgenca.co.uk/portal"}\n\nKind regards,\nNextGen Chartered Accountant`);
+      `Dear ${inv.name},\n\nThank you, we have received your payment of ${gbp(inv.amount_pence)} for invoice ${inv.number}.${n && n.n ? "\n\nNext step: please upload the documents on your checklist so we can start: " : "\n\nWe will now start the work and keep you updated in your portal: "}${env.SITE_URL || "https://nextgenca.co.uk"}/portal\n\nKind regards,\nNextGen Chartered Accountant`);
   }
   return json({ ok: true });
 }

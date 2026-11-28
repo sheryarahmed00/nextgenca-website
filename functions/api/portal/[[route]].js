@@ -164,7 +164,7 @@ async function signup(env, request) {
     await env.DB.prepare("INSERT INTO clients (email, name, company, phone, active, stage, wanted_service, signup_note, created_at) VALUES (?, ?, ?, ?, 1, 'kyc', ?, ?, ?)")
       .bind(email, name, cleanText(b.company, 150) || null, phone, service, cleanText(b.note, 1000) || null, nowIso()).run();
     await audit(env, request, email, "signup", service);
-    if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `New portal sign-up: ${name}`, `${name} <${email}>, ${phone}\nService: ${service}\n\nThey will now upload ID. Review at https://nextgenca.co.uk/portal-admin`);
+    if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `New portal sign-up: ${name}`, `${name} <${email}>, ${phone}\nService: ${service}\n\nThey will now upload ID. Review at ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   }
   // Same next step for new and existing emails: a login code (only sent to active accounts)
   return loginRequest(env, request, email);
@@ -188,7 +188,7 @@ async function kyc(env, request, s) {
   for (const x of checked) await storeUpload(env, request, { clientId: s.client_id, file: x.f, chk: x.chk, title: x.title, category: x.cat, by: "client" });
   await env.DB.prepare("UPDATE clients SET stage = 'review' WHERE id = ?").bind(s.client_id).run();
   await audit(env, request, s.email, "kyc_submitted");
-  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `ID ready to check: ${c.name}`, `${c.name} <${c.email}> uploaded photo ID and proof of address for "${c.wanted_service}".\n\nCheck and approve: https://nextgenca.co.uk/portal-admin`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `ID ready to check: ${c.name}`, `${c.name} <${c.email}> uploaded photo ID and proof of address for "${c.wanted_service}".\n\nCheck and approve: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   return json({ ok: true });
 }
 
@@ -214,7 +214,7 @@ async function paidNotice(env, request, s, id) {
   if (e && e.status !== "signed") return bad("Please sign the agreement first.");
   await env.DB.prepare("UPDATE invoices SET client_says_paid_at = ? WHERE id = ?").bind(nowIso(), id).run();
   await audit(env, request, s.email, "client_says_paid", inv.number);
-  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client says paid: ${inv.number} (${gbp(inv.amount_pence)})`, `${s.email} says they have paid invoice ${inv.number} for ${gbp(inv.amount_pence)}. Check the bank and mark it paid: https://nextgenca.co.uk/portal-admin`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client says paid: ${inv.number} (${gbp(inv.amount_pence)})`, `${s.email} says they have paid invoice ${inv.number} for ${gbp(inv.amount_pence)}. Check the bank and mark it paid: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   return json({ ok: true });
 }
 
@@ -232,7 +232,7 @@ async function placeOrder(env, request, s) {
   if (env.NOTIFY_EMAIL) {
     const c = await env.DB.prepare("SELECT name, company FROM clients WHERE id = ?").bind(s.client_id).first();
     await sendEmail(env, env.NOTIFY_EMAIL, `New portal order #${r.meta.last_row_id}: ${service}`,
-      `Client: ${c.name}${c.company ? " (" + c.company + ")" : ""} <${s.email}>\nService: ${service}\n\n${details}\n\nOpen the admin page: https://nextgenca.co.uk/portal-admin`);
+      `Client: ${c.name}${c.company ? " (" + c.company + ")" : ""} <${s.email}>\nService: ${service}\n\n${details}\n\nOpen the admin page: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   }
   return json({ ok: true, id: r.meta.last_row_id });
 }
@@ -258,7 +258,7 @@ async function upload(env, request, s) {
   if (itemId) await env.DB.prepare("UPDATE checklist SET document_id = ?, done_at = ? WHERE id = ? AND client_id = ?").bind(docId, nowIso(), itemId, s.client_id).run();
   await audit(env, request, s.email, "client_upload", `#${docId} ${chk.name}`);
   if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client uploaded a document: ${title}`,
-    `${s.email} uploaded "${chk.name}" to the client portal.\n\nhttps://nextgenca.co.uk/portal-admin`);
+    `${s.email} uploaded "${chk.name}" to the client portal.\n\n${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
   return json({ ok: true });
 }
 

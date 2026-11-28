@@ -10,7 +10,7 @@ import { json, bad, ensureSchema, safeEqual, nowIso, isAdminEmail } from "../_sh
 import { verifyGoogleIdToken } from "../_shared/google-id.js";
 
 const SENDERS = { "sheryar@nextgenca.co.uk": "Sheryar", "fiza@nextgenca.co.uk": "Fiza", "info@nextgenca.co.uk": "Fiza" };
-import { ensureEnquirySchema, enqEmail, enqText, enqDate, enqLink, MAILBOXES } from "../_shared/enquiries.js";
+import { ensureEnquirySchema, enqEmail, enqText, enqBody, enqDate, enqLink, MAILBOXES } from "../_shared/enquiries.js";
 
 export async function onRequestPost({ request, env }) {
   try {
@@ -82,7 +82,19 @@ export async function onRequestPost({ request, env }) {
             ...mailVals, status, e.created_at || now, now, e.updated_at || now);
       });
       await env.DB.batch(stmts);
-      saved += stmts.length;
+      saved += chunk.length;
+
+      // full email conversation, each message stored once (by Gmail message id)
+      const msgStmts = [];
+      for (const r of chunk) {
+        for (const m of r.messages) {
+          msgStmts.push(env.DB.prepare(`INSERT INTO enquiry_messages (msg_id, email, mailbox, at, side, sender, subject, body, synced_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+              ON CONFLICT(msg_id) DO UPDATE SET body = excluded.body, subject = excluded.subject, synced_at = excluded.synced_at`)
+            .bind(m.id, r.email, b.mailbox, m.at, m.side, m.sender, m.subject, m.body, now));
+        }
+      }
+      for (let j = 0; j < msgStmts.length; j += 80) await env.DB.batch(msgStmts.slice(j, j + 80));
     }
     return json({ ok: true, saved });
   } catch (e) {
@@ -98,9 +110,17 @@ function clean(r) {
   const lastFrom = r.last_from === "Client" ? "Client" : (r.last_from ? "NextGen" : null);
   return {
     email,
-    name: enqText(r.name, 120), phone: enqText(r.phone, 40), service: enqText(r.service, 150), query: enqText(r.query, 1500),
+    name: enqText(r.name, 120), phone: enqText(r.phone, 40), service: enqText(r.service, 150), query: enqBody(r.query, 6000),
     form_at: enqDate(r.form_at), call_at: enqDate(r.call_at), call_booked_at: enqDate(r.call_booked_at),
     last_at: enqDate(r.last_at), last_from: lastFrom, said: enqText(r.said, 400), count, link: enqLink(r.link),
+    messages: (Array.isArray(r.messages) ? r.messages.slice(0, 60) : []).map(m => ({
+      id: /^[A-Za-z0-9]{6,40}$/.test(String(m && m.id)) ? String(m.id) : null,
+      at: enqDate(m && m.at),
+      side: m && m.side === "Client" ? "Client" : "NextGen",
+      sender: enqText(m && m.sender, 120),
+      subject: enqText(m && m.subject, 200),
+      body: enqBody(m && m.body, 8000),
+    })).filter(m => m.id && m.at),
   };
 }
 

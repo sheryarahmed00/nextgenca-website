@@ -100,25 +100,82 @@
       el("div", { class: "enq-next " + cls }, text),
       el("div", { style: "display:flex;gap:10px;align-items:center" }, pill(e.status), el("span", { class: "enq-arrow", "aria-hidden": "true" }, "›")));
 
-    const body = el("div", { class: "enq-body" },
-      el("div", { class: "enq-grid" },
-        el("div", { class: "enq-box" },
-          el("h4", {}, "Website form"),
-          e.form_at ? el("p", {}, "Filled on ", el("b", {}, dayTime(e.form_at))) : el("p", { class: "muted" }, "This client did not use the website form."),
-          e.phone ? el("p", {}, "Phone: ", el("a", { href: "tel:" + e.phone.replace(/[^\d+]/g, "") }, e.phone)) : "",
-          el("p", {}, "Email: ", el("a", { href: "mailto:" + e.email }, e.email)),
-          e.query ? el("div", { class: "enq-quote" }, e.query) : ""),
-        el("div", { class: "enq-box" },
-          el("h4", {}, "Call"),
-          e.call_at
-            ? [el("p", {}, el("b", {}, dayTime(e.call_at)), e.call_with ? " with " + e.call_with : ""),
-               e.call_booked_at ? el("p", { class: "muted" }, "Booked on " + dayTime(e.call_booked_at)) : "",
-               el("p", { class: "muted" }, callUpcoming(e) ? "Coming up" : "This call has already happened")]
-            : el("p", { class: "muted" }, "No call booked.")),
-        mailBox(e, "Sheryar", "sheryar"),
-        mailBox(e, "Fiza", "fiza")),
+    // ----- details: three tabs -----
+    const tabBtns = [], panes = [];
+    function tab(label, pane) {
+      const i = tabBtns.length;
+      const b = el("button", { type: "button", role: "tab", class: "enq-tab", "aria-selected": i === 0 ? "true" : "false", onclick: () => {
+        tabBtns.forEach((x, j) => x.setAttribute("aria-selected", j === i ? "true" : "false"));
+        panes.forEach((x, j) => x.classList.toggle("hide", j !== i));
+        if (pane.onshow) pane.onshow();
+      } }, label);
+      if (i !== 0) pane.classList.add("hide");
+      tabBtns.push(b); panes.push(pane);
+    }
+
+    // 1. what the client asked (exact words from the website form)
+    const askPane = el("div", { class: "enq-pane" },
+      e.form_at
+        ? [el("p", { class: "muted" }, "Sent through the website form on " + dayTime(e.form_at) + (e.service ? " · Service: " + e.service : "")),
+           el("div", { class: "enq-bubble client" },
+             el("div", { class: "enq-meta" }, (e.name || "Client") + " wrote:"),
+             el("div", { class: "enq-text" }, e.query || "(no message written)"))]
+        : el("p", { class: "muted" }, "This client did not use the website form. Their first message is in the Emails tab."),
+      el("p", { style: "margin-top:12px" }, "Email: ", el("a", { href: "mailto:" + e.email }, e.email),
+        e.phone ? [" · Phone: ", el("a", { href: "tel:" + e.phone.replace(/[^\d+]/g, "") }, e.phone)] : ""));
+
+    // 2. the full email conversation, oldest first, exact wording
+    const mailPane = el("div", { class: "enq-pane" }, el("p", { class: "muted" }, "Loading emails…"));
+    let mailsLoaded = false;
+    mailPane.onshow = async () => {
+      if (mailsLoaded) return;
+      mailsLoaded = true;
+      try {
+        const r = await api("/api/admin/enquiries/" + e.id + "/messages");
+        if (!r.items.length) {
+          mailPane.replaceChildren(el("p", { class: "muted" }, "No emails saved yet. They appear after the next update (every 15 minutes)."));
+          return;
+        }
+        let lastSubject = "";
+        mailPane.replaceChildren(
+          el("p", { class: "muted" }, r.items.length + (r.items.length === 1 ? " email" : " emails") + ", oldest first. Exact wording, without the quoted older replies."),
+          ...r.items.map(x => {
+            const us = x.side !== "Client";
+            const showSubject = x.subject && x.subject.replace(/^(re|fwd?):\s*/i, "") !== lastSubject.replace(/^(re|fwd?):\s*/i, "");
+            lastSubject = x.subject || lastSubject;
+            return el("div", { class: "enq-bubble " + (us ? "us" : "client") },
+              el("div", { class: "enq-meta" },
+                el("b", {}, us ? (x.mailbox === "Fiza" ? "Fiza (NextGen)" : "Sheryar (NextGen)") : (e.name || "Client")),
+                " · " + dayTime(x.at)),
+              showSubject ? el("div", { class: "enq-subj" }, "Subject: " + x.subject) : "",
+              el("div", { class: "enq-text" }, x.body || "(empty message)"));
+          }),
+          ...["sheryar", "fiza"].filter(k => e[k + "_link"]).map(k =>
+            el("p", { style: "margin-top:10px" }, el("a", { href: e[k + "_link"], target: "_blank", rel: "noopener noreferrer" },
+              "Open in " + (k === "fiza" ? "Fiza" : "Sheryar") + "'s Gmail to reply →"))));
+      } catch (err) { mailPane.replaceChildren(el("p", { class: "muted" }, err.message)); mailsLoaded = false; }
+    };
+
+    // 3. call, status and notes
+    const callPane = el("div", { class: "enq-pane" },
+      el("div", { class: "enq-box" },
+        el("h4", {}, "Call"),
+        e.call_at
+          ? [el("p", {}, el("b", {}, dayTime(e.call_at)), e.call_with ? " with " + e.call_with : ""),
+             e.call_booked_at ? el("p", { class: "muted" }, "Booked on " + dayTime(e.call_booked_at)) : "",
+             el("p", { class: "muted" }, callUpcoming(e) ? "Coming up" : "This call has already happened")]
+          : el("p", { class: "muted" }, "No call booked.")),
       el("div", { class: "enq-save" }, st, notes, save),
       m);
+
+    const mailCount = (e.sheryar_count || 0) + (e.fiza_count || 0);
+    tab("1. Client's question", askPane);
+    tab("2. Emails" + (mailCount ? " (" + mailCount + ")" : ""), mailPane);
+    tab("3. Call & notes", callPane);
+
+    const body = el("div", { class: "enq-body" },
+      el("div", { class: "enq-tabs", role: "tablist" }, tabBtns),
+      panes);
 
     wrap.append(head, body);
     return wrap;

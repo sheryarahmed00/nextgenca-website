@@ -7,7 +7,7 @@
 
   async function start() {
     try { meta = await api("/api/admin/meta"); }
-    catch (e) { if (e.status === 401 || e.status === 403) { location.replace("/portal"); return; } $("gate").classList.remove("hide"); return; }
+    catch (e) { if (e.status === 401 || e.status === 403) { location.replace("/staff-login"); return; } $("gate").classList.remove("hide"); return; }
     $("whoEmail").textContent = meta.email;
     meta.orderStatuses.forEach(s => $("orderFilter").append(el("option", { value: s }, s)));
     $("app").classList.remove("hide");
@@ -15,7 +15,7 @@
     loadClients(); loadOrders(); loadAudit(); loadSignups(); loadSettings();
   }
 
-  $("logoutBtn").addEventListener("click", async () => { try { await api("/api/portal/logout", { method: "POST" }); } catch (e) {} location.replace("/portal"); });
+  $("logoutBtn").addEventListener("click", async () => { try { await api("/api/portal/logout", { method: "POST" }); } catch (e) {} location.replace("/staff-login"); });
 
   // ----- clients list -----
   let t;

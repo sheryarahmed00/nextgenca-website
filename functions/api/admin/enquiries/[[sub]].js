@@ -30,6 +30,13 @@ export async function onRequest({ request, env, params }) {
       return json({ items: r.results, statuses: ENQ_STATUSES, lastSync: last && last.t });
     }
 
+    if (sub.length === 2 && /^\d+$/.test(sub[0]) && sub[1] === "messages" && m === "GET") {
+      const e = await env.DB.prepare("SELECT email FROM enquiries WHERE id = ?").bind(Number(sub[0])).first();
+      if (!e) return bad("Not found.", 404);
+      const r = await env.DB.prepare("SELECT msg_id, mailbox, at, side, sender, subject, body FROM enquiry_messages WHERE email = ? ORDER BY at ASC LIMIT 200").bind(e.email).all();
+      return json({ items: r.results });
+    }
+
     if (sub.length === 1 && /^\d+$/.test(sub[0]) && m === "PUT") {
       let b = {};
       try { b = await request.json(); } catch {}

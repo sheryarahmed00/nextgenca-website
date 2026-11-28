@@ -1,0 +1,273 @@
+// Client portal API: /api/portal/*
+// Login is by a one-time 6-digit code emailed to an address NextGen has registered. No passwords are stored.
+import {
+  json, bad, ensureSchema, sameOrigin, cleanEmail, cleanText, clientIp, isAdminEmail, rateLimit, audit,
+  randomCode, hmac, safeEqual, createSession, getSession, destroySession, sessionCookie, sendEmail,
+  checkUpload, sniffOk, downloadResponse, nowIso, getSettings, storeUpload, gbp,
+  SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
+} from "../../_shared/portal.js";
+
+const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen, a 6-digit code is on its way. It expires in 10 minutes." };
+
+export async function onRequest(context) {
+  const { request, env, params } = context;
+  try {
+    await ensureSchema(env);
+    if (!sameOrigin(request)) return bad("Request blocked.", 403);
+    const route = (params.route || []).join("/");
+    const m = request.method;
+
+    if (route === "login/request" && m === "POST") return loginRequest(env, request);
+    if (route === "login/verify" && m === "POST") return loginVerify(env, request);
+    if (route === "logout" && m === "POST") {
+      await destroySession(env, request);
+      return json({ ok: true }, 200, { "set-cookie": sessionCookie("", 0) });
+    }
+    if (route === "services-list" && m === "GET") return json({ services: SERVICES });
+    if (route === "config" && m === "GET") return json({ turnstileSiteKey: env.TURNSTILE_SITE_KEY || "" });
+    if (route === "signup" && m === "POST") return signup(env, request);
+
+    const s = await getSession(env, request);
+    if (!s) return bad("Please log in.", 401);
+    if (route === "me" && m === "GET") return json({ email: s.email, role: s.role });
+    if (s.role !== "client") return bad("This page is for clients. Use the admin page.", 403);
+
+    if (route === "dashboard" && m === "GET") return dashboard(env, s);
+    if (route === "kyc" && m === "POST") return kyc(env, request, s);
+    if (route === "agreement/sign" && m === "POST") return signAgreement(env, request, s);
+    const pn = route.match(/^invoices\/(\d+)\/paid-notice$/);
+    if (pn && m === "POST") return paidNotice(env, request, s, Number(pn[1]));
+    const st = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
+    if (!st || st.stage !== "active") return bad("Please finish the steps above first.", 403);
+    if (route === "orders" && m === "POST") return placeOrder(env, request, s);
+    if (route === "upload" && m === "POST") return upload(env, request, s);
+    const dl = route.match(/^documents\/(\d+)\/download$/);
+    if (dl && m === "GET") return download(env, request, s, Number(dl[1]));
+    return bad("Not found.", 404);
+  } catch (e) {
+    console.log("portal error", e && e.stack || e);
+    return bad("Something went wrong. Please try again.", 500);
+  }
+}
+
+async function body(request) {
+  try { return await request.json(); } catch { return {}; }
+}
+
+async function loginRequest(env, request, knownEmail) {
+  const email = knownEmail || cleanEmail((await body(request)).email);
+  if (!email) return bad("Please enter a valid email address.");
+  const ip = clientIp(request);
+  if (!(await rateLimit(env, "ip-req:" + ip, 10, 60 * 60 * 1000))) return bad("Too many attempts. Please try again in an hour.", 429);
+  if (!(await rateLimit(env, "em-req:" + email, 3, 15 * 60 * 1000))) return bad("Too many codes requested. Please wait 15 minutes.", 429);
+
+  let allowed = isAdminEmail(env, email);
+  if (!allowed) {
+    const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ? AND active = 1").bind(email).first();
+    allowed = !!c;
+  }
+  if (!allowed) {
+    await audit(env, request, email, "login_code_unknown_email");
+    return json(GENERIC_SENT); // same answer so nobody can test which emails are clients
+  }
+  const code = randomCode();
+  const now = Date.now();
+  await env.DB.batch([
+    env.DB.prepare("UPDATE otps SET used = 1 WHERE email = ? AND used = 0").bind(email),
+    env.DB.prepare("INSERT INTO otps (email, code_hash, expires_at, created_at) VALUES (?, ?, ?, ?)")
+      .bind(email, await hmac(env, `o:${email}:${code}`), now + OTP_TTL_MS, now),
+  ]);
+  await sendEmail(env, email, `Your NextGen login code: ${code}`,
+    `Your NextGen Chartered Accountant client portal login code is:\n\n${code}\n\nIt expires in 10 minutes and works once.\n\nIf you did not ask for this code, you can ignore this email. Nobody can log in without it.\n\nNextGen Chartered Accountant\nhttps://nextgenca.co.uk`);
+  await audit(env, request, email, "login_code_sent");
+  return json(GENERIC_SENT);
+}
+
+async function loginVerify(env, request) {
+  const { email: raw, code: rawCode } = await body(request);
+  const email = cleanEmail(raw);
+  const code = String(rawCode || "").replace(/\D/g, "");
+  if (!email || code.length !== 6) return bad("Enter the 6-digit code from your email.");
+  const ip = clientIp(request);
+  if (!(await rateLimit(env, "ip-ver:" + ip, 20, 15 * 60 * 1000))) return bad("Too many attempts. Please wait 15 minutes.", 429);
+
+  const otp = await env.DB.prepare("SELECT * FROM otps WHERE email = ? AND used = 0 ORDER BY id DESC LIMIT 1").bind(email).first();
+  const fail = async (msg) => { await audit(env, request, email, "login_failed", msg); return bad(msg, 401); };
+  if (!otp || otp.expires_at < Date.now()) return fail("This code has expired. Please request a new one.");
+  if (otp.attempts >= OTP_MAX_ATTEMPTS) {
+    await env.DB.prepare("UPDATE otps SET used = 1 WHERE id = ?").bind(otp.id).run();
+    return fail("Too many wrong codes. Please request a new one.");
+  }
+  await env.DB.prepare("UPDATE otps SET attempts = attempts + 1 WHERE id = ?").bind(otp.id).run();
+  if (!safeEqual(await hmac(env, `o:${email}:${code}`), otp.code_hash)) return fail("That code is not right. Please check and try again.");
+  await env.DB.prepare("UPDATE otps SET used = 1 WHERE id = ?").bind(otp.id).run();
+
+  let role = "client", clientId = null;
+  if (isAdminEmail(env, email)) role = "admin";
+  else {
+    const c = await env.DB.prepare("SELECT id FROM clients WHERE email = ? AND active = 1").bind(email).first();
+    if (!c) return fail("This account is not active.");
+    clientId = c.id;
+  }
+  const token = await createSession(env, request, email, role, clientId);
+  await audit(env, request, email, "login_ok", role);
+  return json({ ok: true, role }, 200, { "set-cookie": sessionCookie(token, Math.floor(SESSION_MAX_MS / 1000)) });
+}
+
+async function dashboard(env, s) {
+  const id = s.client_id;
+  const [client, services, documents, orders, engagements, invoices, checklist] = await env.DB.batch([
+    env.DB.prepare("SELECT name, company, email, phone, stage, wanted_service, reject_reason FROM clients WHERE id = ?").bind(id),
+    env.DB.prepare("SELECT id, service, period, notes, status, start_date, completed_date, fee FROM services WHERE client_id = ? ORDER BY COALESCE(completed_date, start_date, created_at) DESC, id DESC").bind(id),
+    env.DB.prepare("SELECT id, service_id, title, category, filename, size, uploaded_by, created_at FROM documents WHERE client_id = ? ORDER BY id DESC").bind(id),
+    env.DB.prepare("SELECT id, service, details, status, firm_note, created_at, updated_at FROM orders WHERE client_id = ? ORDER BY id DESC").bind(id),
+    env.DB.prepare("SELECT id, service, period, fee_pence, letter_text, status, signed_name, signed_at, created_at FROM engagements WHERE client_id = ? ORDER BY id DESC").bind(id),
+    env.DB.prepare("SELECT id, number, engagement_id, description, amount_pence, status, client_says_paid_at, paid_at, created_at FROM invoices WHERE client_id = ? ORDER BY id DESC").bind(id),
+    env.DB.prepare("SELECT id, engagement_id, label, document_id, done_at FROM checklist WHERE client_id = ? ORDER BY id").bind(id),
+  ]);
+  const inv = invoices.results;
+  const paidEng = new Set(inv.filter(i => i.status === "paid").map(i => i.engagement_id));
+  let bank = null;
+  if (inv.some(i => i.status === "unpaid")) {
+    const st = await getSettings(env);
+    bank = { bank_name: st.bank_name, account_name: st.account_name, sort_code: st.sort_code, account_number: st.account_number, pay_link: st.pay_link, dd_link: st.dd_link };
+  }
+  return json({
+    client: client.results[0], services: services.results, documents: documents.results.filter(d => !d.category.startsWith("kyc")),
+    kycCount: documents.results.filter(d => d.category.startsWith("kyc")).length,
+    orders: orders.results, engagements: engagements.results, invoices: inv,
+    checklist: checklist.results.filter(c => !c.engagement_id || paidEng.has(c.engagement_id)),
+    bank, serviceList: SERVICES,
+  });
+}
+
+async function signup(env, request) {
+  const b = await body(request);
+  const email = cleanEmail(b.email);
+  const name = cleanText(b.name, 120);
+  const phone = cleanText(b.phone, 40);
+  const service = cleanText(b.service, 120);
+  if (!name || name.length < 2) return bad("Please enter your full name.");
+  if (!email) return bad("Please enter a valid email address.");
+  if (!/^[+\d][\d\s()-]{7,}$/.test(phone)) return bad("Please enter your mobile number.");
+  if (!SERVICES.includes(service)) return bad("Please choose the service you need.");
+  if (!b.consent) return bad("Please tick the box to agree to our privacy notice.");
+  const ip = clientIp(request);
+  if (!(await rateLimit(env, "ip-signup:" + ip, 5, 60 * 60 * 1000))) return bad("Too many sign-ups from this connection. Please try later.", 429);
+  if (env.TURNSTILE_SECRET) {
+    const fd = new FormData(); fd.append("secret", env.TURNSTILE_SECRET); fd.append("response", String(b.turnstile || "")); fd.append("remoteip", ip);
+    const v = await (await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: fd })).json();
+    if (!v.success) return bad("Please complete the security check.");
+  }
+  const existing = await env.DB.prepare("SELECT id FROM clients WHERE email = ?").bind(email).first();
+  if (!existing && !isAdminEmail(env, email)) {
+    await env.DB.prepare("INSERT INTO clients (email, name, company, phone, active, stage, wanted_service, signup_note, created_at) VALUES (?, ?, ?, ?, 1, 'kyc', ?, ?, ?)")
+      .bind(email, name, cleanText(b.company, 150) || null, phone, service, cleanText(b.note, 1000) || null, nowIso()).run();
+    await audit(env, request, email, "signup", service);
+    if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `New portal sign-up: ${name}`, `${name} <${email}>, ${phone}\nService: ${service}\n\nThey will now upload ID. Review at ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  }
+  // Same next step for new and existing emails: a login code (only sent to active accounts)
+  return loginRequest(env, request, email);
+}
+
+async function kyc(env, request, s) {
+  files(env);
+  const c = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(s.client_id).first();
+  if (c.stage !== "kyc") return bad("Your ID has already been received.");
+  if (!(await rateLimit(env, "kyc:" + s.client_id, 10, 24 * 60 * 60 * 1000))) return bad("Too many uploads today.", 429);
+  const form = await request.formData();
+  const files = [["id_file", "kyc_id", "Photo ID"], ["address_file", "kyc_address", "Proof of address"]];
+  const checked = [];
+  for (const [field, cat, title] of files) {
+    const f = form.get(field);
+    const chk = checkUpload(f);
+    if (chk.error) return bad(title + ": " + chk.error);
+    if (!(await sniffOk(f, chk.ext))) return bad(title + ": this file does not look like a real photo or PDF.");
+    checked.push({ f, chk, cat, title });
+  }
+  for (const x of checked) await storeUpload(env, request, { clientId: s.client_id, file: x.f, chk: x.chk, title: x.title, category: x.cat, by: "client" });
+  await env.DB.prepare("UPDATE clients SET stage = 'review' WHERE id = ?").bind(s.client_id).run();
+  await audit(env, request, s.email, "kyc_submitted");
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `ID ready to check: ${c.name}`, `${c.name} <${c.email}> uploaded photo ID and proof of address for "${c.wanted_service}".\n\nCheck and approve: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  return json({ ok: true });
+}
+
+async function signAgreement(env, request, s) {
+  const b = await body(request);
+  const e = await env.DB.prepare("SELECT * FROM engagements WHERE id = ? AND client_id = ?").bind(Number(b.engagement_id), s.client_id).first();
+  if (!e) return bad("Agreement not found.", 404);
+  if (e.status !== "sent") return bad("This agreement is already signed.");
+  const name = cleanText(b.name, 120);
+  if (name.length < 3) return bad("Type your full name to sign.");
+  if (!b.agree) return bad("Please tick to confirm you agree.");
+  await env.DB.prepare("UPDATE engagements SET status = 'signed', signed_name = ?, signed_at = ?, signed_ip = ?, signed_ua = ? WHERE id = ?")
+    .bind(name, nowIso(), clientIp(request), cleanText(request.headers.get("user-agent"), 200), e.id).run();
+  await audit(env, request, s.email, "agreement_signed", `#${e.id} ${e.service} by "${name}" hash=${e.letter_hash.slice(0, 16)}`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Agreement signed: ${e.service}`, `${s.email} signed engagement #${e.id} (${e.service}) as "${name}".`);
+  return json({ ok: true });
+}
+
+async function paidNotice(env, request, s, id) {
+  const inv = await env.DB.prepare("SELECT * FROM invoices WHERE id = ? AND client_id = ?").bind(id, s.client_id).first();
+  if (!inv || inv.status !== "unpaid") return bad("Invoice not found.", 404);
+  const e = inv.engagement_id ? await env.DB.prepare("SELECT status FROM engagements WHERE id = ?").bind(inv.engagement_id).first() : null;
+  if (e && e.status !== "signed") return bad("Please sign the agreement first.");
+  await env.DB.prepare("UPDATE invoices SET client_says_paid_at = ? WHERE id = ?").bind(nowIso(), id).run();
+  await audit(env, request, s.email, "client_says_paid", inv.number);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client says paid: ${inv.number} (${gbp(inv.amount_pence)})`, `${s.email} says they have paid invoice ${inv.number} for ${gbp(inv.amount_pence)}. Check the bank and mark it paid: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  return json({ ok: true });
+}
+
+async function placeOrder(env, request, s) {
+  if (!(await rateLimit(env, "order:" + s.client_id, 10, 24 * 60 * 60 * 1000))) return bad("You have placed a lot of orders today. Please message us instead.", 429);
+  const b = await body(request);
+  const service = cleanText(b.service, 120);
+  const details = cleanText(b.details, 3000);
+  if (!SERVICES.includes(service)) return bad("Please choose a service.");
+  if (details.length < 5) return bad("Please tell us a little about what you need.");
+  const now = nowIso();
+  const r = await env.DB.prepare("INSERT INTO orders (client_id, service, details, status, created_at, updated_at) VALUES (?, ?, ?, 'New', ?, ?)")
+    .bind(s.client_id, service, details, now, now).run();
+  await audit(env, request, s.email, "order_placed", `#${r.meta.last_row_id} ${service}`);
+  if (env.NOTIFY_EMAIL) {
+    const c = await env.DB.prepare("SELECT name, company FROM clients WHERE id = ?").bind(s.client_id).first();
+    await sendEmail(env, env.NOTIFY_EMAIL, `New portal order #${r.meta.last_row_id}: ${service}`,
+      `Client: ${c.name}${c.company ? " (" + c.company + ")" : ""} <${s.email}>\nService: ${service}\n\n${details}\n\nOpen the admin page: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  }
+  return json({ ok: true, id: r.meta.last_row_id });
+}
+
+async function upload(env, request, s) {
+  files(env);
+  if (!(await rateLimit(env, "up:" + s.client_id, 40, 24 * 60 * 60 * 1000))) return bad("Upload limit reached for today. Please email us the rest.", 429);
+  const len = Number(request.headers.get("content-length") || 0);
+  if (len > 21 * 1024 * 1024) return bad("Files must be 20 MB or smaller.", 413);
+  const form = await request.formData();
+  const file = form.get("file");
+  const chk = checkUpload(file);
+  if (chk.error) return bad(chk.error);
+  if (!(await sniffOk(file, chk.ext))) return bad("This file does not look like a real " + chk.ext.toUpperCase() + " file.");
+  const title = cleanText(form.get("title"), 120) || chk.name;
+  let serviceId = Number(form.get("service_id")) || null;
+  if (serviceId) {
+    const own = await env.DB.prepare("SELECT id FROM services WHERE id = ? AND client_id = ?").bind(serviceId, s.client_id).first();
+    if (!own) serviceId = null;
+  }
+  const docId = await storeUpload(env, request, { clientId: s.client_id, file, chk, title, serviceId, by: "client" });
+  const itemId = Number(form.get("checklist_id")) || null;
+  if (itemId) await env.DB.prepare("UPDATE checklist SET document_id = ?, done_at = ? WHERE id = ? AND client_id = ?").bind(docId, nowIso(), itemId, s.client_id).run();
+  await audit(env, request, s.email, "client_upload", `#${docId} ${chk.name}`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Client uploaded a document: ${title}`,
+    `${s.email} uploaded "${chk.name}" to the client portal.\n\n${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  return json({ ok: true });
+}
+
+async function download(env, request, s, id) {
+  // The client_id check is what stops one client opening another client's file.
+  const d = await env.DB.prepare("SELECT * FROM documents WHERE id = ? AND client_id = ?").bind(id, s.client_id).first();
+  if (!d) return bad("Not found.", 404);
+  const obj = await files(env).get(d.r2_key);
+  if (!obj) return bad("File missing. Please contact us.", 404);
+  await audit(env, request, s.email, "client_download", `#${id} ${d.filename}`);
+  return downloadResponse(obj, d.filename, d.content_type);
+}

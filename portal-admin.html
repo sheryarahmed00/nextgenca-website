@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal admin | NextGen Chartered Accountant</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/img/mark.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/portal.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="/portal-admin"><img src="/img/mark.jpg" alt="" width="54" height="40"><span><b>NEXT<i>GEN</i></b><small>PORTAL ADMIN</small></span></a>
+  <div class="who"><span id="whoEmail"></span><button class="btn line small" id="logoutBtn" type="button">Log out</button></div>
+</div></header>
+<main>
+  <div id="gate" class="card hide"><p>Please <a href="/staff-login">log in with your username</a>, or <a href="/portal">with your email code</a>.</p></div>
+  <section id="app" class="hide">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="tClients">Clients</button>
+      <button role="tab" aria-selected="false" data-tab="tSignups">To do <span id="todoCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tOrders">Orders <span id="newCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tEnquiries">Enquiries &amp; Calls <span id="enqCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tAudit">Activity log</button>
+      <button role="tab" aria-selected="false" data-tab="tSettings">Settings</button>
+    </div>
+
+    <div class="tab" id="tClients">
+      <div class="split">
+        <div>
+          <div class="card" style="padding:14px">
+            <input id="search" type="search" placeholder="Search name, email, company" aria-label="Search clients">
+            <p style="margin-top:10px"><button class="btn gold small" id="newClientBtn" type="button">+ Add client</button></p>
+          </div>
+          <div class="card list" id="clientList" style="padding:0;max-height:70vh;overflow:auto"></div>
+        </div>
+        <div>
+          <div class="card hide" id="newClient">
+            <h2>Add client</h2>
+            <form id="newClientForm" novalidate>
+              <div class="grid2">
+                <div><label>Name *</label><input name="name" required maxlength="120"></div>
+                <div><label>Email *</label><input name="email" type="email" required></div>
+                <div><label>Company</label><input name="company" maxlength="150"></div>
+                <div><label>Phone</label><input name="phone" maxlength="40"></div>
+              </div>
+              <label class="row" style="font-weight:600"><input type="checkbox" name="invite" value="1" checked style="width:auto"> Email the client a welcome message with the portal link</label>
+              <p style="margin-top:12px"><button class="btn" type="submit">Save client</button></p>
+              <div class="m" role="status"></div>
+            </form>
+          </div>
+          <div id="clientView"><div class="card"><p class="muted">Choose a client on the left, or add a new one.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tOrders">
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h2>Orders</h2>
+          <select id="orderFilter" style="width:auto"><option value="">All</option></select></div>
+        <div id="ordersBox"></div>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tEnquiries">
+      <div class="card" style="padding:14px">
+        <div class="row" style="gap:10px;flex-wrap:wrap">
+          <input id="enqSearch" type="search" placeholder="Search name, email, service" aria-label="Search enquiries" style="flex:1;min-width:200px">
+          <select id="enqFilter" style="width:auto" aria-label="Filter by status"><option value="">All statuses</option></select>
+        </div>
+        <p class="muted" id="enqSync" style="margin:8px 0 0"></p>
+      </div>
+      <div id="enqBox"></div>
+    </div>
+
+    <div class="tab hide" id="tSignups">
+      <div class="card"><h2>To do</h2><p class="muted">New sign-ups waiting for ID, ID to check, and unpaid invoices.</p><div id="signupsBox"></div></div>
+    </div>
+
+    <div class="tab hide" id="tSettings">
+      <div class="card">
+        <h2>Payment details</h2>
+        <p class="muted">Shown to clients on unpaid invoices only. Stored in the private database, not on the public website code.</p>
+        <form id="settingsForm" novalidate>
+          <div class="grid2">
+            <div><label>Account name</label><input name="account_name" maxlength="120"></div>
+            <div><label>Bank</label><input name="bank_name" maxlength="80"></div>
+            <div><label>Sort code</label><input name="sort_code" maxlength="8" placeholder="12-34-56"></div>
+            <div><label>Account number</label><input name="account_number" maxlength="8" inputmode="numeric"></div>
+          </div>
+          <label>Card / Apple Pay payment link (optional)</label><input name="pay_link" placeholder="https://...">
+          <label>Direct Debit link (optional, e.g. GoCardless or Stripe)</label><input name="dd_link" placeholder="https://...">
+          <h3 style="margin-top:22px">Engagement letter template</h3>
+          <p class="muted">Placeholders: {date} {name} {company_line} {service} {period_line} {scope} {fee}. Leave empty to restore the standard letter.</p>
+          <textarea name="letter_template" style="min-height:360px;font-size:.85rem"></textarea>
+          <p style="margin-top:12px"><button class="btn" type="submit">Save settings</button></p>
+          <div class="m" role="status"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tAudit">
+      <div class="card"><h2>Activity log</h2><p class="muted">Every login, upload, download and change, newest first.</p><div id="auditBox"></div></div>
+    </div>
+  </section>
+</main>
+<script src="/js/portal-common.js"></script>
+<script src="/js/portal-admin.js"></script>
+<script src="/js/portal-enquiries.js"></script>
+<script src="/js/portal-staff.js"></script>
+</body>
+</html>

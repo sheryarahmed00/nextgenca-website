@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff login | NextGen Chartered Accountant</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/img/mark.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/portal.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="/staff-login"><img src="/img/mark.jpg" alt="" width="54" height="40"><span><b>NEXT<i>GEN</i></b><small>STAFF LOGIN</small></span></a>
+</div></header>
+<main>
+  <div class="card" style="max-width:420px;margin:30px auto">
+    <h1 style="margin-top:0">Staff login</h1>
+    <form id="staffForm" novalidate>
+      <label for="username">Username</label>
+      <input id="username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="24">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="200">
+      <p style="margin-top:14px"><button class="btn" type="submit">Log in</button></p>
+      <div class="m" role="status"></div>
+    </form>
+    <p class="muted" style="margin-top:16px">First time? <a href="/portal">Log in with your email code</a>, then set your username and password under Settings.</p>
+  </div>
+</main>
+<script src="/js/portal-common.js"></script>
+<script src="/js/staff-login.js"></script>
+</body>
+</html>

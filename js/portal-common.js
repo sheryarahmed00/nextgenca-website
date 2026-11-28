@@ -48,4 +48,36 @@
     }));
   }
   window.P = { api, el, msg, date, size, pill, table, busy, tabs };
+
+  // Log out after 5 minutes with no activity (mouse, keys, touch, scroll).
+  // While someone is active, a light check every minute keeps their session alive on the server.
+  if (/[?&]timeout=1/.test(location.search)) {
+    const main = document.querySelector("main");
+    if (main) main.prepend(el("div", { class: "msg ok", style: "max-width:440px;margin:20px auto 0" },
+      "You were logged out after 5 minutes without activity. Please log in again."));
+  }
+
+  (function idleLogout() {
+    const IDLE_MS = 5 * 60 * 1000;
+    const isAdmin = location.pathname.startsWith("/portal-admin");
+    const back = isAdmin ? "/staff-login?timeout=1" : "/portal?timeout=1";
+    let last = Date.now(), lastPing = Date.now(), done = false;
+    const loggedIn = () => { const b = document.getElementById("logoutBtn"); return b && b.offsetParent !== null; };
+    const activity = () => {
+      last = Date.now();
+      if (loggedIn() && Date.now() - lastPing > 60 * 1000) {
+        lastPing = Date.now();
+        fetch("/api/portal/me", { headers: { "x-portal": "1" }, credentials: "same-origin", cache: "no-store" })
+          .then(r => { if (r.status === 401 && !done) { done = true; location.replace(back); } }).catch(() => {});
+      }
+    };
+    ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "wheel"].forEach(ev =>
+      window.addEventListener(ev, activity, { passive: true, capture: true }));
+    setInterval(async () => {
+      if (done || !loggedIn() || Date.now() - last < IDLE_MS) return;
+      done = true;
+      try { await fetch("/api/portal/logout", { method: "POST", headers: { "x-portal": "1" }, credentials: "same-origin" }); } catch (e) {}
+      location.replace(back);
+    }, 15 * 1000);
+  })();
 })();

@@ -10,7 +10,7 @@
 //   DEV_MODE        "1" only on a local machine: prints login codes to the log instead of emailing
 
 export const SESSION_COOKIE = "__Host-ng_portal";
-export const SESSION_IDLE_MS = 2 * 60 * 60 * 1000;        // 2 hours without activity
+export const SESSION_IDLE_MS = 5 * 60 * 1000;             // 5 minutes without activity
 export const SESSION_MAX_MS = 12 * 60 * 60 * 1000;        // 12 hours absolute
 export const OTP_TTL_MS = 10 * 60 * 1000;                 // codes live 10 minutes
 export const OTP_MAX_ATTEMPTS = 5;
@@ -227,7 +227,7 @@ export async function getSession(env, request) {
     const c = await env.DB.prepare("SELECT active FROM clients WHERE id = ?").bind(s.client_id).first();
     if (!c || !c.active) return null;
   }
-  if (now - s.last_seen > 60 * 1000) {
+  if (now - s.last_seen > 30 * 1000) {
     await env.DB.prepare("UPDATE sessions SET last_seen = ? WHERE token_hash = ?").bind(now, h).run();
   }
   return { ...s, token_hash: h };

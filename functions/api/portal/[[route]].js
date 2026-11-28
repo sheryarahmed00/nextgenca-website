@@ -4,7 +4,7 @@ import {
   json, bad, ensureSchema, sameOrigin, cleanEmail, cleanText, clientIp, isAdminEmail, rateLimit, audit,
   randomCode, hmac, safeEqual, createSession, getSession, destroySession, sessionCookie, sendEmail,
   checkUpload, sniffOk, downloadResponse, nowIso, getSettings, storeUpload, gbp,
-  SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS,
+  SERVICES, OTP_TTL_MS, OTP_MAX_ATTEMPTS, SESSION_MAX_MS, files,
 } from "../../_shared/portal.js";
 
 const GENERIC_SENT = { ok: true, message: "If this email is registered with NextGen, a 6-digit code is on its way. It expires in 10 minutes." };
@@ -171,7 +171,7 @@ async function signup(env, request) {
 }
 
 async function kyc(env, request, s) {
-  if (!env.DOCS) throw new Error("R2 binding DOCS missing");
+  files(env);
   const c = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(s.client_id).first();
   if (c.stage !== "kyc") return bad("Your ID has already been received.");
   if (!(await rateLimit(env, "kyc:" + s.client_id, 10, 24 * 60 * 60 * 1000))) return bad("Too many uploads today.", 429);
@@ -238,7 +238,7 @@ async function placeOrder(env, request, s) {
 }
 
 async function upload(env, request, s) {
-  if (!env.DOCS) throw new Error("R2 binding DOCS missing");
+  files(env);
   if (!(await rateLimit(env, "up:" + s.client_id, 40, 24 * 60 * 60 * 1000))) return bad("Upload limit reached for today. Please email us the rest.", 429);
   const len = Number(request.headers.get("content-length") || 0);
   if (len > 21 * 1024 * 1024) return bad("Files must be 20 MB or smaller.", 413);
@@ -266,7 +266,7 @@ async function download(env, request, s, id) {
   // The client_id check is what stops one client opening another client's file.
   const d = await env.DB.prepare("SELECT * FROM documents WHERE id = ? AND client_id = ?").bind(id, s.client_id).first();
   if (!d) return bad("Not found.", 404);
-  const obj = await env.DOCS.get(d.r2_key);
+  const obj = await files(env).get(d.r2_key);
   if (!obj) return bad("File missing. Please contact us.", 404);
   await audit(env, request, s.email, "client_download", `#${id} ${d.filename}`);
   return downloadResponse(obj, d.filename, d.content_type);

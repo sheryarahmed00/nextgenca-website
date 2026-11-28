@@ -3,7 +3,7 @@ import {
   json, bad, ensureSchema, sameOrigin, cleanEmail, cleanText, cleanDate, getSession, audit,
   checkUpload, sniffOk, downloadResponse, nowIso, sendEmail, storeUpload,
   getSettings, renderLetter, sha256, nextInvoiceNumber, parsePence, gbp,
-  SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER,
+  SERVICES, SERVICE_STATUSES, ORDER_STATUSES, DEFAULT_CHECKLIST, DEFAULT_LETTER, files,
 } from "../../_shared/portal.js";
 
 const PORTAL_URL = "https://nextgenca.co.uk/portal";
@@ -168,7 +168,7 @@ async function deleteService(env, request, s, id) {
 }
 
 async function uploadDoc(env, request, s, clientId) {
-  if (!env.DOCS) throw new Error("R2 binding DOCS missing");
+  files(env);
   const c = await env.DB.prepare("SELECT * FROM clients WHERE id = ?").bind(clientId).first();
   if (!c) return bad("Client not found.", 404);
   const form = await request.formData();
@@ -195,7 +195,7 @@ async function uploadDoc(env, request, s, clientId) {
 async function deleteDoc(env, request, s, id) {
   const d = await env.DB.prepare("SELECT * FROM documents WHERE id = ?").bind(id).first();
   if (!d) return bad("Not found.", 404);
-  await env.DOCS.delete(d.r2_key);
+  await files(env).del(d.r2_key);
   await env.DB.prepare("DELETE FROM documents WHERE id = ?").bind(id).run();
   await audit(env, request, s.email, "document_deleted", `#${id} client#${d.client_id} ${d.filename}`);
   return json({ ok: true });
@@ -204,7 +204,7 @@ async function deleteDoc(env, request, s, id) {
 async function downloadDoc(env, request, s, id) {
   const d = await env.DB.prepare("SELECT * FROM documents WHERE id = ?").bind(id).first();
   if (!d) return bad("Not found.", 404);
-  const obj = await env.DOCS.get(d.r2_key);
+  const obj = await files(env).get(d.r2_key);
   if (!obj) return bad("File missing.", 404);
   await audit(env, request, s.email, "firm_download", `#${id} client#${d.client_id} ${d.filename}`);
   return downloadResponse(obj, d.filename, d.content_type);

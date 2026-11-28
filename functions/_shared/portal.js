@@ -284,9 +284,23 @@ export async function sniffOk(file, ext) {
   }
   return false;
 }
-export function downloadResponse(obj, filename, contentType) {
+// File storage: R2 bucket (DOCS) if bound, otherwise Workers KV (DOCS_KV, no card needed, 25 MB per file)
+export function files(env) {
+  if (env.DOCS) return {
+    put: (k, f, ct) => env.DOCS.put(k, f.stream(), { httpMetadata: { contentType: ct } }),
+    get: async k => { const o = await env.DOCS.get(k); return o ? o.body : null; },
+    del: k => env.DOCS.delete(k),
+  };
+  if (env.DOCS_KV) return {
+    put: async (k, f) => env.DOCS_KV.put(k, await f.arrayBuffer()),
+    get: k => env.DOCS_KV.get(k, { type: "stream" }),
+    del: k => env.DOCS_KV.delete(k),
+  };
+  throw new Error("No file storage binding (DOCS or DOCS_KV)");
+}
+export function downloadResponse(body, filename, contentType) {
   const safe = filename.replace(/[^\w.\- ()]+/g, "_");
-  return new Response(obj.body, {
+  return new Response(body, {
     headers: {
       "content-type": contentType || "application/octet-stream",
       "content-disposition": `attachment; filename="${safe}"`,
@@ -329,7 +343,7 @@ export async function nextInvoiceNumber(env) {
 }
 export async function storeUpload(env, request, { clientId, file, chk, title, category, serviceId, by }) {
   const key = `clients/${clientId}/${randomToken(16)}.${chk.ext}`;
-  await env.DOCS.put(key, file.stream(), { httpMetadata: { contentType: chk.type } });
+  await files(env).put(key, file, chk.type);
   const r = await env.DB.prepare("INSERT INTO documents (client_id, service_id, title, category, filename, r2_key, size, content_type, uploaded_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
     .bind(clientId, serviceId || null, title, category || "general", chk.name, key, file.size, chk.type, by, nowIso()).run();
   return r.meta.last_row_id;

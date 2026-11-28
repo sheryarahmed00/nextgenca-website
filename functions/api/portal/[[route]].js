@@ -44,6 +44,8 @@ export async function onRequest(context) {
     if (route === "agreement/sign" && m === "POST") return signAgreement(env, request, s);
     const pn = route.match(/^invoices\/(\d+)\/paid-notice$/);
     if (pn && m === "POST") return paidNotice(env, request, s, Number(pn[1]));
+    const pp = route.match(/^invoices\/(\d+)\/proof$/);
+    if (pp && m === "POST") return paymentProof(env, request, s, Number(pp[1]));
     const co = route.match(/^invoices\/(\d+)\/checkout$/);
     if (co && m === "POST") return checkout(env, request, s, Number(co[1]));
     const st = await env.DB.prepare("SELECT stage FROM clients WHERE id = ?").bind(s.client_id).first();
@@ -147,7 +149,10 @@ async function dashboard(env, s) {
     env.DB.prepare("SELECT id, engagement_id, label, document_id, done_at FROM checklist WHERE client_id = ? ORDER BY id").bind(id),
   ]);
   const inv = invoices.results;
-  const paidEng = new Set(inv.filter(i => i.status === "paid").map(i => i.engagement_id));
+  // A client who uploaded proof of payment can carry on to the documents step while we check the bank.
+  const proofTitles = new Set(documents.results.filter(d => d.category === "payment_proof").map(d => d.title));
+  for (const i of inv) i.proof = proofTitles.has("Proof of payment " + i.number);
+  const paidEng = new Set(inv.filter(i => i.status === "paid" || (i.status === "unpaid" && i.proof)).map(i => i.engagement_id));
   let bank = null;
   if (inv.some(i => i.status === "unpaid")) {
     const st = await getSettings(env);
@@ -400,4 +405,25 @@ async function acceptQuote(env, request, token) {
   const res = await loginRequest(env, request, q.email);
   if (res.status !== 200) return res;
   return json({ ok: true, email: q.email, message: "Thank you. We have emailed a 6-digit code to " + q.email + " to open your portal. If you already set a password, log in with it instead." });
+}
+
+// Client says they already paid and attaches a screenshot or PDF of the payment.
+async function paymentProof(env, request, s, id) {
+  files(env);
+  if (!(await rateLimit(env, "proof:" + s.client_id, 10, 24 * 60 * 60 * 1000))) return bad("Too many uploads today.", 429);
+  const inv = await env.DB.prepare("SELECT * FROM invoices WHERE id = ? AND client_id = ?").bind(id, s.client_id).first();
+  if (!inv || inv.status !== "unpaid") return bad("This invoice is not open.", 404);
+  const e = inv.engagement_id ? await env.DB.prepare("SELECT status FROM engagements WHERE id = ?").bind(inv.engagement_id).first() : null;
+  if (e && e.status !== "signed") return bad("Please sign the agreement first.");
+  const form = await request.formData();
+  const file = form.get("file");
+  const chk = checkUpload(file);
+  if (chk.error) return bad(chk.error);
+  if (!(await sniffOk(file, chk.ext))) return bad("This file does not look like a real photo or PDF.");
+  const docId = await storeUpload(env, request, { clientId: s.client_id, file, chk, title: "Proof of payment " + inv.number, category: "payment_proof", by: "client" });
+  await env.DB.prepare("UPDATE invoices SET client_says_paid_at = COALESCE(client_says_paid_at, ?) WHERE id = ?").bind(nowIso(), id).run();
+  await audit(env, request, s.email, "payment_proof_uploaded", `${inv.number} doc#${docId}`);
+  if (env.NOTIFY_EMAIL) await sendEmail(env, env.NOTIFY_EMAIL, `Proof of payment: ${inv.number} (${gbp(inv.amount_pence)})`,
+    `${s.email} uploaded proof of payment for ${inv.number} (${gbp(inv.amount_pence)}) and has moved on to uploading documents.\n\nCheck your bank and mark the invoice paid: ${env.SITE_URL || "https://nextgenca.co.uk"}/portal-admin`);
+  return json({ ok: true });
 }

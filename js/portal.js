@@ -229,6 +229,18 @@
     }
     const said = inv.client_says_paid_at;
     if (said) opts.length = 0;
+    // Already paid elsewhere? Attach proof and carry on.
+    const proofInput = el("input", { type: "file", name: "file", accept: "image/*,.pdf" });
+    const proofForm = el("form", { novalidate: true, style: "margin-top:6px" },
+      el("p", { style: "margin:0 0 6px" }, el("b", {}, "Already paid?"), " Attach a screenshot or PDF of the payment and carry on. We will confirm it with our bank."),
+      el("div", { class: "row" }, proofInput, el("button", { class: "btn small", type: "submit" }, "Upload proof")));
+    proofForm.addEventListener("submit", async ev => {
+      ev.preventDefault();
+      if (!proofInput.files[0]) { msg(box, "Choose the screenshot or PDF first."); return; }
+      busy(proofForm, true);
+      try { await api("/api/portal/invoices/" + inv.id + "/proof", { method: "POST", body: new FormData(proofForm) }); await loadDash(); }
+      catch (err) { msg(box, err.message); busy(proofForm, false); }
+    });
     const btn = el("button", { class: "btn line wide", type: "button", disabled: !!said, onclick: async ev => {
       ev.target.disabled = true;
       try { await api("/api/portal/invoices/" + inv.id + "/paid-notice", { method: "POST" }); await loadDash(); }
@@ -238,7 +250,7 @@
       el("h2", {}, "Pay your invoice"),
       el("p", { class: "muted" }, inv.number + " · " + inv.description),
       el("div", { class: "amount" }, gbp(inv.amount_pence)),
-      el("div", { class: "paybox" }, opts, btn, box),
+      el("div", { class: "paybox" }, opts, inv.proof ? el("p", { class: "msg ok" }, "Thank you, we received your proof of payment and will confirm it shortly. You can upload your documents below.") : [btn, proofForm], box),
       el("p", { class: "muted", style: "margin-top:10px;font-size:.8rem" }, bank.stripe_card ? "Card, Apple Pay, Google Pay and Direct Debit payments are handled securely by Stripe and confirmed here automatically. We never see your card details. For a bank transfer, use the invoice number as the reference." : "Use the invoice number as your payment reference. Card, Direct Debit and bank payments are handled by your bank or the payment provider. We never see your card details."));
   }
   function checklistCard(items) {
@@ -273,7 +285,7 @@
     // which step is the client on?
     const openEng = data.engagements.find(e => e.status === "sent");
     const unpaid = data.invoices.filter(i => i.status === "unpaid");
-    const signedUnpaid = unpaid.filter(i => { const e = data.engagements.find(x => x.id === i.engagement_id); return !e || e.status === "signed"; });
+    const signedUnpaid = unpaid.filter(i => { const e = data.engagements.find(x => x.id === i.engagement_id); return (!e || e.status === "signed") && !i.proof; });
     const todo = data.checklist.filter(x => !x.done_at);
     // now = the step the client is on (2 to 4); 5 = everything done
     let now = 5;

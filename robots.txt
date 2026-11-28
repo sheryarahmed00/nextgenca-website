@@ -1,4 +1,8 @@
 User-agent: *
+Disallow: /portal
+Disallow: /portal-admin
+Disallow: /api/portal/
+Disallow: /api/admin/
 Allow: /
 
 # Search engines and AI assistants are welcome to read and cite this site
@@ -20,6 +24,10 @@ User-agent: Amazonbot
 User-agent: meta-externalagent
 User-agent: DuckAssistBot
 User-agent: MistralAI-User
+Disallow: /portal
+Disallow: /portal-admin
+Disallow: /api/portal/
+Disallow: /api/admin/
 Allow: /
 
 Sitemap: https://nextgenca.co.uk/sitemap.xml

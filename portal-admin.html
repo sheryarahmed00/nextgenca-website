@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal admin | NextGen Chartered Accountant</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/img/mark.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/portal.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="/portal-admin"><img src="/img/mark.jpg" alt="" width="54" height="40"><span><b>NEXT<i>GEN</i></b><small>PORTAL ADMIN</small></span></a>
+  <div class="who"><span id="whoEmail"></span><button class="btn line small" id="logoutBtn" type="button">Log out</button></div>
+</div></header>
+<main>
+  <div id="gate" class="card hide"><p>Please <a href="/portal">log in</a> with an admin email.</p></div>
+  <section id="app" class="hide">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="tClients">Clients</button>
+      <button role="tab" aria-selected="false" data-tab="tOrders">Orders <span id="newCount"></span></button>
+      <button role="tab" aria-selected="false" data-tab="tAudit">Activity log</button>
+    </div>
+
+    <div class="tab" id="tClients">
+      <div class="split">
+        <div>
+          <div class="card" style="padding:14px">
+            <input id="search" type="search" placeholder="Search name, email, company" aria-label="Search clients">
+            <p style="margin-top:10px"><button class="btn gold small" id="newClientBtn" type="button">+ Add client</button></p>
+          </div>
+          <div class="card list" id="clientList" style="padding:0;max-height:70vh;overflow:auto"></div>
+        </div>
+        <div>
+          <div class="card hide" id="newClient">
+            <h2>Add client</h2>
+            <form id="newClientForm" novalidate>
+              <div class="grid2">
+                <div><label>Name *</label><input name="name" required maxlength="120"></div>
+                <div><label>Email *</label><input name="email" type="email" required></div>
+                <div><label>Company</label><input name="company" maxlength="150"></div>
+                <div><label>Phone</label><input name="phone" maxlength="40"></div>
+              </div>
+              <label class="row" style="font-weight:600"><input type="checkbox" name="invite" value="1" checked style="width:auto"> Email the client a welcome message with the portal link</label>
+              <p style="margin-top:12px"><button class="btn" type="submit">Save client</button></p>
+              <div class="m" role="status"></div>
+            </form>
+          </div>
+          <div id="clientView"><div class="card"><p class="muted">Choose a client on the left, or add a new one.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tOrders">
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h2>Orders</h2>
+          <select id="orderFilter" style="width:auto"><option value="">All</option></select></div>
+        <div id="ordersBox"></div>
+      </div>
+    </div>
+
+    <div class="tab hide" id="tAudit">
+      <div class="card"><h2>Activity log</h2><p class="muted">Every login, upload, download and change, newest first.</p><div id="auditBox"></div></div>
+    </div>
+  </section>
+</main>
+<script src="/js/portal-common.js"></script>
+<script src="/js/portal-admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client portal | NextGen Chartered Accountant</title>
+<meta name="description" content="Secure client portal for NextGen Chartered Accountant clients.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/img/mark.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/portal.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="/"><img src="/img/mark.jpg" alt="" width="54" height="40"><span><b>NEXT<i>GEN</i></b><small>CLIENT PORTAL</small></span></a>
+  <div class="who hide" id="who"><span id="whoEmail"></span><button class="btn line small" id="logoutBtn" type="button">Log out</button></div>
+</div></header>
+
+<main>
+  <!-- Step 1: email -->
+  <section class="login" id="stepEmail">
+    <div class="card">
+      <h1>Client login</h1>
+      <p class="muted">Enter the email address you use with NextGen. We will email you a one-time 6-digit code. There is no password to remember.</p>
+      <form id="emailForm" novalidate>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+        <p style="margin-top:16px"><button class="btn gold" type="submit">Email me a login code</button></p>
+        <div id="emailMsg" role="status" aria-live="polite"></div>
+      </form>
+      <p class="secure">🔒 <span>Your documents are stored privately and can only be opened after logging in. We never send your documents as email attachments.</span></p>
+    </div>
+    <p class="muted" style="text-align:center">Not a client yet? <a href="/#contact">Get in touch</a></p>
+  </section>
+
+  <!-- Step 2: code -->
+  <section class="login hide" id="stepCode">
+    <div class="card">
+      <h1>Check your email</h1>
+      <p class="muted" id="codeInfo"></p>
+      <form id="codeForm" novalidate>
+        <label for="code">6-digit code</label>
+        <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+        <p class="row" style="margin-top:16px"><button class="btn gold" type="submit">Log in</button><button class="btn line" type="button" id="backBtn">Use a different email</button></p>
+        <div id="codeMsg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="hide" id="dash">
+    <h1 id="hello"></h1>
+    <p class="muted" id="company"></p>
+    <div class="stats" id="stats"></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="tServices">Our work for you</button>
+      <button role="tab" aria-selected="false" data-tab="tDocs">Documents</button>
+      <button role="tab" aria-selected="false" data-tab="tOrders">My orders</button>
+      <button role="tab" aria-selected="false" data-tab="tNew">Order a service</button>
+    </div>
+
+    <div class="card tab" id="tServices">
+      <h2>Services we have done for you</h2>
+      <div id="servicesBox"></div>
+    </div>
+
+    <div class="card tab hide" id="tDocs">
+      <h2>Your documents</h2>
+      <div id="docsBox"></div>
+      <h3 style="margin-top:26px">Send us a document</h3>
+      <p class="muted">Bank statements, receipts, HMRC letters and so on. PDF, JPG, PNG, Excel, Word, CSV. Up to 20 MB each.</p>
+      <form id="upForm" novalidate>
+        <div class="grid2">
+          <div><label for="upFile">File</label><input id="upFile" name="file" type="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.docx,.doc,.csv,.txt"></div>
+          <div><label for="upTitle">What is it? (optional)</label><input id="upTitle" name="title" maxlength="120" placeholder="e.g. Barclays statements April to June"></div>
+        </div>
+        <p style="margin-top:14px"><button class="btn" type="submit">Upload securely</button></p>
+        <div id="upMsg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <div class="card tab hide" id="tOrders">
+      <h2>My orders</h2>
+      <div id="ordersBox"></div>
+    </div>
+
+    <div class="card tab hide" id="tNew">
+      <h2>Order a new service</h2>
+      <p class="muted">Tell us what you need. We will reply within 1 hour (Monday to Saturday, 9am to 7pm) with the fee and next steps. Nothing is charged until you agree.</p>
+      <form id="orderForm" novalidate>
+        <label for="oService">Service</label>
+        <select id="oService" name="service" required><option value="">Choose a service</option></select>
+        <label for="oDetails">Details</label>
+        <textarea id="oDetails" name="details" maxlength="3000" required placeholder="e.g. Self Assessment for 2025/26, one rental property, need it done by end of December"></textarea>
+        <p style="margin-top:14px"><button class="btn gold" type="submit">Place order</button></p>
+        <div id="orderMsg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+</main>
+<script src="/js/portal-common.js"></script>
+<script src="/js/portal.js"></script>
+</body>
+</html>
